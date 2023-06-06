@@ -22,14 +22,6 @@ namespace CSTest1
             char villageEmblem = '!';
             string victoryNote = "Вы победили!";
             bool death = false;
-
-
-
-
-
-
-
-
         }
     }
 }
