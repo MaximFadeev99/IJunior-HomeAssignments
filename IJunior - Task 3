@@ -15,7 +15,7 @@ namespace CSTest1
           byte age = 21; 
           string zodiacSign = "водолей";
           string workingPlace = "завод";
-          string result = "Вас зовут" + " " + name + ", вам" + age + " год, вы " + zodiacSign + " и работаете на " + workingPlace + "е.";
+          string result = "Вас зовут " + name + ", вам " + age + " год, вы " + zodiacSign + " и работаете на " + workingPlace + "е.";
           console.writeline (result); 
           console.readkey();
         }
