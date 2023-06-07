@@ -10,15 +10,24 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {        
-          string name = "Алексей";
-          byte age = 21; 
-          string zodiacSign = "водолей";
-          string workingPlace = "завод";
-          string result1 = "Вас зовут " + name + ", вам " + age + " год, вы " + zodiacSign + " и работаете на " + workingPlace + "е.";
-          string result2 = $"Вас зовут {name}, вам {21} год, вы {zodiacSign} и работаете на {workingPlace}e."
-          console.writeline (result1);
-          console.writeline (result2); 
-          console.readkey();
+            string name;
+            int age;
+            string zodiacSign;
+            string workingPlace;
+            Console.Write("Как Вас зовут:");
+            name = Console.ReadLine();
+            Console.Write("Сколько Вам лет:");
+            age = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Какой Ваш зодиака:");
+            zodiacSign = Console.ReadLine();
+            Console.Write("Ваше место работы:");
+            workingPlace = Console.ReadLine();
+            string result1 = "Вас зовут " + name + ", вам " + age + " год, вы " + zodiacSign +
+                " и работаете на " + workingPlace + "е.";
+            string result2 = $"Вас зовут {name}, вам {age} год, вы {zodiacSign} и работаете на {workingPlace}e.";
+            Console.WriteLine(result1);
+            Console.WriteLine(result2);
+            Console.ReadKey();
         }
     }
 }
