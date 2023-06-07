@@ -21,7 +21,8 @@ namespace CSTest1
             double expPerKill = 10.7;
             char villageEmblem = '!';
             string victoryNote = "Вы победили!";
-            bool death = false;
+            bool isDead = false;
+            bool staminaIsDepleted = true;
         }
     }
 }
