@@ -9,8 +9,7 @@ namespace CSTest1
     internal class Program
     {
         static void Main(string[] args)
-        {
-            //задача 3
+        {        
           string name = "Алексей";
           byte age = 21; 
           string zodiacSign = "водолей";
