@@ -10,7 +10,6 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
-            //задача 1
             byte level = 1;
             sbyte stamina = 50;
             short curseEffect = -70;
