@@ -13,9 +13,9 @@ namespace CSTest1
           int picturesCount = 52;
           int picturesInRow = 3;
           int completeRows = picturesCount / picturesInRow;
-          int picturesLeft = picturesCount % picturesInRow;
+          int exсessivePictures = picturesCount % picturesInRow;
           console.writeline ($"Число полностью заполненных строк - {completeRows}");
-          console.writeline ($"Число излишних картинок - {picturesLeft}");
+          console.writeline ($"Число излишних картинок - {excessivePictures}");
           console.readkey()
         }
     }
