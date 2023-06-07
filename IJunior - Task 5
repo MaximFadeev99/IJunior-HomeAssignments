@@ -1,1 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {        
+          string surname = "Илья";
+          string name = "Петров";
+          surname = converttostring(name);
+          name = converttostring(surname);
+          console.writeline(surname);
+          console.writeline(name);
+          console.readkey();
+        }
+    }
+}
