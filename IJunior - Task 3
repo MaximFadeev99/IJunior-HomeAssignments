@@ -1,1 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            //задача 3
+          string name = "Алексей";
+          byte age = 21; 
+          string zodiacSign = "водолей";
+          string workingPlace = "завод";
+          string result = "Вас зовут" + " " + name + ", вам" + age + " год, вы " + zodiacSign + " и работаете на " + workingPlace + "е.";
+          console.writeline (result); 
+          console.readkey();
+        }
+    }
+}
