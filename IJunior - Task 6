@@ -18,11 +18,16 @@ namespace CSTest1
             
             gold = 200;
             crystalCost = 20;
-            Console.WriteLine($"Добро пожаловать в магазин кристаллов! Сегодня мы продаем кристалы по {crystalCost} золотых монет за 1 штуку")
-            Console.Write("Сколько кристаллов вы хотите купить:")
-            requestedCrystalCount = Convert.toInt32(Console.ReadLine())
-            isEnoughGold >= gold /(requestedCrystalCount * crystalCount)
-        
+            Console.WriteLine($"Добро пожаловать в магазин кристаллов! Сегодня мы продаем кристалы по {crystalCost} золотых монет за 1 штуку");
+            Console.Write("Сколько кристаллов вы хотите купить:");
+            requestedCrystalCount = Convert.toInt32(Console.ReadLine());
+            isEnoughGold = gold >=  requestedCrystalCount * crystalCost;
+            isEnoughGold = Convert.ToInt32(isEnoughGold);
+            soldCrystalCount = requestedCrystalCount * isEnoughGold;
+            gold -= soldCrystalCount * crystalCost
+            Console.WriteLine($"Вы купили {soldCrystalCount} шт. кристалов за {soldCrystalCount * crystalCost} монет.
+            У вас осталось {gold} золотых монет.")
+            Console.ReadKey()
         }
     }
 }
