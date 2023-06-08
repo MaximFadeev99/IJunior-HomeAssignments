@@ -10,13 +10,22 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {        
-          string surname = "Илья";
-          string name = "Петров";
-          surname = name;
-          name = surname;
-          Console.WriteLine(surname);
-          Console.WriteLine(name);
-          Console.ReadKey();
+            string surname = "Илья";
+            string name = "Петров";
+            string tempVariable;
+
+            Console.WriteLine($"Введенная фамилия: {surname}");
+            Console.WriteLine($"Введенное имя: {name}");
+            Console.WriteLine();
+            Console.WriteLine("Нажмите любую клавишу для смены данных");
+            Console.ReadKey();
+            Console.WriteLine();
+            tempVariable = surname;
+            surname = name;
+            name= tempVariable;
+            Console.WriteLine($"Исправленная фамилия: {surname}");
+            Console.WriteLine($"Исправленное имя: {name}");
+            Console.ReadKey();
         }
     }
 }
