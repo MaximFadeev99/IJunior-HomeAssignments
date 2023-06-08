@@ -1,0 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {        
+          int queueSize;
+          int timePerPerson = 10;
+          int waitTimeMinutes;
+          int waitTimeHours;
+          
+          Console.WriteLine($"Добро пожаловать в городскую поликлинику № 8. Стандартное время приема - {timePerPerson} минут на пациента.");
+          Console.Write("Пожалуйста, укажите, сколько человек в очереди перед Вами:");
+          queueSize = Convert.ToInt32(Console.ReadLine());
+          waitTimeHours = queueSize * timePerPerson / 60;
+          waitTimeMinutes = queueSize * timePerPerson % 60;
+          Console.WriteLine($"Вы должны стоять в очереди {waitTimeHours} часа и {waitTimeMinutes} минут");
+          Console.ReadKey();
+        }
+    }
+}
