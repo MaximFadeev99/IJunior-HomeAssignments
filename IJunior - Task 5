@@ -14,9 +14,9 @@ namespace CSTest1
           string name = "Петров";
           surname = name;
           name = surname;
-          console.writeline(surname);
-          console.writeline(name);
-          console.readkey();
+          Console.WriteLine(surname);
+          Console.WriteLine(name);
+          Console.ReadKey();
         }
     }
 }
