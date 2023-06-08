@@ -12,8 +12,8 @@ namespace CSTest1
         {        
           string surname = "Илья";
           string name = "Петров";
-          surname = converttostring(name);
-          name = converttostring(surname);
+          surname = name;
+          name = surname;
           console.writeline(surname);
           console.writeline(name);
           console.readkey();
