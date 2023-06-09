@@ -18,7 +18,7 @@ namespace CSTest1
          
          Console.WriteLine("Добро пожаловать в КредитБанк!");
          Console.WriteLine($"В нашем банке Вы можете взять рублевый кредит на неограниченное количество лет под {percent}% в год.");
-         Console.WriteLine("Возможность досрочного погашения кредита отсуствует.");
+         Console.WriteLine("Возможность погашения кредита до прошествия 1 года с момента его выдачи отсуствует.");
          Console.WriteLine();
          Console.Write("Введите желаемую сумму займа:");
          creditAmount = Convert.ToInt32(Console.Readline());
@@ -30,7 +30,7 @@ namespace CSTest1
             {
                Case "продолжить":
                   creditAmount *= float percent / 100 + 1;
-                  yearCount++
+                  ++yearCount
                   Console.WriteLine()
                   Console.WriteLine($"Сумма кредита к погашению за {yearCount} год составила {creditAmount} рублей.");
                   Console.WriteLine()
