@@ -1,1 +1,28 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {        
+          int iterationCount;
+          string userMessage;
+          
+          Console.Write("Введите сообщение, которое вы хотите повторить:"); 
+          userMessage = Console.ReadLine();
+          Console.Write("Введите количество повторений:");
+          iterationCount = Convert.ToInt32(Console.ReadLine());
+          for (i = 0, i <= iterationCount, i++)
+          {
+            Console.WriteLine(userMessage);
+          }
+          Console.WriteLine();
+          Console.WriteLine($"Выполнено {iterationCount} повторений.");
+        }
+    }
+}
