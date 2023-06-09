@@ -1,1 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            float creditAmount;
+            float percent = 8.15f;
+            int yearCount = 0;
+            string decision;
+            bool isPayingBack = false;
+
+            Console.WriteLine("Добро пожаловать в КредитБанк!");
+            Console.WriteLine($"В нашем банке Вы можете взять рублевый кредит на неограниченное количество лет под {percent}% в год.");
+            Console.WriteLine("Возможность погашения кредита до прошествия 1 года с момента его выдачи отсуствует.");
+            Console.WriteLine();
+            Console.Write("Введите желаемую сумму займа:");
+            creditAmount = Convert.ToInt32(Console.ReadLine());
+            decision = "продолжить";
+
+            while (isPayingBack = false)
+            {
+                switch (decision)
+                {
+                    case "продолжить":
+                        creditAmount *= percent / 100 + 1;
+                        ++yearCount;
+                        Console.WriteLine();
+                        Console.WriteLine($"Сумма кредита к погашению за {yearCount} год составила {creditAmount} рублей.");
+                        Console.WriteLine();
+                        Console.Write("Введите продолжить, чтобы продлить кредит на год, либо exit, чтобы выплатить кредит:");
+                        decision = Console.ReadLine();
+                        break;
+                    case "exit":
+                        isPayingBack = true;
+                        break;
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("Ошибка: неверная команда!");
+                        Console.Write("Введите продолжить, чтобы продлить кредит на год, либо exit, чтобы выплатить кредит:");
+                        decision = Console.ReadLine();
+                        break;
+                }
+            }
+        }    
+    }
+}
