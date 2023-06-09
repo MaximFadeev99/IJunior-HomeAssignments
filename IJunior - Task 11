@@ -11,10 +11,22 @@ namespace CSTest1
         static void Main(string[] args)
         {       
           Random rand = new Random();
-          int startingNumber = rand.Next(0,100);
-          int sumCumulation;
+          int startingNumber = 0;
+          int lastNumber = rand.Next(0,101);
+          int sumCumulation = 0;
           
-          
+          Console.WriteLine ($"Рандомно сгенерированное число:{lastNumber}");
+          Console.WriteLine ($"Список чисел, которые кратны 3 или 5 и которые находятся в диапазоне от {startingNumber} до {lastNumber}:");
+          For (i = startingNumber, i = lastNumber, i++) 
+          {
+            if (i / 3 == Math.Round(i / 3, 0) || i / 5 == Math.Round(i / 5, 0))
+            {
+            Console.WriteLine(i);
+            sumCumulation += i;
+            }
+          }
+          Console.WriteLine();
+          Console.WriteLine($"Сумма чисел, кратных 3 или 5, находящихся в указанном диапазоне, равняется {sumCumulation}.");
         }
     }
 }
