@@ -47,7 +47,7 @@ namespace CSTest1
                   decision = Console.ReadLine();
                   break;
             }
-            
+          }  
             
             
             
