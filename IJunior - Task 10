@@ -11,7 +11,8 @@ namespace CSTest1
         static void Main(string[] args)
         {        
           int startNumber = 5;
-          For (int i = startNumber, i = 96, i += 7)
+          For (int i = startNumber, i = 96, i += 7) //Выбрана конструкция For, поскольку у нас есть четкое понимание, когда итерации должны закончатся (когда число станет равно 96). 
+                                                     //Хотя с while тоже можно было бы прописать 
           {
               Console.WriteLine(i)
           }
