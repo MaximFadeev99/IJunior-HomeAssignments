@@ -10,26 +10,30 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {       
-            Random rand = new Random();
-            int startingNumber = 0;
-            int lastNumber = rand.Next(0, 101);
-            double sumCumulation = 0;
-
-            Console.WriteLine($"Рандомно сгенерированное число:{lastNumber}");
-            Console.WriteLine($"Список чисел, которые кратны 3 или 5 и которые находятся в диапазоне от {startingNumber} до {lastNumber}:");
+            Random random = new Random();
+            int randomNumber;
+            int minNumber = 0;
+            int maxNumber = 100;
+            double sum = 0;
+            int firstDivisor = 3;
+            int secondDivisor = 5;
             
-            for(double i = startingNumber; i <= lastNumber; i++)
+            randomNumber = random.Next(maxNumber+1);
+            Console.WriteLine($"Рандомно сгенерированное число:{randomNumber}");
+            Console.WriteLine($"Список чисел, которые кратны {firstDivisor} или {secondDivisor} и которые находятся в диапазоне от {minNumber} до {maxNumber}:");
+
+            for (double i = minNumber; i <= randomNumber; i++)
             {
-                if (i / 3 == Math.Round(i / 3, 0) || i / 5 == Math.Round(i / 5, 0))
+                if (i / firstDivisor == Math.Round(i / firstDivisor, 0) || i / secondDivisor == Math.Round(i / secondDivisor, 0))
                 {
                     Console.WriteLine(i);
-                    sumCumulation += i;
+                    sum += i;
                 }
             }
-            
+
             Console.WriteLine();
-            Console.WriteLine($"Сумма чисел, кратных 3 или 5, находящихся в указанном диапазоне, равняется {sumCumulation}.");
-            Console.ReadKey(); 
+            Console.WriteLine($"Сумма чисел, кратных {firstDivisor} или {secondDivisor}, находящихся в указанном диапазоне, равняется {sum}.");
+            Console.ReadKey();
         }
     }
 }
