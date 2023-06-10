@@ -10,20 +10,22 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {        
-            int iterationCount;
+            int iterationsCount;
             string userMessage;
 
             Console.Write("Введите сообщение, которое вы хотите повторить:");
             userMessage = Console.ReadLine();
             Console.Write("Введите количество повторений:");
-            iterationCount = Convert.ToInt32(Console.ReadLine());
-            for (int i = 1; i <= iterationCount; i++)
+            iterationsCount = Convert.ToInt32(Console.ReadLine());
+            
+            for (int i = 1; i <= iterationsCount; i++)
             {
                 Console.WriteLine(i + " - " + userMessage);
             }
+           
             Console.WriteLine();
-            Console.WriteLine($"Выполнено {iterationCount} повторений.");
-            Console.ReadKey (); 
+            Console.WriteLine($"Выполнено {iterationsCount} повторений.");
+            Console.ReadKey();
         }
     }
 }
