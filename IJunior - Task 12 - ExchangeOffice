@@ -1,0 +1,266 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandRubToUsd = "1";
+            const string CommandUsdToRub = "2";
+            const string CommandRubToEur = "3";
+            const string CommandEurToRub = "4";
+            const string CommandUsdToEur = "5";
+            const string CommandEurToUsd = "6";
+            const string CommandExit = "7";
+
+            float startRub = 20000;
+            float startUsd = 3000;
+            float startEur = 1500;
+            float rubToUsdRate = 0.014f;
+            float usdToRubRate = 84;
+            float rubToEurRate = 0.015f;
+            float eurToRubRate = 90;
+            float usdToEurRate = 0.95f;
+            float eurToUsdRate = 1.1f;
+            bool isLeavingAlready = false;
+            float balanceRub = startRub;
+            float balanceUsd = startUsd;
+            float balanceEur = startEur;
+            float targetAmount;
+            string decision;
+
+            Console.WriteLine("Добро пожаловать в наш обменник!");
+            Console.WriteLine("У нас Вы можете купить рубли, доллары США и евро.");
+            Console.WriteLine();
+            Console.WriteLine($"При обмене рублей на доллары США: 1 рубль = {rubToUsdRate} доллара США.");
+            Console.WriteLine($"При обмене долларов США на рубли: 1 доллар США = {usdToRubRate} рубля.");
+            Console.WriteLine($"При обмене рублей на евро: 1 рубль = {rubToEurRate} евро.");
+            Console.WriteLine($"При обмене евро на рубли: 1 евро = {eurToRubRate} рублей.");
+            Console.WriteLine($"При обмене долларов США на евро: 1 долар США = {usdToEurRate} евро.");
+            Console.WriteLine($"При обмене евро на доллары США: 1 евро = {eurToUsdRate} доллара США.");
+            Console.WriteLine();
+            Console.WriteLine($"Ваш баланс по рублям:{balanceRub}");
+            Console.WriteLine($"Ваш баланс по долларам США:{balanceUsd}");
+            Console.WriteLine($"Ваш баланс по евро:{balanceEur}");
+            Console.WriteLine();
+            Console.WriteLine("Выберите операцию:");
+            Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+            Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+            Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+            Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+            Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+            Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+            Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+            decision = Console.ReadLine();
+
+            while (isLeavingAlready == false) 
+            { 
+                switch (decision) 
+                {
+                    case CommandRubToUsd:
+                        Console.WriteLine();
+                        Console.WriteLine("Вы выбрали конвертацию рублей в доллары США.");
+                        Console.Write("Укажите, сколько долларов США Вы желаете приобрести:");
+                        targetAmount = Convert.ToSingle(Console.ReadLine());
+
+                        while (targetAmount / rubToUsdRate > balanceRub) 
+                        {
+                            Console.WriteLine("Недостаточно средств на балансе для конвертации!");
+                            Console.Write("Укажите, сколько долларов США Вы желаете приобрести:");
+                            targetAmount = Convert.ToSingle(Console.ReadLine());
+                        }
+                        
+                        balanceUsd += targetAmount;
+                        balanceRub -= targetAmount / rubToUsdRate;
+                        Console.WriteLine();
+                        Console.WriteLine($"Ваш баланс по рублям:{balanceRub}");
+                        Console.WriteLine($"Ваш баланс по долларам США:{balanceUsd}");
+                        Console.WriteLine($"Ваш баланс по евро:{balanceEur}");
+                        Console.WriteLine();
+                        Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+                        Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+                        decision = Console.ReadLine();
+                        break;
+
+                    case CommandUsdToRub:
+                        Console.WriteLine();
+                        Console.WriteLine("Вы выбрали конвертацию долларов США в рубли.");
+                        Console.Write("Укажите, сколько рублей Вы желаете приобрести:");
+                        targetAmount = Convert.ToSingle(Console.ReadLine());
+
+                        while (targetAmount / usdToRubRate > balanceUsd)
+                        {
+                            Console.WriteLine("Недостаточно средств на балансе для конвертации!");
+                            Console.Write("Укажите, сколько рублей Вы желаете приобрести:");
+                            targetAmount = Convert.ToSingle(Console.ReadLine());
+                        }
+
+                        balanceRub += targetAmount;
+                        balanceUsd -= targetAmount / usdToRubRate;
+                        Console.WriteLine();
+                        Console.WriteLine($"Ваш баланс по рублям:{balanceRub}");
+                        Console.WriteLine($"Ваш баланс по долларам США:{balanceUsd}");
+                        Console.WriteLine($"Ваш баланс по евро:{balanceEur}");
+                        Console.WriteLine();
+                        Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+                        Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+                        decision = Console.ReadLine();
+                        break;
+
+                    case CommandRubToEur:
+                        Console.WriteLine();
+                        Console.WriteLine("Вы выбрали конвертацию рублей в евро.");
+                        Console.Write("Укажите, сколько евро Вы желаете приобрести:");
+                        targetAmount = Convert.ToSingle(Console.ReadLine());
+
+                        while (targetAmount / rubToEurRate > balanceRub)
+                        {
+                            Console.WriteLine("Недостаточно средств на балансе для конвертации!");
+                            Console.Write("Укажите, сколько евро Вы желаете приобрести:");
+                            targetAmount = Convert.ToSingle(Console.ReadLine());
+                        }
+
+                        balanceEur += targetAmount;
+                        balanceRub -= targetAmount / rubToEurRate;
+                        Console.WriteLine();
+                        Console.WriteLine($"Ваш баланс по рублям:{balanceRub}");
+                        Console.WriteLine($"Ваш баланс по долларам США:{balanceUsd}");
+                        Console.WriteLine($"Ваш баланс по евро:{balanceEur}");
+                        Console.WriteLine();
+                        Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+                        Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+                        decision = Console.ReadLine();
+                        break;
+
+                    case CommandEurToRub:
+                        Console.WriteLine();
+                        Console.WriteLine("Вы выбрали конвертацию евро в рубли.");
+                        Console.Write("Укажите, сколько рублей Вы желаете приобрести:");
+                        targetAmount = Convert.ToSingle(Console.ReadLine());
+
+                        while (targetAmount / eurToRubRate > balanceEur)
+                        {
+                            Console.WriteLine("Недостаточно средств на балансе для конвертации!");
+                            Console.Write("Укажите, сколько рублей Вы желаете приобрести:");
+                            targetAmount = Convert.ToSingle(Console.ReadLine());
+                        }
+
+                        balanceRub += targetAmount;
+                        balanceEur -= targetAmount / eurToRubRate;
+                        Console.WriteLine();
+                        Console.WriteLine($"Ваш баланс по рублям:{balanceRub}");
+                        Console.WriteLine($"Ваш баланс по долларам США:{balanceUsd}");
+                        Console.WriteLine($"Ваш баланс по евро:{balanceEur}");
+                        Console.WriteLine();
+                        Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+                        Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+                        decision = Console.ReadLine();
+                        break;
+
+                    case CommandUsdToEur:
+                        Console.WriteLine();
+                        Console.WriteLine("Вы выбрали конвертацию долларов США в евро.");
+                        Console.Write("Укажите, сколько евро Вы желаете приобрести:");
+                        targetAmount = Convert.ToSingle(Console.ReadLine());
+
+                        while (targetAmount / usdToEurRate > balanceUsd)
+                        {
+                            Console.WriteLine("Недостаточно средств на балансе для конвертации!");
+                            Console.Write("Укажите, сколько евро Вы желаете приобрести:");
+                            targetAmount = Convert.ToSingle(Console.ReadLine());
+                        }
+
+                        balanceEur += targetAmount;
+                        balanceUsd -= targetAmount / usdToEurRate;
+                        Console.WriteLine();
+                        Console.WriteLine($"Ваш баланс по рублям:{balanceRub}");
+                        Console.WriteLine($"Ваш баланс по долларам США:{balanceUsd}");
+                        Console.WriteLine($"Ваш баланс по евро:{balanceEur}");
+                        Console.WriteLine();
+                        Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+                        Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+                        decision = Console.ReadLine();
+                        break;
+
+                    case CommandEurToUsd:
+                        Console.WriteLine();
+                        Console.WriteLine("Вы выбрали конвертацию евро в доллары США.");
+                        Console.Write("Укажите, сколько долларов США Вы желаете приобрести:");
+                        targetAmount = Convert.ToSingle(Console.ReadLine());
+
+                        while (targetAmount / eurToUsdRate > balanceEur)
+                        {
+                            Console.WriteLine("Недостаточно средств на балансе для конвертации!");
+                            Console.Write("Укажите, сколько долларов США Вы желаете приобрести:");
+                            targetAmount = Convert.ToSingle(Console.ReadLine());
+                        }
+
+                        balanceUsd += targetAmount;
+                        balanceEur -= targetAmount / eurToUsdRate;
+                        Console.WriteLine();
+                        Console.WriteLine($"Ваш баланс по рублям:{balanceRub}");
+                        Console.WriteLine($"Ваш баланс по долларам США:{balanceUsd}");
+                        Console.WriteLine($"Ваш баланс по евро:{balanceEur}");
+                        Console.WriteLine();
+                        Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+                        Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+                        decision = Console.ReadLine();
+                        break;
+
+                    case CommandExit:
+                        isLeavingAlready = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("Ошибка! Неизвестная команда!");
+                        Console.WriteLine($"Чтобы конвертировать рубли в доллары США, нажмите - {CommandRubToUsd} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в рубли, нажмите - {CommandUsdToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать рубли в евро, нажмите - {CommandRubToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в рубли, нажмите - {CommandEurToRub} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать доллары США в евро, нажмите - {CommandUsdToEur} и Enter");
+                        Console.WriteLine($"Чтобы конвертировать евро в доллары США, нажмите - {CommandEurToUsd} и Enter");
+                        Console.WriteLine($"Чтобы выйти из обменника, нажмите - {CommandExit} и Enter");
+                        decision = Console.ReadLine();
+                        break;
+                }          
+            }
+        }
+    }
+}
