@@ -12,49 +12,64 @@ namespace CSTest1
         static void Main(string[] args)
         {
             const string CommandExit = "exit";
-            const string CommandContinue = "продолжить";
-            const int HundredPercent = 100;
+            const string CommandTakeCredit= "продолжить";
 
             float creditAmount;
             float creditRate = 8.15f;
             int yearsCount = 0;
             string decision;
             bool isPayingBack = false;
+            int maxPercent = 100;
 
             Console.WriteLine("Добро пожаловать в КредитБанк!");
             Console.WriteLine($"В нашем банке Вы можете взять рублевый кредит на неограниченное количество лет под {creditRate}% в год.");
             Console.WriteLine("Возможность погашения кредита до прошествия 1 года с момента его выдачи отсуствует.");
             Console.WriteLine();
-            Console.Write("Введите желаемую сумму займа:");
-            creditAmount = Convert.ToInt32(Console.ReadLine());
-            decision = CommandContinue;
+            Console.WriteLine("Желаете взять кредит?");
+            Console.Write($"Введите {CommandTakeCredit}, чтобы взять кредит на год, либо {CommandExit}, чтобы выйти из банка:");
+            decision = Console.ReadLine();
 
-            while (isPayingBack == false)
+            while (decision != CommandExit && decision != CommandTakeCredit)
             {
-                switch (decision)
+                Console.WriteLine();
+                Console.WriteLine("Ошибка: неверная команда!");
+                Console.Write($"Введите {CommandTakeCredit}, чтобы взять кредит на год, либо {CommandExit}, чтобы выйти из банка:");
+                decision = Console.ReadLine();
+            }
+
+            if (decision == CommandTakeCredit)
+            {
+                Console.WriteLine();
+                Console.Write("Введите желаемую сумму займа:");
+                creditAmount = Convert.ToInt32(Console.ReadLine());
+
+                while (isPayingBack == false)
                 {
-                    case CommandContinue:
-                        creditAmount *= creditRate / HundredPercent + 1;
-                        ++yearsCount;
-                        Console.WriteLine();
-                        Console.WriteLine($"Сумма кредита к погашению за {yearsCount} год составила {creditAmount} рублей.");
-                        Console.WriteLine();
-                        Console.Write($"Введите {CommandContinue}, чтобы продлить кредит на год, либо {CommandExit}, чтобы выплатить кредит:"); ; ;
-                        decision = Console.ReadLine();
-                        break;
-                    
-                    case CommandExit:
-                        isPayingBack = true;
-                        break;
-                    
-                    default:
-                        Console.WriteLine();
-                        Console.WriteLine("Ошибка: неверная команда!");
-                        Console.Write($"Введите {CommandContinue}, чтобы продлить кредит на год, либо {CommandExit}, чтобы выплатить кредит:");
-                        decision = Console.ReadLine();
-                        break;
+                    switch (decision)
+                    {
+                        case CommandTakeCredit:
+                            creditAmount *= creditRate / maxPercent + 1;
+                            ++yearsCount;
+                            Console.WriteLine();
+                            Console.WriteLine($"Сумма кредита к погашению за {yearsCount} год составила {creditAmount} рублей.");
+                            Console.WriteLine();
+                            Console.Write($"Введите {CommandTakeCredit}, чтобы продлить кредит на год, либо {CommandExit}, чтобы выплатить кредит:"); ; ;
+                            decision = Console.ReadLine();
+                            break;
+
+                        case CommandExit:
+                            isPayingBack = true;
+                            break;
+
+                        default:
+                            Console.WriteLine();
+                            Console.WriteLine("Ошибка: неверная команда!");
+                            Console.Write($"Введите {CommandTakeCredit}, чтобы продлить кредит на год, либо {CommandExit}, чтобы выплатить кредит:");
+                            decision = Console.ReadLine();
+                            break;
+                    }
                 }
             }
-        }    
+        }
     }
 }
