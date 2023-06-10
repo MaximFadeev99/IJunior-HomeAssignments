@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace CSTest1
     internal class Program
     {
         static void Main(string[] args)
-        {       
+        {
             Random random = new Random();
             int randomNumber;
             int minNumber = 0;
@@ -24,7 +25,7 @@ namespace CSTest1
 
             for (double i = minNumber; i <= randomNumber; i++)
             {
-                if (i / firstDivisor == Math.Round(i / firstDivisor, 0) || i / secondDivisor == Math.Round(i / secondDivisor, 0))
+                if (i / firstDivisor == Convert.ToInt32(i/firstDivisor) || i / secondDivisor == Convert.ToInt32(i / secondDivisor))
                 {
                     Console.WriteLine(i);
                     sum += i;
