@@ -15,7 +15,7 @@ namespace CSTest1
             int randomNumber;
             int minNumber = 0;
             int maxNumber = 100;
-            double sum = 0;
+            float sum = 0;
             int firstDivisor = 3;
             int secondDivisor = 5;
             
@@ -23,7 +23,7 @@ namespace CSTest1
             Console.WriteLine($"Рандомно сгенерированное число:{randomNumber}");
             Console.WriteLine($"Список чисел, которые кратны {firstDivisor} или {secondDivisor} и которые находятся в диапазоне от {minNumber} до {maxNumber}:");
 
-            for (double i = minNumber; i <= randomNumber; i++)
+            for (float i = minNumber; i <= randomNumber; i++)
             {
                 if (i / firstDivisor == Convert.ToInt32(i/firstDivisor) || i / secondDivisor == Convert.ToInt32(i / secondDivisor))
                 {
