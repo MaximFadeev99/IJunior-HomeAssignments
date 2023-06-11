@@ -1,0 +1,205 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandPurchase = "1";
+            const string CommandShip = "2";
+            const string CommandBalance = "3";
+            const string CommandStockCount = "4"; 
+            const string CommandResetPassword = "5";
+            const string CommandExit = "6";
+
+            Random random = new Random();
+            int armorSetsStartAmount = 10;
+            int potionsStartAmount = 20;
+            int goldStartAmount = 10000;
+            int armorSetsBalance = armorSetsStartAmount;
+            int potionsBalance = potionsStartAmount;
+            int goldBalance = goldStartAmount;
+            int armorSetsForOrder = random.Next(5,30);
+            int potionsForOrder = random.Next(15,40);
+            int armorSetBuyPrice = 250;
+            int armorSetSellPrice = 500;
+            int potionBuyPrice = 125;
+            int potionSellPrice = 200;
+            int armorSetsTargetAmount;
+            int potionsTargetAmount;
+            string password = "1111";
+            string passwordInput;
+            string actionOptions = $"Выберите дальнейшие действия:\n" +
+                $"{CommandPurchase} - покупка товаров\n" +
+                $"{CommandShip} - отгрузка товаров по заказу\n" +
+                $"{CommandBalance} - подсчет доходов и расходов\n" +
+                $"{CommandStockCount} - инвентаризация\n" +
+                $"{CommandResetPassword} - смена пароля\n" +
+                $"{CommandExit} - выход из системы"; 
+            int shopExpenses;
+            int shopRevenue; 
+            int shopProfit;
+            int armorSetsSold = 0;
+            int potionsSold = 0;
+            int armorSetsBought= 0;
+            int potionsBought= 0;
+            string action;
+
+            Console.WriteLine("Дорогой управляющий, добро пожаловать в систему управления магазином \"Броня и Снадобья\"!");
+            Console.Write("Введите пароль для доступа к системе:");
+            passwordInput = Console.ReadLine();
+
+            while (passwordInput != password)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Неверный пароль!");
+                Console.Write("Введите пароль для доступа к системе:");
+                passwordInput = Console.ReadLine();
+            }
+
+            Console.WriteLine("Пароль принят!");
+            Console.WriteLine();
+            Console.WriteLine($"Баланс магазина по золотым монетам:{goldBalance}\nДоспехов в наличии: {armorSetsBalance} шт.\nСнадобий в наличии: {potionsBalance} шт.");
+            Console.WriteLine();
+            Console.WriteLine($"Напоминание: у Вас один новый заказ на {armorSetsForOrder} шт. доспехов и {potionsForOrder} шт. снадобий." +
+                $" Отгрузка частями недопустима!");
+            Console.WriteLine();
+            Console.WriteLine(actionOptions);
+            action = Console.ReadLine();
+
+            while (action != CommandExit) 
+            {
+                switch (action) 
+                {
+                    case CommandPurchase:
+                        Console.WriteLine();
+                        Console.WriteLine($"Цена за 1 шт. доспехов: {armorSetBuyPrice} золотых монет.");
+                        Console.WriteLine($"Цена за 1 шт. снадобья: {potionBuyPrice} золотых монет.");
+                        Console.Write("Введите количество доспехов, которое Вы желаете закупить:");
+                        armorSetsTargetAmount = Convert.ToInt32 (Console.ReadLine());
+                        Console.Write("Введите количество снадобий, которое Вы желаете закупить:");
+                        potionsTargetAmount = Convert.ToInt32(Console.ReadLine());
+
+                        while (armorSetsTargetAmount * armorSetBuyPrice + potionsTargetAmount * potionBuyPrice > goldBalance) 
+                        {
+                            Console.WriteLine("У магазина недостаточно средств для покупки такого количества!" +
+                                "Введите количества повторно.");
+                            Console.WriteLine();
+                            Console.Write("Введите количество доспехов, которое Вы желаете закупить:");
+                            armorSetsTargetAmount = Convert.ToInt32(Console.ReadLine());
+                            Console.Write("Введите количество снадобий, которое Вы желаете закупить:");
+                            potionsTargetAmount = Convert.ToInt32(Console.ReadLine());
+                        }
+                        armorSetsBalance += armorSetsTargetAmount;
+                        potionsBalance += potionsTargetAmount;
+                        goldBalance -= armorSetsTargetAmount * armorSetBuyPrice + potionsTargetAmount * potionBuyPrice;
+                        armorSetsBought += armorSetsTargetAmount;
+                        potionsBought += potionsTargetAmount;
+                        Console.WriteLine();
+                        Console.WriteLine($"Баланс магазина по золотым монетам:{goldBalance}\nДоспехов в наличии: {armorSetsBalance} шт.\nСнадобий в наличии: {potionsBalance} шт.");
+                        Console.WriteLine();
+                        Console.WriteLine(actionOptions);
+                        action = Console.ReadLine();
+                        break;
+
+                    case CommandShip:
+                        if (armorSetsForOrder <= armorSetsBalance && potionsForOrder <= potionsBalance)
+                        {
+                            armorSetsBalance -= armorSetsForOrder;
+                            potionsBalance -= potionsForOrder;
+                            goldBalance += armorSetsForOrder * armorSetSellPrice + potionsForOrder * potionSellPrice;
+                            armorSetsSold += armorSetsForOrder;
+                            potionsSold += potionsForOrder;
+                            Console.WriteLine();
+                            Console.WriteLine($"Вы успешно продали {armorSetsForOrder} шт. брони за {armorSetsForOrder * armorSetSellPrice} золотых монет\n" +
+                                $"и {potionsForOrder} шт. снадобий за {potionsForOrder * potionSellPrice} золотых монет.");
+                            Console.WriteLine();
+                            Console.WriteLine($"Баланс магазина по золотым монетам:{goldBalance}\nДоспехов в наличии: {armorSetsBalance} шт.\nСнадобий в наличии: {potionsBalance} шт.");
+                            Console.WriteLine();
+                            Console.WriteLine(actionOptions);
+                            action = Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Отгрузка невозможна, т.к. у Вас не хватает товара в наличии! Осуществите закупку.");
+                            Console.WriteLine();
+                            Console.WriteLine($"Вам необходимо отгрузить {armorSetsForOrder} шт. доспехов и {potionsForOrder} шт. снадобий.");
+                            Console.WriteLine();
+                            Console.WriteLine($"Баланс магазина по золотым монетам:{goldBalance}\nДоспехов в наличии: {armorSetsBalance} шт.\nСнадобий в наличии: {potionsBalance} шт.");
+                            Console.WriteLine();
+                            Console.WriteLine(actionOptions);
+                            action = Console.ReadLine();
+                        }
+                        break;
+
+                    case CommandBalance:
+                        shopExpenses = armorSetsBought * armorSetBuyPrice + potionsBought * potionBuyPrice;
+                        shopRevenue = armorSetsSold * armorSetSellPrice + potionsSold * potionSellPrice;
+                        shopProfit = shopRevenue - shopExpenses;
+                        Console.WriteLine();
+                        Console.WriteLine($"Расходы магазина составили {shopExpenses} золотых монет");
+                        Console.WriteLine($"Доходы магазина составили {shopRevenue} золотых монет");
+                        Console.WriteLine($"Прибыль магазина составила {shopProfit} золотых монет");
+                        Console.WriteLine();
+                        Console.WriteLine($"Баланс магазина по золотым монетам:{goldBalance}\nДоспехов в наличии: {armorSetsBalance} шт.\nСнадобий в наличии: {potionsBalance} шт.");
+                        Console.WriteLine();
+                        Console.WriteLine(actionOptions);
+                        action = Console.ReadLine();
+                        break;
+
+                    case CommandStockCount:
+                        Console.WriteLine();
+                        Console.WriteLine($"Доспехов продано за сегодня: {armorSetsSold} шт.");
+                        Console.WriteLine($"Доспехов закуплено за сегодня: {armorSetsBought} шт.");
+                        Console.WriteLine($"Снадобий продано за сегодня: {potionsSold} шт.");
+                        Console.WriteLine($"Снадобий закуплено за сегодня: {potionsBought} шт.");
+                        Console.WriteLine($"Доспехов в наличии: {armorSetsBalance} шт.\nСнадобий в наличии: {potionsBalance} шт."); 
+                        Console.WriteLine();
+                        Console.WriteLine(actionOptions);
+                        action = Console.ReadLine();
+                        break;
+
+                    case CommandResetPassword:
+                        Console.WriteLine();
+                        Console.Write("Для установки нового пароля введите действующий пароль:");
+                        passwordInput = Console.ReadLine();
+
+                        while (passwordInput != password)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Неверный пароль!");
+                            Console.Write("Введите действуйющий пароль для его смены:");
+                            passwordInput = Console.ReadLine();
+                        } 
+                        
+                        Console.Write("Введите новый пароль:");
+                        password = Console.ReadLine();
+                        Console.WriteLine("Новый пароль успешно установлен!");
+                        Console.WriteLine();
+                        Console.WriteLine($"Баланс магазина по золотым монетам:{goldBalance}\nДоспехов в наличии: {armorSetsBalance} шт.\nСнадобий в наличии: {potionsBalance} шт.");
+                        Console.WriteLine();
+                        Console.WriteLine(actionOptions);
+                        action = Console.ReadLine();
+                        break;
+
+                    case CommandExit:
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("Ошибка: неизвестная команда!");
+                        action = Console.ReadLine();
+                        break;
+                }               
+            }           
+        }
+    }
+}
