@@ -1,0 +1,34 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            int number = random.Next(1, 1001);
+            int multiplier = 2;
+            int power =1;
+            int product = 2;
+
+            while (product < number) 
+            {
+                product *= multiplier;
+                power++;
+            }
+
+            Console.WriteLine($"Рандомно сгенерированное число: {number}");
+            Console.WriteLine($"Степень двойки, в которой она превосходит {number}: {power}");
+            Console.WriteLine($"Двойка в степени {power} равняется {product}");
+            Console.ReadLine();
+        }
+    }
+}
