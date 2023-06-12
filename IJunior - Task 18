@@ -1,0 +1,57 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            char bracket1 = '(';
+            char bracket2 = ')';
+            string text;
+            int bracket1Count = 0;
+            int bracket2Count = 0;
+
+            Console.Write("Введите скобочное выражение:");
+            text = Console.ReadLine();
+
+            if (text.StartsWith(Convert.ToString(bracket1)) == false) 
+            {
+                Console.WriteLine("Введенное скобочное выражение неверно!");
+                goto End;            
+            }
+
+            foreach (var character in text)
+            {
+                if (character == bracket1) 
+                {
+                    bracket1Count++;
+                } 
+
+                else if (character == bracket2) 
+                {
+                    bracket2Count++;
+                }
+            }
+
+            if (bracket1Count != bracket2Count)
+            {
+                Console.WriteLine("Введенное скобочное выражение неверно!");
+                goto End;
+            }
+            
+            Console.WriteLine($"Введенное скобочное выражение верно!");
+            End:
+            Console.ReadKey();    
+        }
+    }
+}
