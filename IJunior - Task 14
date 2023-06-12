@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,31 +16,34 @@ namespace CSTest1
         static void Main(string[] args)
         {
             string name;
-            char character;
-            string mainText;
-            int mainTextLength;
-            int startLine = 3;
+            char symbol;
+            string middleString;
+            int middleStringLength;
+            int startLine = 4;
             int startColumn = 0;
 
             Console.Write("Введите любое имя:");
             name = Console.ReadLine();
             Console.Write("Укажите любой символ:");
-            character = Convert.ToChar(Console.ReadLine());
-            mainText = $"{character}{name}{character}";
-            mainTextLength = mainText.Length;
+            symbol = Convert.ToChar(Console.Read());
+            middleString = $"{symbol}{name}{symbol}";
+            middleStringLength = middleString.Length;
             Console.WriteLine();
-            Console.SetCursorPosition(startColumn, startLine + 1);
-            Console.Write(mainText);
-
-            for (int i = startColumn; i < mainTextLength; i++)
+            
+            for (int i = startColumn; i < middleStringLength; i++)
             {
-                Console.SetCursorPosition(i, startLine);
-                Console.Write(character);
-                Console.SetCursorPosition(i, startLine + 2);
-                Console.Write(character);
+                Console.Write(symbol);
+            }
+            
+            Console.WriteLine();
+            Console.WriteLine(middleString);
+
+            for (int i = startColumn; i < middleStringLength; i++)
+            {
+                Console.Write(symbol);
             }
 
-            Console.ReadKey();          
+            Console.ReadKey();
         }
     }
 }
