@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            int minNumber = 1;
+            int maxNumber = 27;
+            int mainDivisor = random.Next(minNumber, maxNumber+1);
+            int startSequence = 100;
+            int endSequence = 999;
+            int numbersCount = 0;
+
+            Console.WriteLine($"Рандомно сгенерированное числов в пределах от {minNumber} до {maxNumber} (включительно): {mainDivisor}") ;
+            Console.WriteLine();
+            Console.WriteLine($"Список трехзначных чисел, кратных {mainDivisor}:");
+
+            for (int i = startSequence; i <= endSequence ; i++) 
+            {
+                if (i % mainDivisor == 0) 
+                {
+                    Console.WriteLine(i);
+                    numbersCount++;                 
+                }            
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"Количество чисел из списка выше: {numbersCount}");
+            Console.ReadKey();
+        }
+    }
+}
