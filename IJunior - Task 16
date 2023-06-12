@@ -16,22 +16,25 @@ namespace CSTest1
             Random random = new Random();
             int minNumber = 1;
             int maxNumber = 27;
-            int mainDivisor = random.Next(minNumber, maxNumber+1);
-            int startSequence = 100;
-            int endSequence = 999;
+            int randomNumber = random.Next(minNumber, maxNumber + 1);
+            int startSequence = 1;
+            int endSequence = 1000;
             int numbersCount = 0;
+            int targetNumber;
 
-            Console.WriteLine($"Рандомно сгенерированное числов в пределах от {minNumber} до {maxNumber} (включительно): {mainDivisor}") ;
+            Console.WriteLine($"Рандомно сгенерированное числов в пределах от {minNumber} до {maxNumber} (включительно): {randomNumber}");
             Console.WriteLine();
-            Console.WriteLine($"Список трехзначных чисел, кратных {mainDivisor}:");
+            Console.WriteLine($"Список трехзначных чисел, кратных {randomNumber}:");
 
-            for (int i = startSequence; i <= endSequence ; i++) 
+            for (int i = startSequence; i <= endSequence; i++)
             {
-                if (i % mainDivisor == 0) 
+                targetNumber = randomNumber * i;
+                
+                if (Convert.ToString(targetNumber).Length == 3)
                 {
-                    Console.WriteLine(i);
-                    numbersCount++;                 
-                }            
+                    Console.WriteLine(targetNumber);
+                    numbersCount++;
+                }
             }
 
             Console.WriteLine();
