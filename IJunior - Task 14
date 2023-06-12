@@ -14,24 +14,26 @@ namespace CSTest1
         {
             string name;
             char character;
-            int nameLength;
+            string mainText;
+            int mainTextLength;
             int startLine = 3;
-            int StartColumn = 0;
+            int startColumn = 0;
 
             Console.Write("Введите любое имя:");
             name = Console.ReadLine();
             Console.Write("Укажите любой символ:");
             character = Convert.ToChar(Console.ReadLine());
-            nameLength = name.Length;
+            mainText = $"{character}{name}{character}";
+            mainTextLength = mainText.Length;
             Console.WriteLine();
-            Console.SetCursorPosition(StartColumn, startLine + 1);
-            Console.Write(character + name + character);
+            Console.SetCursorPosition(startColumn, startLine + 1);
+            Console.Write(mainText);
 
-            for (int i = StartColumn; i < nameLength + 2; i++)
+            for (int i = startColumn; i < mainTextLength; i++)
             {
                 Console.SetCursorPosition(i, startLine);
                 Console.Write(character);
-                Console.SetCursorPosition(i, startLine+2);
+                Console.SetCursorPosition(i, startLine + 2);
                 Console.Write(character);
             }
 
