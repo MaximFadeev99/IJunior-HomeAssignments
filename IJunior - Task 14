@@ -19,7 +19,6 @@ namespace CSTest1
             char symbol;
             string middleString;
             int middleStringLength;
-            int startLine = 4;
             int startColumn = 0;
 
             Console.Write("Введите любое имя:");
