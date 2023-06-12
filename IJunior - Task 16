@@ -20,7 +20,7 @@ namespace CSTest1
             int startSequence = 1;
             int endSequence = 1000;
             int numbersCount = 0;
-            int targetNumber;
+            int targetNumber = 0;
 
             Console.WriteLine($"Рандомно сгенерированное числов в пределах от {minNumber} до {maxNumber} (включительно): {randomNumber}");
             Console.WriteLine();
@@ -28,8 +28,8 @@ namespace CSTest1
 
             for (int i = startSequence; i <= endSequence; i++)
             {
-                targetNumber = randomNumber * i;
-                
+                targetNumber += randomNumber;
+
                 if (Convert.ToString(targetNumber).Length == 3)
                 {
                     Console.WriteLine(targetNumber);
