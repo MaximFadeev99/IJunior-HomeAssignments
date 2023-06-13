@@ -16,24 +16,24 @@ namespace CSTest1
         static void Main(string[] args)
         {
             string name;
-            string symbol;
+            char symbol;
             string middleString;
-            string edgeString;
+            string edgeString = "";
             int middleStringLength;
 
             Console.Write("Введите любое имя:");
             name = Console.ReadLine();
             Console.Write("Укажите любой символ:");
-            symbol = Console.Read();
+            symbol = Convert.ToChar(Console.Read());
             middleString = $"{symbol}{name}{symbol}";
             middleStringLength = middleString.Length;
             Console.WriteLine();
-            
+
             for (int i = 0; i < middleStringLength; i++)
             {
-              edgeString += symbol  
+                edgeString += symbol;
             }
-            
+
             Console.WriteLine(edgeString);
             Console.WriteLine(middleString);
             Console.WriteLine(edgeString);
