@@ -22,28 +22,44 @@ namespace CSTest1
           const string CommandProtectionDoom = "5";
           const string CommandEscape = "6";
           
-          int playerHealth = 800;
+          int playerStartHealth = 800;
+          int playerRoundHealth = playerStartHealth;
           int blackFireBallDamage = 100;
           bool burningEffect;
           int burningEffectDamage = 50;
           bool protectionDoom;
           int protectionDoomEffect = 150;
-          bool shadowClone;
+          bool shadowCloneSpawn;
           int shadowCloneDamage = 350;
           int shadowSpearDamage = 100;
-          int bossHealth = 1000;
-          int bossDamage = 200;
+          int playerRoundDamage;
+          int playerStartDamage = 0;
+          int bossStartHealth = 1000;
+          int bossRoundHealth = bossStartHealth;          
+          int bossStartDamage = 200;
+          int bossRoundDamage;
           string chosenAttack;
           string playerAttackOptions = $" 1 - Теневое копье (наносит {shadowSpearDamage} ед. урона)\n" +
           + $"2 - Шар черного пламени (наносит {blackFireBallDamage}ед. урона на этом ходу и {burningEffectDamage} ед. урона на следующем ходу от эффекта горения)\n" +
           + $"3 - Призыв теневого клона (не наносит урона, поззволяет на следующем ходу выполнить атаку \"Удар теневого клона\")\n" +
           + $"4 - Удар теневого клона (наносит {shadowCloneDamage} ед. урона, клон исчезает после атаки)\n" +
           + $"5 - Защитный купол (не наносит урона, блокирует входящий урон на текущем ходу, восстанавливает {protectionDoomEffect} ед. здоровья)\n";
-          bool escape = false;
+          bool isEscaping = false;
           string escapeOption = $"\n 6 - телепортация (осуществляет тактическое отступление героя в безопасную зону)";
           
-          While (playerHealth > 0 || bossHealth > 0)
+          While (playerRoundHealth > 0 && bossRoundHealth > 0)
           {
+            bossRoundDamage = bossStartDamage;
+            playerRoundDamage = playerStartDamage;
+            
+            if (burningEffect == true)
+            {
+                playerRoundDamage += burningEffectDamage;
+                burningEffect = false;
+            }
+            
+     Action Options:  
+     
             if (playerHealth < 100)
             {
               bool escape = true;
@@ -60,11 +76,74 @@ namespace CSTest1
             
             switch (decision)
             {
-            
+              case CommandShadowSpear:
+                    playerRoundDamage += shadowSpearDamage;
+                    break;
+              
+              case CommandBlackFireBall:
+                    playerRoundDamage += blackFireBallDamage;
+                    burningEffect = true;
+                    break;
+               
+              case CommandSummonShadowClone:
+                    shadowCloneSpawn = true;
+                    break;
+              
+              case CommandShadowCloneStrike:
+                    if (shadowCloneSpawn == false)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Действие невозможно, т.к. сначала необходимо выполнить призыв теневого клона");
+                        goto Action Options;
+                    }
+                    else
+                    {
+                        playerRoundDamage += shadowCloneDamage;
+                        shadowCloneSpawn = false;
+                    }
+                    break;
+                    
+              case CommandProtectionDoom:
+                    protectionDoom = true;
+                    playerRoundHealth += protectionDoomEffect;
+                    
+                    if (playerRoundHealth > playerStartHealth)
+                    {
+                        playerRoundHealth = playerStartHealth;
+                    }
+                    
+                    break;                
+               
+              case CommandEscape:
+                    isEscaping = true;
+                    break;               
             }
+            
+            if (isEscaping == true)
+            {
+                Console.WriteLine("Вы трусливо сбегаете с поля боя! Враг победил.");
+                goto End;
+            }
+            
+            if (protectionDoom == true)
+            {
+                bossRoundDamage = 0;                
+            }
+            
+           playerRoundHealth -= bossRoundDamage;
+           bossRoundHealth -= playerRoundDamage;
+           Console.WriteLine();
+           Console.WriteLine($"Игрок получает {bossRoundDamage} ед. урона, оставшееся здоровье игрока - {playerRoundHealth} ед.")
+           Console.WriteLine($"Враг получает {playerRoundDamage} ед. урона, оставшееся здоровье врага - {bossRoundHealth} ед.")           
+          }
+          
+          if (playerRoundHealth <= 0)
+          {
+            Console.WriteLine($"Вы пали в бою! У врага осталось {bossRoundHealth} ед. здоровья");
           }
           
           
+          End:
         }
     }
 }
