@@ -1,1 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            char bracket1 = '(';
+            char bracket2 = ')';
+            string text;
+            int bracket1Count = 0;
+            int bracket2Count = 0;
+            int depth = 0;
+            string textLength;
+
+            //Console.Write("Введите скобочное выражение:");
+            //text = Console.ReadLine();
+            
+            text ="(()((()))())";
+            textLength= text.Length;
+             for (int i = 1; i <= text.Length; i++) 
+             {
+                if (i = bracket1 && and i+1 = bracket1)
+                {
+                  depth++;
+                }
+                
+                else if ()
+             }          
+        
+
+  
+        }
+    }
+}
