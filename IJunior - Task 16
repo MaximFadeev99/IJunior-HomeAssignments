@@ -17,25 +17,25 @@ namespace CSTest1
             int minNumber = 1;
             int maxNumber = 27;
             int randomNumber = random.Next(minNumber, maxNumber + 1);
-            int startSequence = 1;
+            int startSequence = 100;
             int endSequence = 1000;
             int numbersCount = 0;
-            int targetNumber = 0;
+            int targetNumber = randomNumber;
             int maxTargetNumberLength = 3;
 
             Console.WriteLine($"Рандомно сгенерированное числов в пределах от {minNumber} до {maxNumber} (включительно): {randomNumber}");
             Console.WriteLine();
             Console.WriteLine($"Список трехзначных чисел, кратных {randomNumber}:");
 
-            for (int i = startSequence; i <= endSequence; i++)
+            While (targetNumber.Length <=  maxTargetNumberLength)
             {
-                targetNumber += randomNumber;
-
-                if (Convert.ToString(targetNumber).Length == maxTargetNumberLength)
-                {
-                    Console.WriteLine(targetNumber);
-                    numbersCount++;
-                }
+              targetNumber += randomNumber;
+              
+              if (targetNumber.Length < 3)
+              {
+                Console.WriteLine(targetNumber);
+                numbersCount++;
+              }
             }
 
             Console.WriteLine();
