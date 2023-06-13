@@ -62,10 +62,16 @@ namespace CSTest1
                 }
               }          
               
+              if (bracket1Count != bracket2Count)
+              {
+                Console.WriteLine();
+                Console.WriteLine("Указанное скобочное выражение неверное!");
+                goto End;
+              }
+              
               Console.WriteLine();
               Console.WriteLine("Указанное скобочное выражение верно!")
               Console.WriteLine($"Его максимальная глубина составляет {depth}.")
-
             End:
         }
     }
