@@ -21,6 +21,7 @@ namespace CSTest1
             int endSequence = 1000;
             int numbersCount = 0;
             int targetNumber = 0;
+            int maxTargetNumberLength = 3;
 
             Console.WriteLine($"Рандомно сгенерированное числов в пределах от {minNumber} до {maxNumber} (включительно): {randomNumber}");
             Console.WriteLine();
@@ -30,7 +31,7 @@ namespace CSTest1
             {
                 targetNumber += randomNumber;
 
-                if (Convert.ToString(targetNumber).Length == 3)
+                if (Convert.ToString(targetNumber).Length == maxTargetNumberLength)
                 {
                     Console.WriteLine(targetNumber);
                     numbersCount++;
