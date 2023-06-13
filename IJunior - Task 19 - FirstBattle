@@ -47,7 +47,13 @@ namespace CSTest1
             bool isEscaping = false;
             string escapeOption = $"\n6 - Телепортация (осуществляет тактическое отступление героя в безопасную зону)";
 
-            while(playerRoundHealth > 0 && bossRoundHealth > 0)
+            Console.WriteLine($"Вы выходите на бой с врагом.\n" +
+                $"Ваше здоровье - {playerStartHealth} ед.\n" +
+                $"Здоровье врага - {bossStartHealth} ед.\n" +
+                $"Ответный урон врага - {bossStartDamage} ед.");
+            Console.WriteLine();
+
+            while (playerRoundHealth > 0 && bossRoundHealth > 0)
             {
                 bossRoundDamage = bossStartDamage;
                 playerRoundDamage = playerStartDamage;
