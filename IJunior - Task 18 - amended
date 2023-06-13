@@ -36,7 +36,7 @@ namespace CSTest1
                 goto End;
             }
             
-             for (int i = 1; i <= text.Length; i++) 
+             for (int i = 0; i <= text.Length - 1; i++) 
              {
                 if (text.Substring(i,i) == bracket2 && text.Substring(i+1,i+1) == bracket1) 
                 {
@@ -58,7 +58,7 @@ namespace CSTest1
                 
                 else if (text.Substring(i,i) == bracket2) 
                 {
-                    bracket2Count++; 
+                  bracket2Count++; 
                 }
               }          
               
