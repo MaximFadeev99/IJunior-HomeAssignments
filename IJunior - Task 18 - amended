@@ -18,17 +18,11 @@ namespace CSTest1
             string bracket1 = "(";
             string bracket2 = ")";
             string text;
-            int bracket1Count = 0;
-            int bracket2Count = 0;
+            int bracketsCount = 0;
             int depth = 1;
-            int textLength;
 
-            //Console.Write("Введите скобочное выражение:");
-            //text = Console.ReadLine();
-            //(()((()))())
-
-            text = "(()())";
-            textLength = text.Length;
+            Console.Write("Введите скобочное выражение:");
+            text = Console.ReadLine();
 
             if (text.StartsWith(bracket1) == false || text.EndsWith(bracket2) == false)
             {
@@ -37,39 +31,41 @@ namespace CSTest1
                 goto End;
             }
 
-            for (int i = 0; i < text.Length-1; i++)
+            foreach (var character in text)
             {
-                if (text.Substring(i, 1) == bracket2 && text.Substring(i + 1, 1) == bracket1)
+                if (character == Convert.ToChar(bracket1)) 
+                {
+                    bracketsCount++;
+                }
+                
+                else if (character == Convert.ToChar(bracket2))
+                {
+                    bracketsCount--;
+                }
+
+                if (bracketsCount < 0) 
                 {
                     Console.WriteLine();
                     Console.WriteLine("Указанное скобочное выражение неверное!");
                     goto End;
                 }
+            }
 
-                else if (text.Substring(i, 1) == bracket1 && text.Substring(i + 1, 1) == bracket1)
+            if (bracketsCount != 0) 
+            {
+                Console.WriteLine();
+                Console.WriteLine("Указанное скобочное выражение неверное!");
+                goto End;
+            }
+
+            for (int i = 0; i < text.Length-1; i++)
+            {
+                 if (text.Substring(i, 1) == bracket1 && text.Substring(i + 1, 1) == bracket1)
                 {
-                    bracket1Count++;
                     depth++;
-                }
-
-                else if (text.Substring(i, 1) == bracket1 && text.Substring(i + 1, 1) != bracket1)
-                {
-                    bracket1Count++;
-                }
-
-                else if (text.Substring(i, 1) == bracket2)
-                {
-                    bracket2Count++;
                 }
             }          
               
-                  if (bracket1Count != ++bracket2Count)
-                  {
-                    Console.WriteLine();
-                    Console.WriteLine("Указанное скобочное выражение неверное!");
-                    goto End;
-                  }
-
             Console.WriteLine();
             Console.WriteLine("Указанное скобочное выражение верно!");
             Console.WriteLine($"Его максимальная глубина составляет {depth}.");
