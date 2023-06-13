@@ -1,1 +1,51 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {        
+          // Здоровье героя - 800
+          //Заклинания 1) огненный шар , 100 урона сейчас и 50 урона на следующий ход от горения 2) защитный купол : восстановление 250 хп, урон босса не проходит  3) призыв теневого клона (- 100 хп), живет 1 ход после призыва, 4) может на нести 350 урона 
+          5) теневое копье 100 урона сейчас
+          // Босс: хп 1000, ответный урон 200 
+          
+          const string CommandShadowSpear = "1";
+          const string CommandBlackFireBall = "2";
+          const string CommandSummonShadowClone = "3";
+          const string CommandShadowCloneStrike = "4";
+          const string CommandProtectionDoom = "5";
+          const string CommandProtectionDoom = "6";
+          
+          int playerHealth = 800;
+          int blackFireBallDamage = 100;
+          bool burningEffect;
+          int burningEffectDamage = 50;
+          bool protectionDoom;
+          int protectionDoomEffect = 150;
+          bool shadowClone;
+          int shadowCloneDamage = 350;
+          int shadowSpearDamage = 100;
+          int bossHealth = 1000;
+          int bossDamage = 200;
+          string chosenAttack;
+          string playerAttackOptions = $" 1 - Теневое копье (наносит {shadowSpearDamage} ед. урона)\n" +
+          + $"2 - Шар черного пламени (наносит {blackFireBallDamage}ед. урона на этом ходу и {burningEffectDamage} ед. урона на следующем ходу от эффекта горения)\n" +
+          + $"3 - Призыв теневого клона (не наносит урона, поззволяет на следующем ходу выполнить атаку \"Удар теневого клона\")\n" +
+          + $"4 - Удар теневого клона (наносит {shadowCloneDamage} ед. урона, клон исчезает после атаки)\n" +
+          + $"5 - Защитный купол (не наносит урона, блокирует входящий урон на текущем ходу, восстанавливает {protectionDoomEffect} ед. здоровья)\n";
+          
+          While (playerHealth > 0 || bossHealth > 0)
+          {
+            
+          }
+          
+          
+        }
+    }
+}
