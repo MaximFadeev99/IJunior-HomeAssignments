@@ -35,6 +35,7 @@ namespace CSTest1
                 Console.WriteLine("Указанное скобочное выражение неверное!");
                 goto End;
             }
+            
              for (int i = 1; i <= text.Length; i++) 
              {
                 if (text.Substring(i,i) == bracket2 && text.Substring(i+1,i+1) == bracket1) 
