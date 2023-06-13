@@ -20,7 +20,7 @@ namespace CSTest1
           const string CommandSummonShadowClone = "3";
           const string CommandShadowCloneStrike = "4";
           const string CommandProtectionDoom = "5";
-          const string CommandProtectionDoom = "6";
+          const string CommandEscape = "6";
           
           int playerHealth = 800;
           int blackFireBallDamage = 100;
@@ -39,9 +39,21 @@ namespace CSTest1
           + $"3 - Призыв теневого клона (не наносит урона, поззволяет на следующем ходу выполнить атаку \"Удар теневого клона\")\n" +
           + $"4 - Удар теневого клона (наносит {shadowCloneDamage} ед. урона, клон исчезает после атаки)\n" +
           + $"5 - Защитный купол (не наносит урона, блокирует входящий урон на текущем ходу, восстанавливает {protectionDoomEffect} ед. здоровья)\n";
+          bool escape = false;
+          string escapeOption = $"\n 6 - телепортация (осуществляет тактическое отступление героя в безопасную зону)";
           
           While (playerHealth > 0 || bossHealth > 0)
           {
+            if (playerHealth < 100)
+            {
+              bool escape = true;
+              Console.WriteLine(playerAttackOptions + escapeOption);
+            }
+            else 
+            {
+               Console.WriteLine(playerAttackOptions) 
+            }
+            
             
           }
           
