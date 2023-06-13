@@ -37,25 +37,25 @@ namespace CSTest1
             }
              for (int i = 1; i <= text.Length; i++) 
              {
-                if (i == bracket2 && and i+1 == bracket1) 
+                if (text.Substring(i,i) == bracket2 && text.Substring(i+1,i+1) == bracket1) 
                 {
                     Console.WriteLine();
                     Console.WriteLine("Указанное скобочное выражение неверное!");
                     goto End;
                 }
                 
-                else if (i == bracket1 && and i+1 == bracket1)
+                else if (text.Substring(i,i) == bracket1 && and text.Substring(i+1,i+1) == bracket1)
                 {
                   bracket1Count++;
                   depth++;
                 }
                 
-                else if (i == bracket1 && i+1 != bracket1)
+                else if (text.Substring(i,i) == bracket1 && text.Substring(i+1,i+1) != bracket1)
                 {
                   bracket1Count++;  
                 }
                 
-                else if (i == bracket2) 
+                else if (text.Substring(i,i) == bracket2) 
                 {
                     bracket2Count++; 
                 }
