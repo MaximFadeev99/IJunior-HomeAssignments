@@ -121,7 +121,7 @@ namespace CSTest1
             
             if (isEscaping == true)
             {
-                Console.WriteLine("Вы трусливо сбегаете с поля боя! Враг победил.");
+                Console.WriteLine("Вы трусливо сбегаете с поля боя! Враг победил!");
                 goto End;
             }
             
@@ -133,8 +133,8 @@ namespace CSTest1
            playerRoundHealth -= bossRoundDamage;
            bossRoundHealth -= playerRoundDamage;
            Console.WriteLine();
-           Console.WriteLine($"Игрок получает {bossRoundDamage} ед. урона, оставшееся здоровье игрока - {playerRoundHealth} ед.")
-           Console.WriteLine($"Враг получает {playerRoundDamage} ед. урона, оставшееся здоровье врага - {bossRoundHealth} ед.")           
+           Console.WriteLine($"Игрок получает {bossRoundDamage} ед. урона, оставшееся здоровье игрока - {playerRoundHealth} ед.");
+           Console.WriteLine($"Враг получает {playerRoundDamage} ед. урона, оставшееся здоровье врага - {bossRoundHealth} ед.");           
           }
           
           if (playerRoundHealth <= 0)
@@ -142,7 +142,16 @@ namespace CSTest1
             Console.WriteLine($"Вы пали в бою! У врага осталось {bossRoundHealth} ед. здоровья");
           }
           
+          else if (bossRoundHealth <= 0)
+          {
+            Console.WriteLine($"Вы победили! У Вас осталось {playerRoundHealth} ед. здоровья");
+          }
           
+          else
+          {
+            Console.WriteLine("Враг повержен, но этот бой стал последним для Вас!");
+          }
+                    
           End:
         }
     }
