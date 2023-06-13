@@ -24,13 +24,6 @@ namespace CSTest1
             Console.Write("Введите скобочное выражение:");
             text = Console.ReadLine();
 
-            if (text.StartsWith(bracket1) == false || text.EndsWith(bracket2) == false)
-            {
-                Console.WriteLine();
-                Console.WriteLine("Указанное скобочное выражение неверное!");
-                goto End;
-            }
-
             foreach (var character in text)
             {
                 if (character == Convert.ToChar(bracket1)) 
