@@ -17,8 +17,6 @@ namespace CSTest1
             int minNumber = 1;
             int maxNumber = 27;
             int randomNumber = random.Next(minNumber, maxNumber + 1);
-            int startSequence = 100;
-            int endSequence = 1000;
             int numbersCount = 0;
             int targetNumber = randomNumber;
             int maxTargetNumberLength = 3;
@@ -27,15 +25,15 @@ namespace CSTest1
             Console.WriteLine();
             Console.WriteLine($"Список трехзначных чисел, кратных {randomNumber}:");
 
-            While (targetNumber.Length <=  maxTargetNumberLength)
+            while(Convert.ToString(targetNumber).Length <= maxTargetNumberLength)
             {
-              targetNumber += randomNumber;
-              
-              if (targetNumber.Length < 3)
-              {
-                Console.WriteLine(targetNumber);
-                numbersCount++;
-              }
+                targetNumber += randomNumber;
+
+                if (Convert.ToString(targetNumber).Length == 3)
+                {
+                    Console.WriteLine(targetNumber);
+                    numbersCount++;
+                }
             }
 
             Console.WriteLine();
