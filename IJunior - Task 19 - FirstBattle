@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,150 +14,179 @@ namespace CSTest1
     internal class Program
     {
         static void Main(string[] args)
-        {        
-          // Здоровье героя - 800
-          //Заклинания 1) огненный шар , 100 урона сейчас и 50 урона на следующий ход от горения 2) защитный купол : восстановление 250 хп, урон босса не проходит  3) призыв теневого клона (- 100 хп), живет 1 ход после призыва, 4) может на нести 350 урона 
-          5) теневое копье 100 урона сейчас
-          // Босс: хп 1000, ответный урон 200 
-          
-          const string CommandShadowSpear = "1";
-          const string CommandBlackFireBall = "2";
-          const string CommandSummonShadowClone = "3";
-          const string CommandShadowCloneStrike = "4";
-          const string CommandProtectionDoom = "5";
-          const string CommandEscape = "6";
-          
-          int playerStartHealth = 800;
-          int playerRoundHealth = playerStartHealth;
-          int blackFireBallDamage = 100;
-          bool burningEffect;
-          int burningEffectDamage = 50;
-          bool protectionDoom;
-          int protectionDoomEffect = 150;
-          bool shadowCloneSpawn;
-          int shadowCloneDamage = 350;
-          int shadowSpearDamage = 100;
-          int playerRoundDamage;
-          int playerStartDamage = 0;
-          int bossStartHealth = 1000;
-          int bossRoundHealth = bossStartHealth;          
-          int bossStartDamage = 200;
-          int bossRoundDamage;
-          string chosenAttack;
-          string playerAttackOptions = $" 1 - Теневое копье (наносит {shadowSpearDamage} ед. урона)\n" +
-          + $"2 - Шар черного пламени (наносит {blackFireBallDamage}ед. урона на этом ходу и {burningEffectDamage} ед. урона на следующем ходу от эффекта горения)\n" +
-          + $"3 - Призыв теневого клона (не наносит урона, поззволяет на следующем ходу выполнить атаку \"Удар теневого клона\")\n" +
-          + $"4 - Удар теневого клона (наносит {shadowCloneDamage} ед. урона, клон исчезает после атаки)\n" +
-          + $"5 - Защитный купол (не наносит урона, блокирует входящий урон на текущем ходу, восстанавливает {protectionDoomEffect} ед. здоровья)\n";
-          bool isEscaping = false;
-          string escapeOption = $"\n 6 - телепортация (осуществляет тактическое отступление героя в безопасную зону)";
-          
-          While (playerRoundHealth > 0 && bossRoundHealth > 0)
-          {
-            bossRoundDamage = bossStartDamage;
-            playerRoundDamage = playerStartDamage;
-            
-            if (burningEffect == true)
+        {
+            const string CommandShadowSpear = "1";
+            const string CommandBlackFireBall = "2";
+            const string CommandSummonShadowClone = "3";
+            const string CommandShadowCloneStrike = "4";
+            const string CommandProtectionDoom = "5";
+            const string CommandEscape = "6";
+
+            int playerStartHealth = 900;
+            int playerRoundHealth = playerStartHealth;
+            int blackFireBallDamage = 100;
+            bool burningEffect = false;
+            int burningEffectDamage = 50;
+            bool protectionDoom = false;
+            int protectionDoomEffect = 150;
+            bool shadowCloneSpawn = false;
+            int shadowCloneDamage = 450;
+            int shadowSpearDamage = 100;
+            int playerRoundDamage;
+            int playerStartDamage = 0;
+            int bossStartHealth = 1000;
+            int bossRoundHealth = bossStartHealth;
+            int bossStartDamage = 200;
+            int bossRoundDamage;
+            string chosenAction;
+            string playerAttackOptions = $"1 - Теневое копье (наносит {shadowSpearDamage} ед. урона)\n" +
+            $"2 - Шар черного пламени (наносит {blackFireBallDamage} ед. урона на этом ходу и {burningEffectDamage} ед. урона на следующем ходу от эффекта горения)\n" +
+            $"3 - Призыв теневого клона (не наносит урона, позволяет 1 раз выполнить атаку \"Удар теневого клона\")\n" +
+            $"4 - Удар теневого клона (наносит {shadowCloneDamage} ед. урона, клон исчезает после атаки)\n" +
+            $"5 - Защитный купол (не наносит урона, блокирует входящий урон на текущем ходу, восстанавливает {protectionDoomEffect} ед. здоровья)";
+            bool isEscaping = false;
+            string escapeOption = $"\n6 - Телепортация (осуществляет тактическое отступление героя в безопасную зону)";
+
+            while(playerRoundHealth > 0 && bossRoundHealth > 0)
             {
-                playerRoundDamage += burningEffectDamage;
-                burningEffect = false;
-            }
-            
-     Action Options:  
+                bossRoundDamage = bossStartDamage;
+                playerRoundDamage = playerStartDamage;
+
+                if (burningEffect == true)
+                {
+                    playerRoundDamage += burningEffectDamage;
+                    burningEffect = false;
+                }
+
+                ActionOptions:  
      
-            if (playerHealth < 100)
-            {
-              bool escape = true;
-              Console.WriteLine(playerAttackOptions + escapeOption);
-            }
-            
-            else 
-            {
-               Console.WriteLine(playerAttackOptions) 
-            }
-            
-            Console.Write("Укажите следующее действие:");
-            decision = Console.Read();
-            
-            switch (decision)
-            {
-              case CommandShadowSpear:
-                    playerRoundDamage += shadowSpearDamage;
-                    break;
-              
-              case CommandBlackFireBall:
-                    playerRoundDamage += blackFireBallDamage;
-                    burningEffect = true;
-                    break;
-               
-              case CommandSummonShadowClone:
-                    shadowCloneSpawn = true;
-                    break;
-              
-              case CommandShadowCloneStrike:
-                    if (shadowCloneSpawn == false)
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("Действие невозможно, т.к. сначала необходимо выполнить призыв теневого клона");
-                        goto Action Options;
-                    }
-                    else
-                    {
-                        playerRoundDamage += shadowCloneDamage;
-                        shadowCloneSpawn = false;
-                    }
-                    break;
-                    
-              case CommandProtectionDoom:
-                    protectionDoom = true;
-                    playerRoundHealth += protectionDoomEffect;
-                    
-                    if (playerRoundHealth > playerStartHealth)
-                    {
-                        playerRoundHealth = playerStartHealth;
-                    }
-                    
-                    break;                
-               
-              case CommandEscape:
+                if (playerRoundHealth <= 200)
+                {
                     isEscaping = true;
-                    break;               
+                    Console.WriteLine(playerAttackOptions + escapeOption);
+                }
+
+                else
+                {
+                    Console.WriteLine(playerAttackOptions);
+                }
+
+                Console.WriteLine();
+                Console.Write("Укажите следующее действие:");
+                chosenAction = Console.ReadLine();
+
+                switch (chosenAction)
+                {
+                    case CommandShadowSpear:
+                        playerRoundDamage += shadowSpearDamage;
+                        break;
+
+                    case CommandBlackFireBall:
+                        playerRoundDamage += blackFireBallDamage;
+                        burningEffect = true;
+                        break;
+
+                    case CommandSummonShadowClone:
+                        shadowCloneSpawn = true;
+                        break;
+
+                    case CommandShadowCloneStrike:
+
+                        if (shadowCloneSpawn == false)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Действие невозможно, т.к. сначала необходимо выполнить призыв теневого клона");
+                            Console.WriteLine();
+                            goto ActionOptions;
+                        }
+
+                        else
+                        {
+                            playerRoundDamage += shadowCloneDamage;
+                            shadowCloneSpawn = false;
+                        }
+
+                        break;
+
+                    case CommandProtectionDoom:
+                        protectionDoom = true;
+                        playerRoundHealth += protectionDoomEffect;
+
+                        if (playerRoundHealth > playerStartHealth)
+                        {
+                            playerRoundHealth = playerStartHealth;
+                        }
+
+                        break;
+
+                    case CommandEscape:
+
+                        if (isEscaping == false)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Ошибка: неизвестная команда!");
+                            Console.WriteLine();
+                            goto ActionOptions;
+                        }
+                        
+                        else 
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Вы трусливо сбегаете с поля боя! Враг победил!");
+                            goto End;
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("Ошибка: неизвестная команда!");
+                        Console.WriteLine();
+                        goto ActionOptions;
+                        break;
+                }
+
+                if (protectionDoom == true)
+                {
+                    bossRoundDamage = 0;
+                    protectionDoom = false;
+                }
+
+                playerRoundHealth -= bossRoundDamage;
+                bossRoundHealth -= playerRoundDamage;
+
+                if (playerRoundHealth < 0)
+                {
+                    playerRoundHealth = 0;
+                }
+
+                if (bossRoundHealth < 0)
+                {
+                    bossRoundHealth = 0;
+                }
+
+                Console.WriteLine();
+                Console.WriteLine($"Игрок получает {bossRoundDamage} ед. урона, оставшееся здоровье игрока - {playerRoundHealth} ед.");
+                Console.WriteLine($"Враг получает {playerRoundDamage} ед. урона, оставшееся здоровье врага - {bossRoundHealth} ед.");
+                Console.WriteLine();
             }
-            
-            if (isEscaping == true)
+
+            if (playerRoundHealth == 0 && bossRoundHealth == 0)
             {
-                Console.WriteLine("Вы трусливо сбегаете с поля боя! Враг победил!");
-                goto End;
+                Console.WriteLine("Враг повержен, но этот бой стал последним для Вас!");
             }
-            
-            if (protectionDoom == true)
+
+            else if (playerRoundHealth == 0)
             {
-                bossRoundDamage = 0;                
+                Console.WriteLine("Вы пали в бою!");
             }
-            
-           playerRoundHealth -= bossRoundDamage;
-           bossRoundHealth -= playerRoundDamage;
-           Console.WriteLine();
-           Console.WriteLine($"Игрок получает {bossRoundDamage} ед. урона, оставшееся здоровье игрока - {playerRoundHealth} ед.");
-           Console.WriteLine($"Враг получает {playerRoundDamage} ед. урона, оставшееся здоровье врага - {bossRoundHealth} ед.");           
-          }
-          
-          if (playerRoundHealth <= 0)
-          {
-            Console.WriteLine($"Вы пали в бою! У врага осталось {bossRoundHealth} ед. здоровья");
-          }
-          
-          else if (bossRoundHealth <= 0)
-          {
-            Console.WriteLine($"Вы победили! У Вас осталось {playerRoundHealth} ед. здоровья");
-          }
-          
-          else
-          {
-            Console.WriteLine("Враг повержен, но этот бой стал последним для Вас!");
-          }
-                    
-          End:
+
+            else if (bossRoundHealth == 0)
+            {
+                Console.WriteLine("Вы победили!");
+            }
+
+            End:
+            Console.ReadKey();
         }
     }
 }
