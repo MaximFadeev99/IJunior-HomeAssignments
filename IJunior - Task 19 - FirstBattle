@@ -49,12 +49,19 @@ namespace CSTest1
               bool escape = true;
               Console.WriteLine(playerAttackOptions + escapeOption);
             }
+            
             else 
             {
                Console.WriteLine(playerAttackOptions) 
             }
             
+            Console.Write("Укажите следующее действие:");
+            decision = Console.Read();
             
+            switch (decision)
+            {
+            
+            }
           }
           
           
