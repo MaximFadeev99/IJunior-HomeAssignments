@@ -15,8 +15,8 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
-            char bracket1 = '(';
-            char bracket2 = ')';
+            string bracket1 = "(";
+            string bracket2 = ")";
             string text;
             int bracket1Count = 0;
             int bracket2Count = 0;
@@ -28,18 +28,44 @@ namespace CSTest1
             
             text ="(()((()))())";
             textLength= text.Length;
+            
+            if (text.StartsWith(bracket1) == false || text.EndsWith(bracket2) == false)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Указанное скобочное выражение неверное!");
+                goto End;
+            }
              for (int i = 1; i <= text.Length; i++) 
              {
-                if (i = bracket1 && and i+1 = bracket1)
+                if (i == bracket2 && and i+1 == bracket1) 
                 {
+                    Console.WriteLine();
+                    Console.WriteLine("Указанное скобочное выражение неверное!");
+                    goto End;
+                }
+                
+                else if (i == bracket1 && and i+1 == bracket1)
+                {
+                  bracket1Count++;
                   depth++;
                 }
                 
-                else if ()
-             }          
-        
+                else if (i == bracket1 && i+1 != bracket1)
+                {
+                  bracket1Count++;  
+                }
+                
+                else if (i == bracket2) 
+                {
+                    bracket2Count++; 
+                }
+              }          
+              
+              Console.WriteLine();
+              Console.WriteLine("Указанное скобочное выражение верно!")
+              Console.WriteLine($"Его максимальная глубина составляет {depth}.")
 
-  
+            End:
         }
     }
 }
