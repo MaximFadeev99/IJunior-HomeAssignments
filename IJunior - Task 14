@@ -19,7 +19,6 @@ namespace CSTest1
             char symbol;
             string middleString;
             int middleStringLength;
-            int startColumn = 0;
 
             Console.Write("Введите любое имя:");
             name = Console.ReadLine();
@@ -29,7 +28,7 @@ namespace CSTest1
             middleStringLength = middleString.Length;
             Console.WriteLine();
             
-            for (int i = startColumn; i < middleStringLength; i++)
+            for (int i = 0; i < middleStringLength; i++)
             {
                 Console.Write(symbol);
             }
@@ -37,7 +36,7 @@ namespace CSTest1
             Console.WriteLine();
             Console.WriteLine(middleString);
 
-            for (int i = startColumn; i < middleStringLength; i++)
+            for (int i = 0; i < middleStringLength; i++)
             {
                 Console.Write(symbol);
             }
