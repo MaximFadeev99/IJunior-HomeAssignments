@@ -25,7 +25,7 @@ namespace CSTest1
             Console.WriteLine();
             Console.WriteLine($"Список трехзначных чисел, кратных {randomNumber}:");
 
-            for (int i = randomNumber, i <=  999; i += randomNumber)
+            for (int i = randomNumber; i <= lastThreeDigitNumber; i += randomNumber)
             {
                 if (Convert.ToString(i).Length == maxTargetNumberLength)
                 {
