@@ -71,7 +71,6 @@ namespace CSTest1
                     isEscaping = true;
                     Console.WriteLine(playerAttackOptions + escapeOption);
                 }
-
                 else
                 {
                     Console.WriteLine(playerAttackOptions);
@@ -105,7 +104,6 @@ namespace CSTest1
                             Console.WriteLine();
                             goto ActionOptions;
                         }
-
                         else
                         {
                             playerRoundDamage += shadowCloneDamage;
@@ -133,8 +131,7 @@ namespace CSTest1
                             Console.WriteLine("Ошибка: неизвестная команда!");
                             Console.WriteLine();
                             goto ActionOptions;
-                        }
-                        
+                        }                   
                         else 
                         {
                             Console.WriteLine();
