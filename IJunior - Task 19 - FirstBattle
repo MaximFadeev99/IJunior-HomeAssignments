@@ -25,7 +25,7 @@ namespace CSTest1
             int playerStartHealth = 900;
             int playerRoundHealth = playerStartHealth;
             int blackFireBallDamage = 100;
-            bool burningEffect = false;
+            bool isBurning = false;
             int burningEffectDamage = 50;
             bool protectionDoom = false;
             int protectionDoomEffect = 150;
@@ -58,10 +58,10 @@ namespace CSTest1
                 bossRoundDamage = bossStartDamage;
                 playerRoundDamage = playerStartDamage;
 
-                if (burningEffect == true)
+                if (isBurning == true)
                 {
                     playerRoundDamage += burningEffectDamage;
-                    burningEffect = false;
+                    isBurning = false;
                 }
 
                 ActionOptions:  
@@ -89,7 +89,7 @@ namespace CSTest1
 
                     case CommandBlackFireBall:
                         playerRoundDamage += blackFireBallDamage;
-                        burningEffect = true;
+                        isBurning = true;
                         break;
 
                     case CommandSummonShadowClone:
