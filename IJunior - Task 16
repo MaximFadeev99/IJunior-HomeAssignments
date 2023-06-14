@@ -18,20 +18,18 @@ namespace CSTest1
             int maxNumber = 27;
             int randomNumber = random.Next(minNumber, maxNumber + 1);
             int numbersCount = 0;
-            int targetNumber = randomNumber;
+            int lastThreeDigitNumber = 999;
             int maxTargetNumberLength = 3;
 
             Console.WriteLine($"Рандомно сгенерированное числов в пределах от {minNumber} до {maxNumber} (включительно): {randomNumber}");
             Console.WriteLine();
             Console.WriteLine($"Список трехзначных чисел, кратных {randomNumber}:");
 
-            while(Convert.ToString(targetNumber).Length <= maxTargetNumberLength)
+            for (int i = randomNumber, i <=  999; i += randomNumber)
             {
-                targetNumber += randomNumber;
-
-                if (Convert.ToString(targetNumber).Length == 3)
+                if (Convert.ToString(i).Length == maxTargetNumberLength)
                 {
-                    Console.WriteLine(targetNumber);
+                    Console.WriteLine(i);
                     numbersCount++;
                 }
             }
