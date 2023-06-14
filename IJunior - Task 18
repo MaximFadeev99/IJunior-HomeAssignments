@@ -19,7 +19,7 @@ namespace CSTest1
             string bracketClose = ")";
             string text;
             int bracketsCount = 0;
-            int depth = 1;
+            int depth = 0;
 
             Console.Write("Введите скобочное выражение:");
             text = Console.ReadLine();
@@ -29,6 +29,12 @@ namespace CSTest1
                 if (character == Convert.ToChar(bracketOpen)) 
                 {
                     bracketsCount++;
+                    
+                    if (depth < bracketsCount)
+                    {
+                       depth++; 
+                    }
+                    
                 }                
                 else if (character == Convert.ToChar(bracketClose))
                 {
@@ -48,15 +54,7 @@ namespace CSTest1
                 Console.WriteLine();
                 Console.WriteLine("Указанное скобочное выражение неверное!");
                 goto End;
-            }
-
-            for (int i = 0; i < text.Length-1; i++)
-            {
-                 if (text.Substring(i, 1) == bracketOpen && text.Substring(i + 1, 1) == bracketOpen)
-                {
-                    depth++;
-                }
-            }          
+            }        
               
             Console.WriteLine();
             Console.WriteLine("Указанное скобочное выражение верно!");
