@@ -27,7 +27,7 @@ namespace CSTest1
             int blackFireBallDamage = 100;
             bool isBurning = false;
             int burningEffectDamage = 50;
-            bool protectionDoom = false;
+            bool isInvincible = false;
             int protectionDoomEffect = 150;
             bool shadowCloneSpawn = false;
             int shadowCloneDamage = 450;
@@ -115,7 +115,7 @@ namespace CSTest1
                         break;
 
                     case CommandProtectionDoom:
-                        protectionDoom = true;
+                        isInvincible = true;
                         playerRoundHealth += protectionDoomEffect;
 
                         if (playerRoundHealth > playerStartHealth)
@@ -151,10 +151,10 @@ namespace CSTest1
                         break;
                 }
 
-                if (protectionDoom == true)
+                if (isInvincible == true)
                 {
                     bossRoundDamage = 0;
-                    protectionDoom = false;
+                    isInvincible = false;
                 }
 
                 playerRoundHealth -= bossRoundDamage;
