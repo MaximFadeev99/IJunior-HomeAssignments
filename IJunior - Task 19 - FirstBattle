@@ -39,13 +39,13 @@ namespace CSTest1
             int bossStartDamage = 200;
             int bossRoundDamage;
             string chosenAction;
-            string playerAttackOptions = $"1 - Теневое копье (наносит {shadowSpearDamage} ед. урона)\n" +
-            $"2 - Шар черного пламени (наносит {blackFireBallDamage} ед. урона на этом ходу и {burningEffectDamage} ед. урона на следующем ходу от эффекта горения)\n" +
-            $"3 - Призыв теневого клона (не наносит урона, позволяет 1 раз выполнить атаку \"Удар теневого клона\")\n" +
-            $"4 - Удар теневого клона (наносит {shadowCloneDamage} ед. урона, клон исчезает после атаки)\n" +
-            $"5 - Защитный купол (не наносит урона, блокирует входящий урон на текущем ходу, восстанавливает {protectionDoomEffect} ед. здоровья)";
+            string playerAttackOptions = $"{CommandShadowSpear} - Теневое копье (наносит {shadowSpearDamage} ед. урона)\n" +
+            $"{CommandBlackFireBall} - Шар черного пламени (наносит {blackFireBallDamage} ед. урона на этом ходу и {burningEffectDamage} ед. урона на следующем ходу от эффекта горения)\n" +
+            $"{CommandSummonShadowClone} - Призыв теневого клона (не наносит урона, позволяет 1 раз выполнить атаку \"Удар теневого клона\")\n" +
+            $"{CommandShadowCloneStrike} - Удар теневого клона (наносит {shadowCloneDamage} ед. урона, клон исчезает после атаки)\n" +
+            $"{CommandProtectionDoom} - Защитный купол (не наносит урона, блокирует входящий урон на текущем ходу, восстанавливает {protectionDoomEffect} ед. здоровья)";
             bool isEscaping = false;
-            string escapeOption = $"\n6 - Телепортация (осуществляет тактическое отступление героя в безопасную зону)";
+            string escapeOption = $"\n{CommandEscape} - Телепортация (осуществляет тактическое отступление героя в безопасную зону)";
 
             Console.WriteLine($"Вы выходите на бой с врагом.\n" +
                 $"Ваше здоровье - {playerStartHealth} ед.\n" +
