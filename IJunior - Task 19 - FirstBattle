@@ -96,7 +96,6 @@ namespace CSTest1
                         break;
 
                     case CommandShadowCloneStrike:
-
                         if (shadowCloneSpawn == false)
                         {
                             Console.WriteLine();
@@ -109,7 +108,6 @@ namespace CSTest1
                             playerRoundDamage += shadowCloneDamage;
                             shadowCloneSpawn = false;
                         }
-
                         break;
 
                     case CommandProtectionDoom:
@@ -177,12 +175,10 @@ namespace CSTest1
             {
                 Console.WriteLine("Враг повержен, но этот бой стал последним для Вас!");
             }
-
             else if (playerRoundHealth == 0)
             {
                 Console.WriteLine("Вы пали в бою!");
             }
-
             else if (bossRoundHealth == 0)
             {
                 Console.WriteLine("Вы победили!");
