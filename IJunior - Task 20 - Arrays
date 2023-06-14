@@ -1,1 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+          Random random = new random;
+          int[,] array = new int[1,1];
+          int maxNumber = 100;
+          int secondRowIndex = 1;
+          int firstColumnIndex = 0;
+          int secondRowSum = 0;
+          int firstColumnProduction;
+          
+          for (int i = 0; i <= array.GetLength(0))
+          {
+           
+           for (int j = 0; j <= array.GetLength(1))
+            {
+              array[i,j] = random.Next(maxNumber);
+              Console.Write(array[i,j] + " ");
+            }
+           
+           Console.WriteLine();
+          }
+          
+          for (int i = 0; i <= array.GetLength(1); i++)
+          {
+            secondRowSum += array[secondRowIndex, i]
+          }
+          
+          for (int i = 0; i <= array.GetLength(0); i++)
+          {
+            firstColumnProduction *= array[i, firstColumnIndex]
+          }
+          
+           Console.WriteLine();
+           Console.WriteLine($"Сумма чисел второй строки равняется {secondRowSum}.")
+           Console.WriteLine($"Произведение чисел первой строки равняется {firstColumnProduction}.")
+           Console.ReadKey();
+        }
+    }
+}
