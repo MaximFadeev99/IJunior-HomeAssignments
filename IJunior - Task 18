@@ -15,43 +15,55 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
-            char bracket1 = '(';
-            char bracket2 = ')';
+            string bracketOpen = "(";
+            string bracketClose = ")";
             string text;
-            int bracket1Count = 0;
-            int bracket2Count = 0;
+            int bracketsCount = 0;
+            int depth = 1;
 
             Console.Write("Введите скобочное выражение:");
             text = Console.ReadLine();
 
-            if (text.StartsWith(Convert.ToString(bracket1)) == false) 
-            {
-                Console.WriteLine("Введенное скобочное выражение неверно!");
-                goto End;            
-            }
-
             foreach (var character in text)
             {
-                if (character == bracket1) 
+                if (character == Convert.ToChar(bracketOpen)) 
                 {
-                    bracket1Count++;
-                } 
+                    bracketsCount++;
+                }                
+                else if (character == Convert.ToChar(bracketClose))
+                {
+                    bracketsCount--;
+                }
 
-                else if (character == bracket2) 
+                if (bracketsCount < 0) 
                 {
-                    bracket2Count++;
+                    Console.WriteLine();
+                    Console.WriteLine("Указанное скобочное выражение неверное!");
+                    goto End;
                 }
             }
 
-            if (bracket1Count != bracket2Count)
+            if (bracketsCount != 0) 
             {
-                Console.WriteLine("Введенное скобочное выражение неверно!");
+                Console.WriteLine();
+                Console.WriteLine("Указанное скобочное выражение неверное!");
                 goto End;
             }
-            
-            Console.WriteLine($"Введенное скобочное выражение верно!");
+
+            for (int i = 0; i < text.Length-1; i++)
+            {
+                 if (text.Substring(i, 1) == bracketOpen && text.Substring(i + 1, 1) == bracketOpen)
+                {
+                    depth++;
+                }
+            }          
+              
+            Console.WriteLine();
+            Console.WriteLine("Указанное скобочное выражение верно!");
+            Console.WriteLine($"Его максимальная глубина составляет {depth}.");
+                
             End:
-            Console.ReadKey();    
+            Console.ReadKey();
         }
     }
 }
