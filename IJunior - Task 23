@@ -1,1 +1,85 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string const CommandAddNumber = "1";
+            string const CommandSummarize = "2";
+            string const CommandExit = "3";
+                        
+            double[] userNumbers = new array [1];
+            double userNumbersSum = 0;
+            string userInput;
+            bool isLeaving = false;
+            string actionOptions = $"Чтобы добавить число в массив, нажмите - {CommandAddNumber}",
+            + "Чтобы просуммировать все числа в массиве, нажмите - {CommandSummarize}",
+            + "Чтобы закрыть программу, нажмите - {CommandExit}";            
+            
+            while (isLeaving == false)
+            {
+              Console.WriteLine(actionOptions);
+              Console.WriteLine();
+              Console.Write("Укажите команду:")
+              userInput = Console.Read();
+              
+              switch (userInput)
+              {
+                Case CommandAddNumber:
+                    Console.Write("Введите число:")
+                    userInput = Console.ReadLine();
+                    
+                    if (isNumeric(userInput) ==false)
+                    {
+                       Console.Write("Ошибка! Неверный вид данных");
+                       goto Retry;
+                    }
+                    
+                    double[] tempUserNumbers = new array [userNumbers.Length + 1];
+                    
+                    for (int i = 0; i < userNumbers.Length; i++)
+                    {
+                       tempUserNumbers[i] = userNumbers[i];
+                    }
+                    
+                    userNumbers = tempUserNumbers;
+                    userNumbers[userNumbers.Length - 1] = userInput;
+                    break;
+                    
+                 Case CommandSummarize:
+                     
+                     foreach (double number in userNumbers);
+                     {
+                        userNumbersSum += number;
+                     }
+                     
+                     Console.SetCoursor(17,0);
+                     Console.Write($"Сумма всех чисел в массиве равняется {userNumbersSum}"
+                     break; 
+                   
+                  Case CommandExit:
+                     isLeaving = true;
+                     break;              
+              }
+              
+              Console.SetCoursor(15,0);
+              Console.Write("Список чисел в массиве:")
+              
+              foreach (double number in userNumbers);
+                     {
+                        Console.Write(number + " ");
+                     }
+              
+              Retry:
+              Console.Clear;
+            }            
+        }
+    }
+}
