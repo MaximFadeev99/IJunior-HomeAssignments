@@ -12,33 +12,32 @@ namespace CSTest1
         static void Main(string[] args)
         {
           Random random = new Random();
-            int [,] array = new int [2, 2];
+            int [,] numbers = new int [2, 2];
             int maxNumber = 100;
             int targetRowIndex = 1;
             int targetColumnIndex = 0;
             int targetRowSum = 0;
             int targetColumnProduction = 1;
 
-            for (int i = 0; i < array.GetLength(0); i++)
+            for (int i = 0; i < numbers.GetLength(0); i++)
             {
-
-                for (int j = 0; j < array.GetLength(1); j++)
+                for (int j = 0; j < numbers.GetLength(1); j++)
                 {
-                    array[i, j] = random.Next(maxNumber);
-                    Console.Write(array[i, j] + " ");
+                    numbers[i, j] = random.Next(maxNumber);
+                    Console.Write(numbers[i, j] + " ");
                 }
 
                 Console.WriteLine();
             }
 
-            for (int i = 0; i < array.GetLength(0); i++)
+            for (int i = 0; i < numbers.GetLength(0); i++)
             {
-                targetRowSum += array[targetRowIndex, i];
+                targetRowSum += numbers[targetRowIndex, i];
             }
 
-            for (int i = 0; i < array.GetLength(1); i++)
+            for (int i = 0; i < numbers.GetLength(1); i++)
             {
-                targetColumnProduction *= array[i, targetColumnIndex];
+                targetColumnProduction *= numbers[i, targetColumnIndex];
             }
 
             Console.WriteLine();
