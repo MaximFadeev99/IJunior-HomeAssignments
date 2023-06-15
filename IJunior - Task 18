@@ -26,22 +26,22 @@ namespace CSTest1
 
             foreach (var character in text)
             {
-                if (character == bracketOpen) 
+                if (character == bracketOpen)
                 {
                     depth++;
-                    
+
                     if (maxDepth < depth)
                     {
-                       maxDepth++; 
+                        maxDepth = depth;
                     }
-                    
-                }                
+
+                }
                 else if (character == bracketClose)
                 {
                     depth--;
                 }
 
-                if (depth < 0) 
+                if (depth < 0)
                 {
                     Console.WriteLine();
                     Console.WriteLine("Указанное скобочное выражение неверное!");
@@ -49,18 +49,18 @@ namespace CSTest1
                 }
             }
 
-            if (depth != 0) 
+            if (depth != 0)
             {
                 Console.WriteLine();
                 Console.WriteLine("Указанное скобочное выражение неверное!");
                 goto End;
-            }        
-              
+            }
+
             Console.WriteLine();
             Console.WriteLine("Указанное скобочное выражение верно!");
             Console.WriteLine($"Его максимальная глубина составляет {maxDepth}.");
-                
-            End:
+
+        End:
             Console.ReadKey();
         }
     }
