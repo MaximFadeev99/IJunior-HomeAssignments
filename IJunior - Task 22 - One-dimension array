@@ -15,6 +15,7 @@ namespace CSTest1
             int maxRandomNumber = 100;
             int localMaxNumber;
             
+            Console.Write("Массив:");
             for (int i = 0; i < numbers.Length; i++)
             {
               numbers[i] = random.Next(maxRandomNumber);
@@ -22,8 +23,14 @@ namespace CSTest1
             }
             
             Console.WriteLine();
-            Console.WriteLine("Список локальных максимумов:");
+            Console.Write("Список локальных максимумов:");
             
+            if (numbers[0]>numbers[1])
+            {
+                Console.Write(numbers[0]);
+            }
+            
+            for (int i=1; i < 
             Console.ReadKey();
     }
 }
