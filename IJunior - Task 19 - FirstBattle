@@ -29,7 +29,7 @@ namespace CSTest1
             int burningEffectDamage = 50;
             bool isInvincible = false;
             int protectionDoomEffect = 150;
-            bool shadowCloneSpawn = false;
+            bool isSpawningShadowClone = false;
             int shadowCloneDamage = 450;
             int shadowSpearDamage = 100;
             int playerRoundDamage;
@@ -66,7 +66,7 @@ namespace CSTest1
 
                 ActionOptions:  
      
-                if (playerRoundHealth <= 200)
+                if (playerRoundHealth <= bossStartDamage)
                 {
                     isEscaping = true;
                     Console.WriteLine(playerAttackOptions + escapeOption);
@@ -92,11 +92,11 @@ namespace CSTest1
                         break;
 
                     case CommandSummonShadowClone:
-                        shadowCloneSpawn = true;
+                        isSpawningShadowClone = true;
                         break;
 
                     case CommandShadowCloneStrike:
-                        if (shadowCloneSpawn == false)
+                        if (isSpawningShadowClone == false)
                         {
                             Console.WriteLine();
                             Console.WriteLine("Действие невозможно, т.к. сначала необходимо выполнить призыв теневого клона");
@@ -106,7 +106,7 @@ namespace CSTest1
                         else
                         {
                             playerRoundDamage += shadowCloneDamage;
-                            shadowCloneSpawn = false;
+                            isSpawningShadowClone = false;
                         }
                         break;
 
@@ -122,7 +122,6 @@ namespace CSTest1
                         break;
 
                     case CommandEscape:
-
                         if (isEscaping == false)
                         {
                             Console.WriteLine();
