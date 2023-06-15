@@ -47,7 +47,7 @@ namespace CSTest1
                     
                     if (numbers[i, j] == maxNumber) 
                     {
-                        numbers[i, j] = 0;
+                        numbers[i, j] = replacementNumber;
                     }
                     
                     Console.Write(numbers[i, j] + " ");
