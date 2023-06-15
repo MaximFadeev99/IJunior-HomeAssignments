@@ -15,33 +15,33 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
-            string bracketOpen = "(";
-            string bracketClose = ")";
+            char bracketOpen = '(';
+            char bracketClose = ')';
             string text;
-            int bracketsCount = 0;
             int depth = 0;
+            int maxDepth = 0;
 
             Console.Write("Введите скобочное выражение:");
             text = Console.ReadLine();
 
             foreach (var character in text)
             {
-                if (character == Convert.ToChar(bracketOpen)) 
+                if (character == bracketOpen) 
                 {
-                    bracketsCount++;
+                    depth++;
                     
-                    if (depth < bracketsCount)
+                    if (maxDepth < depth)
                     {
-                       depth++; 
+                       maxDepth++; 
                     }
                     
                 }                
-                else if (character == Convert.ToChar(bracketClose))
+                else if (character == bracketClose)
                 {
-                    bracketsCount--;
+                    depth--;
                 }
 
-                if (bracketsCount < 0) 
+                if (depth < 0) 
                 {
                     Console.WriteLine();
                     Console.WriteLine("Указанное скобочное выражение неверное!");
@@ -49,7 +49,7 @@ namespace CSTest1
                 }
             }
 
-            if (bracketsCount != 0) 
+            if (depth != 0) 
             {
                 Console.WriteLine();
                 Console.WriteLine("Указанное скобочное выражение неверное!");
@@ -58,7 +58,7 @@ namespace CSTest1
               
             Console.WriteLine();
             Console.WriteLine("Указанное скобочное выражение верно!");
-            Console.WriteLine($"Его максимальная глубина составляет {depth}.");
+            Console.WriteLine($"Его максимальная глубина составляет {maxDepth}.");
                 
             End:
             Console.ReadKey();
