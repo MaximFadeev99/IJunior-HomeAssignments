@@ -11,6 +11,29 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
+            Random random = new Random();
+            int minNumber = 1;
+            int maxNumber = 5;
+            int[] randomNumbers = new int[30];
+            int poss
+            int maxIterationsNumber;
+            int maxIterationsNumberCount = 1;
+            
+            for (int i = 0; i < randomNumbers; i++)
+            {
+                randomNumbers[i] = random.Next(minNumber, maxNumber);
+                Console.Write(randomNumbers[i] + " ");
+            }
+            
+            for (int i = 0; i < randomNumbers; i++)
+            {
+                if (randomNumbers[i] == randomNumbers[i+1])
+                {
+                    maxIterationsNumber=randomNumbers;
+                    iterationsCount++;
+                }
+                else
+            }
             
         }
     }
