@@ -55,7 +55,7 @@ namespace CSTest1
           
           While (orderedRandomNumbers.Length < arrayLength)
           {
-            int[] tempOrderedRandomNumbers = new int[orderedRandomNumbers.Length+1]
+            int[] tempOrderedRandomNumbers = new int [orderedRandomNumbers.Length+1]
             
             for (int i = 0; i < arrayLength; i++)
             {
