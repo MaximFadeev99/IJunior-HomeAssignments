@@ -1,1 +1,81 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+          Random randon = new Random();
+          int maxNumber = 100;
+          int arrayLength = 10;
+          int[] randomNumbers = new int [arrayLength];
+          int[] orderedRandomNumbers = new int [0];
+          int[] tempOrderedRandomNumbers = new int [0];
+          int checkNumber;
+          
+          Сonsole.Write("Список рандомных чисел до сортировки:")
+          for (int i = 0; i < arrayLength; i++)
+          {
+            randomNumbers[i] = random.Next(maxNumber);
+            Console.Write(randomNumbers[i] + " ");
+          }
+          
+          Console.WriteLine("Нажмите любую клавишу, чтобы отсортировать цифры от меньшего к большему...");
+          Console.WriteLine();
+          Console.Write("Список отсортированных чисел:");
+          
+          for (int i = 0; i < arrayLength; i++)
+          {
+            checkNumber =  randomNumbers[i];
+            
+            if (checkNumber > randomNumbers[i+1])
+            {
+              checkNumber = randomNumbers[i+1];
+            }
+          }
+          
+          orderedRandomNumbers[0] = checkNumber;
+          Console.Write(orderedRandomNumbers[0] + " ");
+          
+          for (int i = 0; i < arrayLength; i++)
+          {
+            checkNumber =  randomNumbers[i];
+            
+            if (checkNumber > randomNumbers[i+1])
+            {
+              checkNumber = randomNumbers[i+1];
+            }
+          }
+          
+          While (orderedRandomNumbers.Length < arrayLength)
+          {
+            for (int i = 0; i < arrayLength; i++)
+            {
+              checkNumber =  randomNumbers[i];
+
+              if (checkNumber > randomNumbers[i+1] && randomNumbers[i+1] != orderedRandomNumbers[i])
+              {
+                orderedRandomNumbers[i] = randomNumbers[i+1];
+              }
+            }                             
+          }
+          
+          for (int i = 0; i < arrayLength; i++)
+          {
+            checkNumber =  randomNumbers[i];
+            
+            if (checkNumber > randomNumbers[i+1] && randomNumbers[i+1] != orderedRandomNumbers[i])
+            {
+              orderedRandomNumbers[i] = randomNumbers[i+1];
+            }
+          }
+          
+        }
+    }
+}
