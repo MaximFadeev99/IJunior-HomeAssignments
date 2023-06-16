@@ -58,7 +58,7 @@ namespace CSTest2
                     default:
                         if (double.TryParse(userInput, out checkUserInput) == false)
                         {
-                            Console.Write("Ошибка: неверный вид данных!");
+                            Console.Write("Ошибка!");
                             Console.ReadKey();
                             goto Retry;
                         }
