@@ -15,7 +15,8 @@ namespace CSTest1
             int minNumber = 1;
             int maxNumber = 5;
             int[] randomNumbers = new int[30];
-            int poss
+            int possibleMaxIterationsNumber;
+            int possibleMaxIterationsNumberCount = 1;
             int maxIterationsNumber;
             int maxIterationsNumberCount = 1;
             
@@ -29,12 +30,21 @@ namespace CSTest1
             {
                 if (randomNumbers[i] == randomNumbers[i+1])
                 {
-                    maxIterationsNumber=randomNumbers;
-                    iterationsCount++;
+                    possibleMaxIterationsNumber=randomNumbers;
+                    possibleMaxIterationsNumberCount++;
                 }
-                else
-            }
+                
+                if (possibleMaxIterationsNumberCount>maxIterationsNumberCount)
+                {
+                   maxIterationsNumber =  possibleMaxIterationsNumber;
+                   maxIterationsNumberCount == possibleMaxIterationsNumberCount;
+                   possibleMaxIterationsNumberCount = 1;
+                }                
+             }
             
+            Console.WriteLine($"Наиболее часто повторившееся число - {maxIterationsNumber}.");
+            Console.WriteLine($"Данное число повторилось подряд {maxIterationsNumberCount} раз(а).");
+            Console.ReadKey();
         }
     }
 }
