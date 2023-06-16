@@ -10,18 +10,16 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            const string CommandAddNumber = "1";
-            const string CommandSummarize = "2";
-            const string CommandExit = "3";
+            const string CommandSummarize = "sum";
+            const string CommandExit = "exit";
 
             double[] userNumbers = new double[0];
             double userNumbersSum = 0;
             double checkUserInput;
             string userInput;
             bool isLeaving = false;
-            string actionOptions = $"Чтобы добавить число в массив, нажмите - {CommandAddNumber}\n" +
-                $"Чтобы просуммировать все числа в массиве, нажмите - {CommandSummarize}\n" +
-                $"Чтобы закрыть программу, нажмите - {CommandExit}";
+            string actionOptions = $"Чтобы просуммировать все числа в массиве, введите - {CommandSummarize}\n" +
+                $"Чтобы закрыть программу, введите - {CommandExit}";
 
             while (isLeaving == false)
             {
@@ -36,15 +34,28 @@ namespace CSTest2
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine(actionOptions);
                 Console.WriteLine();
-                Console.Write("Укажите команду:");
+                Console.Write("Введите число или команду:");
                 userInput = Console.ReadLine();
 
-                switch (userInput) 
-                {
-                    case CommandAddNumber:
-                        Console.Write("Введите число:");
-                        userInput = Console.ReadLine();
-                        
+                switch (userInput)
+                {                      
+                    case CommandSummarize:
+                        foreach (double number in userNumbers)
+                        {
+                            userNumbersSum += number;
+                        }
+
+                        Console.SetCursorPosition(0, 9);
+                        Console.Write($"Сумма всех чисел в массиве равняется {userNumbersSum}");
+                        Console.ReadKey();
+                        userNumbersSum = 0;
+                        break;
+
+                    case CommandExit:
+                        isLeaving = true;
+                        break;
+
+                    default:
                         if (double.TryParse(userInput, out checkUserInput) == false)
                         {
                             Console.Write("Ошибка: неверный вид данных!");
@@ -52,7 +63,7 @@ namespace CSTest2
                             goto Retry;
                         }
 
-                        double[] tempUserNumbers = new double [userNumbers.Length + 1];
+                        double[] tempUserNumbers = new double[userNumbers.Length + 1];
 
                         for (int i = 0; i < userNumbers.Length; i++)
                         {
@@ -62,29 +73,8 @@ namespace CSTest2
                         userNumbers = tempUserNumbers;
                         userNumbers[userNumbers.Length - 1] = Convert.ToDouble(userInput);
                         break;
-
-                    case CommandSummarize:
-
-                        foreach (double number in userNumbers) 
-                        {
-                            userNumbersSum += number;
-                        }
-
-                        Console.SetCursorPosition(0, 9);
-                        Console.Write($"Сумма всех чисел в массиве равняется {userNumbersSum}");
-                        Console.ReadKey();
-                     break;
-
-                    case CommandExit:
-                        isLeaving = true;
-                        break;
-
-                    default:
-                        Console.Write("Ошибка: неизвестная команда!");
-                        Console.ReadKey();
-                        break;
                 }
-             
+
                 Retry:
                 Console.Clear();
             }          
