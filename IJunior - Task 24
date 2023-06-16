@@ -13,12 +13,13 @@ namespace CSTest1
         {
             Random random = new Random();
             int minNumber = 1;
-            int maxNumber = 4;
+            int maxNumber = 3;
             int[] randomNumbers = new int[30];
-            int possibleMaxIterationsNumber = 0;
-            int possibleMaxIterationsNumberCount = 1;
+            int possibleMaxIterationsNumber;
+            int possibleMaxIterationsNumberCount = 0;
             int maxIterationsNumber = 0;
-            int maxIterationsNumberCount = 1;
+            int maxIterationsNumberCount = 0;
+            int maxIterationsDoubleCheck = 0;
 
             for (int i = 0; i < randomNumbers.Length; i++)
             {
@@ -26,25 +27,43 @@ namespace CSTest1
                 Console.Write(randomNumbers[i] + " ");
             }
 
-            for (int i = 0; i < randomNumbers.Length-1; i++)
+            for (int i = 1; i < randomNumbers.Length; i++)
             {
-                if (randomNumbers[i] == randomNumbers[i + 1])
+                if (randomNumbers[i] != randomNumbers[i-1])
+                {
+                    possibleMaxIterationsNumberCount = 0;
+                    possibleMaxIterationsNumber = randomNumbers[i];
+                    possibleMaxIterationsNumberCount++;
+                }
+                else 
                 {
                     possibleMaxIterationsNumber = randomNumbers[i];
                     possibleMaxIterationsNumberCount++;
                 }
 
-                if (possibleMaxIterationsNumberCount > maxIterationsNumberCount)
+                if (possibleMaxIterationsNumberCount > maxIterationsNumberCount) 
                 {
                     maxIterationsNumber = possibleMaxIterationsNumber;
                     maxIterationsNumberCount = possibleMaxIterationsNumberCount;
-                    possibleMaxIterationsNumberCount = 1;
+                }
+            }
+
+            for (int i = 0; i <= maxIterationsNumberCount; i++) 
+            {
+                if (randomNumbers[i] == maxIterationsNumber)
+                {
+                    maxIterationsDoubleCheck++;
+                }
+                else 
+                {
+                    maxIterationsDoubleCheck = maxIterationsNumberCount;
+                    break;
                 }
             }
 
             Console.WriteLine();
             Console.WriteLine($"Наиболее часто повторившееся число - {maxIterationsNumber}.");
-            Console.WriteLine($"Данное число повторилось подряд {maxIterationsNumberCount} раз(а).");
+            Console.WriteLine($"Данное число повторилось подряд {maxIterationsDoubleCheck} раз(а).");
             Console.ReadKey();
         }
     }
