@@ -1,1 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            //1 2 3 4 
+            // нужна будет отдельная переменная, которая будет запоминать первое число массива до начала сдвига , а = 1
+            // начинаем сдвиг: циклом for переставляем все числа начиная со второй позиции на 1 позцию влево, получится 2 3 4 4 , далее присваиваем последнему месту значение а
+            // циклом for отмеряем общее кол-во повторений 
+        }
+    }
+}
