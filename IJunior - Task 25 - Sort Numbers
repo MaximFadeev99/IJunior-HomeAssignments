@@ -11,52 +11,84 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
-          Random randon = new Random();
-          int maxNumber = 100;
-          int arrayLength = 10;
-          int[] randomNumbers = new int [arrayLength];
-          int[] orderedRandomNumbers = new int [0];
-          int[] tempOrderedRandomNumbers = new int [arrayLength];
-          int checkNumber;
-          
-          Сonsole.Write("Список рандомных чисел до сортировки:")
-          for (int i = 0; i < arrayLength; i++)
-          {
-            randomNumbers[i] = random.Next(maxNumber);
-            tempOrderedRandomNumbers[i] =  randomNumbers[i];
-            Console.Write(randomNumbers[i] + " ");
-          }
-          
-          Console.WriteLine("Нажмите любую клавишу, чтобы отсортировать цифры от меньшего к большему...");
-          Console.WriteLine();
-          Console.Write("Список отсортированных чисел:");        
-          
-          while (orderedRandomNumbers.Length < arrayLength)
-          {
-            for (int i = 0; i < arrayLength-1; i++)
+          Random random = new Random();
+            int maxNumber = 1000;
+            int arrayLength = 3;
+            //int[] randomNumbers = new int[arrayLength];
+            //int[] orderedRandomNumbers = new int[1];
+            //int[] tempOrderedRandomNumbers = new int[arrayLength];
+            int minNumber = maxNumber;
+            int count = 1;
+            int count2 = 1;
+            int b = 0;
+            int c = 0;
+            int[] randomNumbers = {500,115,116};
+            int potentialMinNumber;
+           
+
+            foreach (int number in randomNumbers) 
             {
-            
-                if (tempOrderedRandomNumbers[i] > tempOrderedRandomNumbers[i+1])
-                {
-                  checkNumber = tempOrderedRandomNumbers[i+1];
-                }
+                Console.Write(number + " ");
             }
-            
-            orderedRandomNumbers[orderedRandomNumbers.Length-1] = checkNumber;
-            Console.Write(orderedRandomNumbers.Length-1 + " ");
-            int[] tempOrderedRandomNumbers2 = new int [tempOrderedRandomNumbers.Length-1];
-            
-            for (int i = 0; i < arrayLength; i++)
+
+
+                //Console.Write("Список рандомных чисел до сортировки:");
+                //for (int i = 0; i < arrayLength; i++)
+                //{
+                //randomNumbers[i] = random.Next(maxNumber);
+                //tempOrderedRandomNumbers[i] = randomNumbers[i];
+                //Console.Write(randomNumbers[i] + " ");
+                //}
+
+                Console.WriteLine();
+            Console.WriteLine("Нажмите любую клавишу, чтобы отсортировать цифры от меньшего к большему...");
+            //Console.ReadKey();
+            Console.WriteLine();
+            Console.Write("Список отсортированных чисел:");
+
+            while (count < arrayLength)
             {
-                if (tempOrderedRandomNumbers[i] != orderedRandomNumbers[orderedRandomNumbers.Length-1])
+                for (int i = 0; i < randomNumbers.Length - 1; i++)
                 {
-                    tempOrderedRandomNumbers2[i] = tempOrderedRandomNumbers[i];
+
+                    if (randomNumbers[i] > randomNumbers[i + 1])
+                    {
+                        potentialMinNumber = randomNumbers[i + 1];
+                    }
+                    else 
+                    {
+                        potentialMinNumber = randomNumbers[i];
+                    }
+
+                    if (potentialMinNumber < minNumber) 
+                    {
+                        minNumber = potentialMinNumber;
+                    }
                 }
+
+                Console.Write(minNumber + " ");
+                int[] tempRandomNumbers = new int[randomNumbers.Length - 1];
+                b = 0;
+                c = 0;
+
+                while (count2 <= tempRandomNumbers.Length) 
+                {                  
+                    if (randomNumbers[b] != minNumber) 
+                    {
+                        tempRandomNumbers[c] = randomNumbers[b];
+                        c++;
+                        count2++;
+                    }
+                    b++;
+                }
+
+
+                count++;
+                minNumber = maxNumber;
+                count2 = 1;
+                randomNumbers = tempRandomNumbers;
             }
-            
-            tempOrderedRandomNumbers = tempOrderedRandomNumbers2;            
-          }
- 
+            Console.Write(randomNumbers[randomNumbers.Length -1]);
             Console.ReadKey();
         }
     }
