@@ -12,10 +12,8 @@ namespace CSTest2
         {
             const string CommandSummarize = "sum";
             const string CommandExit = "exit";
-
             double[] userNumbers = new double[0];
             double userNumbersSum = 0;
-            double checkUserInput;
             string userInput;
             bool isLeaving = false;
             string actionOptions = $"Чтобы просуммировать все числа в массиве, введите - {CommandSummarize}\n" +
@@ -38,7 +36,7 @@ namespace CSTest2
                 userInput = Console.ReadLine();
 
                 switch (userInput)
-                {                      
+                {
                     case CommandSummarize:
                         foreach (double number in userNumbers)
                         {
@@ -56,11 +54,12 @@ namespace CSTest2
                         break;
 
                     default:
+                        double checkUserInput;
                         if (double.TryParse(userInput, out checkUserInput) == false)
                         {
                             Console.Write("Ошибка!");
                             Console.ReadKey();
-                            goto Retry;
+                            break;
                         }
 
                         double[] tempUserNumbers = new double[userNumbers.Length + 1];
@@ -75,9 +74,8 @@ namespace CSTest2
                         break;
                 }
 
-                Retry:
                 Console.Clear();
-            }          
+            }
         }
     }
 }
