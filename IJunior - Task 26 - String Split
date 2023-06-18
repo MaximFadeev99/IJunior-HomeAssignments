@@ -18,6 +18,7 @@ namespace CSTest2
             {
                 Console.WriteLine(word);
             }
+            
             Console.ReadKey();
         }
     }
