@@ -11,10 +11,48 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
-            //1 2 3 4 
-            // нужна будет отдельная переменная, которая будет запоминать первое число массива до начала сдвига , а = 1
-            // начинаем сдвиг: циклом for переставляем все числа начиная со второй позиции на 1 позцию влево, получится 2 3 4 4 , далее присваиваем последнему месту значение а
-            // циклом for отмеряем общее кол-во повторений 
+            Random random = new Random();
+            int maxNumber = 1000;
+            int arrayLength = 4;
+            int[] randomNumbers = new int[arrayLength];
+            int firstNumber;
+            int userInput;
+
+            Console.Write("Изначальный массив:");
+
+            for (int i = 0; i < arrayLength; i++)
+            {
+                randomNumbers[i] = random.Next(maxNumber);
+                Console.Write(randomNumbers[i] + " ");
+
+            }
+
+            Console.WriteLine();
+            Console.Write("На сколько сдвинуть массив влево:");
+            userInput = Convert.ToInt32(Console.ReadLine());
+
+            for (int i = 1; i <= userInput; i++) 
+            {
+                firstNumber = randomNumbers[0];
+
+                for (int j = 1; j < arrayLength; j++) 
+                {
+                    randomNumbers[j - 1] = randomNumbers[j];
+                }
+
+                randomNumbers[arrayLength-1] = firstNumber;
+            }
+
+            Console.Write($"После сдвига на {userInput}:");
+
+            for (int i = 0; i < arrayLength; i++)
+            {
+
+                Console.Write(randomNumbers[i] + " ");
+
+            }
+
+            Console.ReadKey();
         }
     }
 }
