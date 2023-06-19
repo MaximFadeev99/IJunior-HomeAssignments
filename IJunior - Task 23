@@ -12,8 +12,8 @@ namespace CSTest2
         {
             const string CommandSummarize = "sum";
             const string CommandExit = "exit";
+
             double[] userNumbers = new double[0];
-            double userNumbersSum = 0;
             string userInput;
             bool isLeaving = false;
             string actionOptions = $"Чтобы просуммировать все числа в массиве, введите - {CommandSummarize}\n" +
@@ -38,6 +38,8 @@ namespace CSTest2
                 switch (userInput)
                 {
                     case CommandSummarize:
+                        double userNumbersSum = 0;
+
                         foreach (double number in userNumbers)
                         {
                             userNumbersSum += number;
@@ -55,6 +57,7 @@ namespace CSTest2
 
                     default:
                         double checkUserInput;
+
                         if (double.TryParse(userInput, out checkUserInput) == false)
                         {
                             Console.Write("Ошибка!");
