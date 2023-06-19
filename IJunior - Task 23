@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,7 +49,6 @@ namespace CSTest2
                         Console.SetCursorPosition(0, 9);
                         Console.Write($"Сумма всех чисел в массиве равняется {userNumbersSum}");
                         Console.ReadKey();
-                        userNumbersSum = 0;
                         break;
 
                     case CommandExit:
@@ -56,15 +56,6 @@ namespace CSTest2
                         break;
 
                     default:
-                        double checkUserInput;
-
-                        if (double.TryParse(userInput, out checkUserInput) == false)
-                        {
-                            Console.Write("Ошибка!");
-                            Console.ReadKey();
-                            break;
-                        }
-
                         double[] tempUserNumbers = new double[userNumbers.Length + 1];
 
                         for (int i = 0; i < userNumbers.Length; i++)
