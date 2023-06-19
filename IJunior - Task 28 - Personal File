@@ -41,15 +41,34 @@ namespace CSTest1
             {
                 case (CommandAdd)
                   Console.WriteLine();
-                  Console.Write("Укажите имя нового сотрудника:");
+                  Console.Write("Укажите ФИО нового сотрудника:");
                   name = Console.ReadLine();
                   Console.Write("Укажите должность нового струдника:");
                   position = Console.ReadLine();
+                  //добавить функцию
                   break;
-            
-            }
-            
-          }
+                 
+                 case (CommandShowAll)
+                  // добавить функцию ,которая выведет в консоль всех сотрудников с должностю через дефис 
+                  break;
+                  
+                 case (CommandDeleteFile)
+                    Console.Write("Укажите фамилию сотрудника для удаления:");
+                    name = Console.ReadLine();
+                    // добавить функцию, которая перепишет массив без удаляемого сотрудника
+                    break;
+                    
+                 case (CommandLastNameSearch)
+                    Console.Write("Укажите фамилию сотрудника для поиска:");
+                    name = Console.ReadLine();
+                    // добавить функцию, которая найдет нужную строку и выведет полную ФИО + должность 
+                    break;
+                    
+                 case (CommandExit)
+                    isLeaving = true;
+                    break;                                                  
+               }            
+             }
           
         }
     }
