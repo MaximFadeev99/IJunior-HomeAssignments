@@ -45,10 +45,12 @@ namespace CSTest1
                   name = Console.ReadLine();
                   Console.Write("Укажите должность нового струдника:");
                   position = Console.ReadLine();
-                  //добавить функцию
+                  addEmployee(employees, name, position);
+                  Console.WriteLine("Новый сотрудник успешно добавлен!");
                   break;
                  
                  case (CommandShowAll)
+                    ShowAll (employees);
                   // добавить функцию ,которая выведет в консоль всех сотрудников с должностю через дефис 
                   break;
                   
@@ -67,9 +69,57 @@ namespace CSTest1
                  case (CommandExit)
                     isLeaving = true;
                     break;                                                  
-               }            
-             }
-          
+              }
+              
+              Console.ReadKey();
+              Console.Clear();
+           }          
         }
+        
+        static string [,] addEmployee (string [,] employees, string name, string position)
+        {   
+            string [,] tempEmployees = new string[employees.GetLength(0)+1, employees.GetLength(1)+1]
+            
+            for (int i = 0; i < tempEmployees.GetLength(0); i++)
+            {
+                for (int j = 0; j < tempEmployees.GetLength(1); j++)
+                {
+                    tempEmployees[i, j] = employess[i,j];
+                }
+            }
+
+            templEmployees[templEmployees.GetLength(0), templEmployees.GetLength(1)] = {name, position};
+            employees = tempEmployees; 
+            return employees;
+        }
+        
+        static void ShowAll (string[,] employees)
+        {
+            Console.WriteLine();
+            for (int i = 0; i < employees.GetLength(0); i++)
+            {
+                Console.WriteLine(i+1 + employees[i,0] + " - " + employees[i,1]);
+            }                   
+        }
+        
+        static string [,] addEmployee (string [,] employees, string name)
+        {   
+            string [,] tempEmployees = new string[employees.GetLength(0)-1, employees.GetLength(1)-1]
+            
+            for (int i = 0; i < tempEmployees.GetLength(0); i++)
+            {
+                for (int j = 0; j < tempEmployees.GetLength(1); j++)
+                {
+                    if (employess[i,0] != name)
+                        {
+                            tempEmployees[i, j] = employess[i,j];                        
+                        }
+                }
+            }
+
+            employees = tempEmployees; 
+            return employees;
+        }
+        
     }
 }
