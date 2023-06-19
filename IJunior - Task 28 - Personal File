@@ -1,125 +1,127 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSTest1
+namespace CSTest2
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-          const string CommandAdd = "1";
-          const string CommandShowAll = "2";
-          const string CommandDeleteFile = "3";
-          const string CommandLastNameSearch = "4";
-          const string CommandExit = "5";
-          
-          string[,] employees = {{"Петров Михаил Юрьевич", "Водитель"}, {"Русаков Дмитрий Павлович", "Охранник"}, {"Сидоров Сергей Русланов", "Грузчик"};
-          string userInpur;
-          string commandsList = $"{CommandAdd} - добавить нового сотрудника\n {CommandShowAll} - показать список всех текущих сотрудников\n {CommandDeleteFile} - удалить досье сотрудника\n {CommandLastNameSearch} - поиск сотрудника по фамилии\n {CommandExit} - выйти";
-          bool isLeaving = false;
-          string name;  // возмонжо name и position нужно будет указать только в команде 1
-          string position;
-          
-          Console.WriteLine("Добро пожаловать в систему управления кадрами!");
-          Console.WriteLine();
-          Console.WriteLine(commandsList);
-          Console.WriteLine();
-          
-          While (isLeaving == false)
-          {
+            const string CommandAdd = "1";
+            const string CommandShowAll = "2";
+            const string CommandDeleteFile = "3";
+            const string CommandLastNameSearch = "4";
+            const string CommandExit = "5";
+
+            string[,] employees = { { "Петров Михаил Юрьевич", "Водитель" }, { "Русаков Дмитрий Павлович", "Охранник" }, { "Сидоров Сергей Русланов", "Грузчик" } };
+            string userInput;
+            string commandsList = $"{CommandAdd} - добавить нового сотрудника\n {CommandShowAll} - показать список всех текущих сотрудников\n {CommandDeleteFile} - удалить досье сотрудника\n {CommandLastNameSearch} - поиск сотрудника по фамилии\n {CommandExit} - выйти";
+            bool isLeaving = false;
+            string name;  // возмонжо name и position нужно будет указать только в команде 1
+            string position;
+
             Console.WriteLine("Добро пожаловать в систему управления кадрами!");
             Console.WriteLine();
             Console.WriteLine(commandsList);
             Console.WriteLine();
-            Console.Write("Укажите команду:");
-            userInput = Console.Readline();
-            switch (userInput)
+
+            while(isLeaving == false)
             {
-                case (CommandAdd)
-                  Console.WriteLine();
-                  Console.Write("Укажите ФИО нового сотрудника:");
-                  name = Console.ReadLine();
-                  Console.Write("Укажите должность нового струдника:");
-                  position = Console.ReadLine();
-                  addEmployee(employees, name, position);
-                  Console.WriteLine("Новый сотрудник успешно добавлен!");
-                  break;
-                 
-                 case (CommandShowAll)
-                    ShowAll (employees);
-                  // добавить функцию ,которая выведет в консоль всех сотрудников с должностю через дефис 
-                  break;
-                  
-                 case (CommandDeleteFile)
-                    Console.Write("Укажите фамилию сотрудника для удаления:");
-                    name = Console.ReadLine();
-                    // добавить функцию, которая перепишет массив без удаляемого сотрудника
-                    break;
-                    
-                 case (CommandLastNameSearch)
-                    Console.Write("Укажите фамилию сотрудника для поиска:");
-                    name = Console.ReadLine();
-                    // добавить функцию, которая найдет нужную строку и выведет полную ФИО + должность 
-                    break;
-                    
-                 case (CommandExit)
-                    isLeaving = true;
-                    break;                                                  
-              }
-              
-              Console.ReadKey();
-              Console.Clear();
-           }          
+                Console.WriteLine("Добро пожаловать в систему управления кадрами!");
+                Console.WriteLine();
+                Console.WriteLine(commandsList);
+                Console.WriteLine();
+                Console.Write("Укажите команду:");
+                userInput = Console.ReadLine();
+                switch (userInput)
+                {
+                    case CommandAdd:
+                        Console.WriteLine();
+                        Console.Write("Укажите ФИО нового сотрудника:");
+                        name = Console.ReadLine();
+                        Console.Write("Укажите должность нового струдника:");
+                        position = Console.ReadLine();
+                        addEmployee(employees, name, position);
+                        Console.WriteLine("Новый сотрудник успешно добавлен!");
+                        break;
+
+                    case CommandShowAll:
+                        ShowAll(employees);
+                        // добавить функцию ,которая выведет в консоль всех сотрудников с должностю через дефис 
+                        break;
+
+                    case CommandDeleteFile:
+                        Console.Write("Укажите фамилию сотрудника для удаления:");
+                        name = Console.ReadLine();
+                        // добавить функцию, которая перепишет массив без удаляемого сотрудника
+                        break;
+
+                    case CommandLastNameSearch:
+                        Console.Write("Укажите фамилию сотрудника для поиска:");
+                        name = Console.ReadLine();
+                        // добавить функцию, которая найдет нужную строку и выведет полную ФИО + должность 
+                        break;
+
+                    case CommandExit:
+                        isLeaving = true;
+                        break;
+                }
+
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
-        
-        static string [,] addEmployee (string [,] employees, string name, string position)
-        {   
-            string [,] tempEmployees = new string[employees.GetLength(0)+1, employees.GetLength(1)+1]
-            
+
+        static string[,] addEmployee(string[,] employees, string name, string position)
+        {
+            string[,] tempEmployees = new string[employees.GetLength(0) + 1, employees.GetLength(1) + 1];
+
+
             for (int i = 0; i < tempEmployees.GetLength(0); i++)
             {
                 for (int j = 0; j < tempEmployees.GetLength(1); j++)
                 {
-                    tempEmployees[i, j] = employess[i,j];
+                    tempEmployees[i, j] = employees[i, j];
                 }
             }
 
-            templEmployees[templEmployees.GetLength(0), templEmployees.GetLength(1)] = {name, position};
-            employees = tempEmployees; 
+            tempEmployees[tempEmployees.GetLength(0)-1, 0] = name;
+            tempEmployees[tempEmployees.GetLength(0) - 1, 1] = position;
+            employees = tempEmployees;
             return employees;
         }
-        
-        static void ShowAll (string[,] employees)
+
+        static void ShowAll(string[,] employees)
         {
             Console.WriteLine();
             for (int i = 0; i < employees.GetLength(0); i++)
             {
-                Console.WriteLine(i+1 + employees[i,0] + " - " + employees[i,1]);
-            }                   
+                Console.WriteLine(i + 1 + employees[i, 0] + " - " + employees[i, 1]);
+            }
         }
-        
-        static string [,] addEmployee (string [,] employees, string name)
-        {   
-            string [,] tempEmployees = new string[employees.GetLength(0)-1, employees.GetLength(1)-1]
-            
+
+        static string[,] addEmployee(string[,] employees, string name)
+        {
+            string[,] tempEmployees = new string[employees.GetLength(0) - 1, employees.GetLength(1) - 1];
+
+
             for (int i = 0; i < tempEmployees.GetLength(0); i++)
             {
                 for (int j = 0; j < tempEmployees.GetLength(1); j++)
                 {
-                    if (employess[i,0] != name)
-                        {
-                            tempEmployees[i, j] = employess[i,j];                        
-                        }
+                    if (employees[i, 0] != name)
+                    {
+                        tempEmployees[i, j] = employees[i, j];
+                    }
                 }
             }
 
-            employees = tempEmployees; 
+            employees = tempEmployees;
             return employees;
         }
-        
     }
 }
