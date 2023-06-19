@@ -11,22 +11,19 @@ namespace CSTest1
     {
         static void Main(string[] args)
         {
-          Random random = new Random();
+            Random random = new Random();
             int maxNumber = 1000;
             int arrayLength = 10;
             int[] randomNumbers = new int[arrayLength];
-            int minNumber = maxNumber;
-            int arrayCompletionCount = 1;
-            int rearrangeNumberPosition;
-            int vacantCell;
-            int potentialMinNumber;
+            int bufferVariable;
+            bool isCorrect = false;
 
             Console.Write("Список рандомных чисел до сортировки:");
 
             for (int i = 0; i < arrayLength; i++)
             {
-               randomNumbers[i] = random.Next(maxNumber);
-               Console.Write(randomNumbers[i] + " ");
+                randomNumbers[i] = random.Next(maxNumber);
+                Console.Write(randomNumbers[i] + " ");
             }
 
             Console.WriteLine();
@@ -35,49 +32,26 @@ namespace CSTest1
             Console.WriteLine();
             Console.Write("Список отсортированных чисел:");
 
-            for (int i = 1;  i < arrayLength; i++)
+            while (isCorrect == false) 
             {
-                for (int j = 0; j < randomNumbers.Length - 1; j++)
+                isCorrect = true;
+                for (int i = 1; i < randomNumbers.Length; i++) 
                 {
-
-                    if (randomNumbers[j] > randomNumbers[j + 1])
+                    if (randomNumbers[i] < randomNumbers[i - 1]) 
                     {
-                        potentialMinNumber = randomNumbers[j + 1];
-                    }
-                    else 
-                    {
-                        potentialMinNumber = randomNumbers[j];
-                    }
-
-                    if (potentialMinNumber < minNumber) 
-                    {
-                        minNumber = potentialMinNumber;
-                    }
-                }
-
-                Console.Write(minNumber + " ");
-                int[] tempRandomNumbers = new int[randomNumbers.Length - 1];
-                rearrangeNumberPosition = 0;
-                vacantCell = 0;
-
-                while (arrayCompletionCount <= tempRandomNumbers.Length) 
-                {                  
-                    if (randomNumbers[rearrangeNumberPosition] != minNumber) 
-                    {
-                        tempRandomNumbers[vacantCell] = randomNumbers[rearrangeNumberPosition];
-                        vacantCell++;
-                        arrayCompletionCount++;
-                    }
-
-                    rearrangeNumberPosition++;
-                }
-
-                minNumber = maxNumber;
-                arrayCompletionCount = 1;
-                randomNumbers = tempRandomNumbers;
+                        bufferVariable = randomNumbers[i];
+                        randomNumbers[i] = randomNumbers[i - 1];
+                        randomNumbers[i - 1] = bufferVariable;
+                        isCorrect = false;
+                    }               
+                }           
             }
 
-            Console.Write(randomNumbers[randomNumbers.Length -1]);
+            for (int i = 0; i < arrayLength; i++)
+            {
+                Console.Write(randomNumbers[i] + " ");
+            }
+
             Console.ReadKey();
         }
     }
