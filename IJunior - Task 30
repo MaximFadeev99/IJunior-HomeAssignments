@@ -1,1 +1,44 @@
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {           
+            while (true) 
+            {
+                IntegerCheck();
+                Console.ReadKey();
+                Console.Clear();            
+            }
+        }
+
+        static int IntegerCheck () 
+        {
+            string userInput;
+            int checkedUserInput
+                ;
+            Console.Write("Введите целое число:");
+            userInput = Console.ReadLine();
+
+            while (int.TryParse(userInput, out checkedUserInput) == false)
+            {               
+               Console.Write("Вы ввели неверное число. Попробуйте снова:");
+               userInput = Console.ReadLine();
+            }
+
+            Console.WriteLine($"Вы ввели число {checkedUserInput}. Оно верное.");
+
+            return checkedUserInput;
+        }
+    }
+}
 
