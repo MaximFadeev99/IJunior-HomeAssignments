@@ -21,11 +21,11 @@ namespace CSTest2
             }
         }
 
-        static int IntegerCheck () 
+        static void IntegerCheck () 
         {
             string userInput;
-            int checkedUserInput
-                ;
+            int checkedUserInput;
+                
             Console.Write("Введите целое число:");
             userInput = Console.ReadLine();
 
@@ -36,9 +36,6 @@ namespace CSTest2
             }
 
             Console.WriteLine($"Вы ввели число {checkedUserInput}. Оно верное.");
-
-            return checkedUserInput;
         }
     }
 }
-
