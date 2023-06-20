@@ -1,0 +1,54 @@
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int currentHealth = 4;
+            int maxHealth = 10;
+            int healthbarPosition = 1;
+            int currentMana = 6;
+            int maxMana = 10;
+            int manabarPosition = 4;
+
+            DrawBar(currentHealth, maxHealth, ConsoleColor.Red, healthbarPosition);
+            DrawBar(currentMana, maxMana, ConsoleColor.Blue, manabarPosition);
+
+            Console.ReadKey();
+        }
+
+        static void DrawBar(int value, int maxValue, ConsoleColor color, int position, char emptySpace = '_') 
+        {
+            string bar = "";
+            ConsoleColor defaultColor = Console.ForegroundColor;
+
+            Console.SetCursorPosition(position, 0);
+
+            Console.Write('[');
+            Console.ForegroundColor = color;
+            for (int i = 0; i < value; i++) 
+            {
+                bar += " ";
+            }
+
+            Console.Write(bar);
+            Console.ForegroundColor = defaultColor;
+
+            for (int i = value; i < maxValue; i++) 
+            {
+                bar += emptySpace;
+            }
+            
+            Console.Write(bar + ']');
+        }
+    }
+}
