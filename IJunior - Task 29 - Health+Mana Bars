@@ -22,32 +22,32 @@ namespace CSTest2
 
             DrawBar(currentHealth, maxHealth, ConsoleColor.Red, healthbarPosition);
             DrawBar(currentMana, maxMana, ConsoleColor.Blue, manabarPosition);
-
             Console.ReadKey();
         }
 
-        static void DrawBar(int value, int maxValue, ConsoleColor color, int position, char emptySpace = '_') 
+        static void DrawBar(int value, int maxValue, ConsoleColor color, int position, char emptySpace = '_')
         {
             string bar = "";
-            ConsoleColor defaultColor = Console.ForegroundColor;
+            ConsoleColor defaultColor = Console.BackgroundColor;
 
-            Console.SetCursorPosition(position, 0);
+            Console.SetCursorPosition(0, position);
 
             Console.Write('[');
-            Console.ForegroundColor = color;
-            for (int i = 0; i < value; i++) 
+            Console.BackgroundColor = color;
+            for (int i = 0; i < value; i++)
             {
-                bar += " ";
+                bar += "#";
             }
 
             Console.Write(bar);
-            Console.ForegroundColor = defaultColor;
+            Console.BackgroundColor = defaultColor;
+            bar = "";
 
-            for (int i = value; i < maxValue; i++) 
+            for (int i = value; i < maxValue; i++)
             {
                 bar += emptySpace;
             }
-            
+
             Console.Write(bar + ']');
         }
     }
