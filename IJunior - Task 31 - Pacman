@@ -14,6 +14,7 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
+            Random random = new Random();
             int playerPositionX;
             int playerPositionY;
             int playerDirectionChangeX = 0;
@@ -30,6 +31,7 @@ namespace CSTest2
             char[,] currentMap = ReadMap(filePath, out playerPositionX, out playerPositionY, ref totalPoints, out enemy1PositionX, 
                 out enemy1PositionY, out enemy2PositionX, out enemy2PositionY);
             bool isPlaying = true;
+            char mapWallsSymbol = '#';
             Console.CursorVisible = false;
 
             DrawMap(currentMap);
@@ -45,10 +47,44 @@ namespace CSTest2
                     ChangeDirection(pressedKey.Key, ref playerDirectionChangeX, ref playerDirectionChangeY);                    
                 }
                 
-                MovePlayer(currentMap,ref playerPositionX, ref playerPositionY, playerDirectionChangeX, playerDirectionChangeY);
+                Move('@', currentMap,ref playerPositionX, ref playerPositionY, ref playerDirectionChangeX, ref playerDirectionChangeY);
                 CollectPoints(currentMap, playerPositionX, playerPositionY, ref collectedPoints);
-                MoveEnemy(currentMap, ref enemy1PositionX, ref enemy1PositionY, 'G', ref enemyDirectionChangeX, ref enemyDirectionChangeY);
-                MoveEnemy(currentMap, ref enemy2PositionX, ref enemy2PositionY, 'X', ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+
+                if (currentMap[enemy1PositionX + enemyDirectionChangeX, enemy1PositionY + enemyDirectionChangeY] != mapWallsSymbol)
+                {
+                    Move('G', currentMap, ref enemy1PositionX, ref enemy1PositionY, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                }
+                else 
+                {
+                    ChangeDirection(random, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                    Move('G', currentMap, ref enemy1PositionX, ref enemy1PositionY, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                }
+
+                if (currentMap[enemy2PositionX + enemyDirectionChangeX, enemy2PositionY + enemyDirectionChangeY] != mapWallsSymbol)
+                {
+                    Move('X', currentMap, ref enemy2PositionX, ref enemy2PositionY, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                }
+                else
+                {
+                    ChangeDirection(random, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                    Move('X', currentMap, ref enemy2PositionX, ref enemy2PositionY, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                }
+
+                if (currentMap[playerPositionX, playerPositionY] == currentMap[enemy1PositionX, enemy1PositionY] || currentMap[playerPositionX, playerPositionY] == currentMap[enemy2PositionX, enemy2PositionY]) 
+                {
+                    isPlaying = false;
+                    Console.SetCursorPosition(0, 19);
+                    Console.WriteLine("Вас съели!");
+                    Console.ReadKey();
+                }
+
+                if (collectedPoints == totalPoints)
+                {
+                    isPlaying = false;
+                    Console.SetCursorPosition(0, 19);
+                    Console.WriteLine("Вы победили!");
+                    Console.ReadKey();
+                }
             }           
         }
 
@@ -77,16 +113,19 @@ namespace CSTest2
                         case '@':
                             playerPositionX = i;
                             playerPositionY = j;
+                            map[i, j] = pointSymbol;
                             break;
 
                         case 'G':
                             enemy1PositionX = i;
                             enemy1PositionY = j;
+                            map[i, j] = pointSymbol;
                             break;
 
                         case 'X':
                             enemy2PositionX = i;
                             enemy2PositionY = j;
+                            map[i, j] = pointSymbol;
                             break;
 
                         case ' ':
@@ -142,26 +181,55 @@ namespace CSTest2
             }
         }
 
-        static void MovePlayer (char[,] currentMap, ref int currentPositionX, ref int currentPositionY, 
-            int directionChangeX, int directionChangeY, char mapWallsSymbol = '#') 
+        static void ChangeDirection(Random random, ref int directionChangeX, ref int directionChangeY)
+        {
+            int minValue = 1;
+            int maxValue = 5;
+
+            switch (random.Next(minValue, maxValue))
+            {
+                case 1:
+                    directionChangeX = -1;
+                    directionChangeY = 0;
+                    break;
+
+                case 2:
+                    directionChangeX = 1;
+                    directionChangeY = 0;
+                    break;
+
+                case 3:
+                    directionChangeX = 0;
+                    directionChangeY = 1;
+                    break;
+
+                case 4:
+                    directionChangeX = 0;
+                    directionChangeY = -1;
+                    break;
+            }
+        }
+
+        static void Move (char mainSymbol, char[,] currentMap, ref int currentPositionX, ref int currentPositionY, 
+            ref int directionChangeX, ref int directionChangeY, char mapWallsSymbol = '#') 
         {
             if (currentMap[currentPositionX + directionChangeX, currentPositionY + directionChangeY] != mapWallsSymbol)
             {
                 Console.SetCursorPosition(currentPositionY, currentPositionX);
-                Console.Write(" ");
+                Console.Write(currentMap[currentPositionX, currentPositionY]);
                 currentPositionX += directionChangeX;
                 currentPositionY += directionChangeY;
                 Console.SetCursorPosition(currentPositionY, currentPositionX);
-                Console.Write("@");
+                Console.Write(mainSymbol);
             }
 
             if (directionChangeX != 0)
             {
-                System.Threading.Thread.Sleep(200);
+                System.Threading.Thread.Sleep(45);
             }
             else
             {
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(20);
             }
         }
 
@@ -171,60 +239,10 @@ namespace CSTest2
             {
                 collectedPoints++;
                 currentMap[playerPositionX, playerPositionY] = ' ';
-            }
+            }       
+        }
+
+                
         
-        }
-
-        static void MoveEnemy(char[,] currentMap, ref int currentPositionX, ref int currentPositionY, char enemySymbol,
-           ref int directionChangeX, ref int directionChangeY, char mapWallsSymbol = '#', char pointSymbol = '.') 
-        {
-            Random random = new Random();
-            int changeDirectionOptions;
-            int minValue = 1;
-            int maxValue = 5;
-
-            while (currentMap[currentPositionX + directionChangeX, currentPositionY + directionChangeY] == mapWallsSymbol) 
-            {
-                changeDirectionOptions = random.Next(minValue, maxValue);
-
-                switch (changeDirectionOptions) 
-                {
-                    case 1:
-                        directionChangeX = -1;
-                        directionChangeY = 0;
-                        break;
-
-                    case 2:
-                        directionChangeX = 1;
-                        directionChangeY = 0;
-                        break;
-
-                    case 3:
-                        directionChangeX = 0;
-                        directionChangeY = 1;
-                        break;
-
-                    case 4:
-                        directionChangeX = 0;
-                        directionChangeY = -1;
-                        break;
-                }
-            }
-            Console.SetCursorPosition(currentPositionY, currentPositionX);
-
-            if (currentMap[currentPositionX, currentPositionY] == pointSymbol)
-            {
-               Console.Write(pointSymbol);
-            }
-            else 
-            {
-               Console.Write(" ");
-            }
-
-            currentPositionX += directionChangeX;
-            currentPositionY += directionChangeY;
-            Console.SetCursorPosition(currentPositionY, currentPositionX);
-            Console.Write(enemySymbol);           
-        }
     }
 }
