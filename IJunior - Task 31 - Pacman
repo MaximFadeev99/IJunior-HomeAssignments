@@ -1,0 +1,230 @@
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using System.Data.SqlClient;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int playerPositionX;
+            int playerPositionY;
+            int playerDirectionChangeX = 0;
+            int playerDirectionChangeY = 0;
+            int collectedPoints = 0;
+            int totalPoints = 0;
+            int enemy1PositionX;
+            int enemy1PositionY;
+            int enemy2PositionX;
+            int enemy2PositionY;
+            int enemyDirectionChangeX = 0;
+            int enemyDirectionChangeY = 1;
+            string filePath = "map1";
+            char[,] currentMap = ReadMap(filePath, out playerPositionX, out playerPositionY, ref totalPoints, out enemy1PositionX, 
+                out enemy1PositionY, out enemy2PositionX, out enemy2PositionY);
+            bool isPlaying = true;
+            Console.CursorVisible = false;
+
+            DrawMap(currentMap);
+
+            while (isPlaying == true) 
+            {
+                Console.SetCursorPosition(0,20);
+                Console.Write($"Собрано {collectedPoints} из {totalPoints}");
+
+                if (Console.KeyAvailable == true)
+                {
+                    ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+                    ChangeDirection(pressedKey.Key, ref playerDirectionChangeX, ref playerDirectionChangeY);                    
+                }
+                
+                MovePlayer(currentMap,ref playerPositionX, ref playerPositionY, playerDirectionChangeX, playerDirectionChangeY);
+                CollectPoints(currentMap, playerPositionX, playerPositionY, ref collectedPoints);
+                MoveEnemy(currentMap, ref enemy1PositionX, ref enemy1PositionY, 'G', ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                MoveEnemy(currentMap, ref enemy2PositionX, ref enemy2PositionY, 'X', ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+            }           
+        }
+
+        static char[,] ReadMap (string filePath, out int playerPositionX, out int playerPositionY, ref int totalPoints,
+            out int enemy1PositionX, out int enemy1PositionY, out int enemy2PositionX, out int enemy2PositionY, char mapWallsSymbol = '#', char pointSymbol = '.') 
+        {
+            
+            string[] mapFile = File.ReadAllLines ($"Maps/{filePath}.txt");
+            char[,] map = new char[mapFile.Length, mapFile[0].Length];
+
+            playerPositionX = 0;
+            playerPositionY = 0;
+            enemy1PositionX = 0;
+            enemy1PositionY = 0;
+            enemy2PositionX = 0;
+            enemy2PositionY = 0;
+
+            for (int i = 0; i < mapFile.Length; i++) 
+            {
+                for (int j = 0; j < mapFile[0].Length; j++)
+                {
+                    map[i, j] = mapFile[i][j];
+
+                    switch (map[i, j]) 
+                    {
+                        case '@':
+                            playerPositionX = i;
+                            playerPositionY = j;
+                            break;
+
+                        case 'G':
+                            enemy1PositionX = i;
+                            enemy1PositionY = j;
+                            break;
+
+                        case 'X':
+                            enemy2PositionX = i;
+                            enemy2PositionY = j;
+                            break;
+
+                        case ' ':
+                            map[i, j] = pointSymbol;
+                            totalPoints++;
+                            break;
+
+                        case '&':
+                            map[i, j] = mapWallsSymbol;
+                            break;
+                    }                   
+                }
+            }
+            return map;      
+        }
+
+        static void DrawMap(char[,] map) 
+        {
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    Console.Write(map[i, j]);
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+        static void ChangeDirection(ConsoleKey pressedKey, ref int directionChangeX, ref int directionChangeY) 
+        {
+            switch (pressedKey)
+            {
+                case ConsoleKey.UpArrow:
+                    directionChangeX = -1;
+                    directionChangeY = 0;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    directionChangeX = 1;
+                    directionChangeY = 0;
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    directionChangeX = 0;
+                    directionChangeY = 1;
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    directionChangeX = 0;
+                    directionChangeY = -1;
+                    break;
+            }
+        }
+
+        static void MovePlayer (char[,] currentMap, ref int currentPositionX, ref int currentPositionY, 
+            int directionChangeX, int directionChangeY, char mapWallsSymbol = '#') 
+        {
+            if (currentMap[currentPositionX + directionChangeX, currentPositionY + directionChangeY] != mapWallsSymbol)
+            {
+                Console.SetCursorPosition(currentPositionY, currentPositionX);
+                Console.Write(" ");
+                currentPositionX += directionChangeX;
+                currentPositionY += directionChangeY;
+                Console.SetCursorPosition(currentPositionY, currentPositionX);
+                Console.Write("@");
+            }
+
+            if (directionChangeX != 0)
+            {
+                System.Threading.Thread.Sleep(200);
+            }
+            else
+            {
+                System.Threading.Thread.Sleep(100);
+            }
+        }
+
+        static void CollectPoints(char[,] currentMap, int playerPositionX, int playerPositionY, ref int collectedPoints, char pointSymbol = '.') 
+        {
+            if (currentMap[playerPositionX, playerPositionY] == pointSymbol) 
+            {
+                collectedPoints++;
+                currentMap[playerPositionX, playerPositionY] = ' ';
+            }
+        
+        }
+
+        static void MoveEnemy(char[,] currentMap, ref int currentPositionX, ref int currentPositionY, char enemySymbol,
+           ref int directionChangeX, ref int directionChangeY, char mapWallsSymbol = '#', char pointSymbol = '.') 
+        {
+            Random random = new Random();
+            int changeDirectionOptions;
+            int minValue = 1;
+            int maxValue = 5;
+
+            while (currentMap[currentPositionX + directionChangeX, currentPositionY + directionChangeY] == mapWallsSymbol) 
+            {
+                changeDirectionOptions = random.Next(minValue, maxValue);
+
+                switch (changeDirectionOptions) 
+                {
+                    case 1:
+                        directionChangeX = -1;
+                        directionChangeY = 0;
+                        break;
+
+                    case 2:
+                        directionChangeX = 1;
+                        directionChangeY = 0;
+                        break;
+
+                    case 3:
+                        directionChangeX = 0;
+                        directionChangeY = 1;
+                        break;
+
+                    case 4:
+                        directionChangeX = 0;
+                        directionChangeY = -1;
+                        break;
+                }
+            }
+            Console.SetCursorPosition(currentPositionY, currentPositionX);
+
+            if (currentMap[currentPositionX, currentPositionY] == pointSymbol)
+            {
+               Console.Write(pointSymbol);
+            }
+            else 
+            {
+               Console.Write(" ");
+            }
+
+            currentPositionX += directionChangeX;
+            currentPositionY += directionChangeY;
+            Console.SetCursorPosition(currentPositionY, currentPositionX);
+            Console.Write(enemySymbol);           
+        }
+    }
+}
