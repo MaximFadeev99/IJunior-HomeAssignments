@@ -52,6 +52,14 @@ namespace CSTest1
           return reshuffledNumbers;         
         }
         
-        static void Depict (ref int[] depictedArray, 
+        static void Depict (ref int[] depictedArray, int cursorPositionX, int cursorPositionY)
+        {
+            Console.SetCursorPosition (cursorPositionX, cursorPositionY); 
+            
+            for( int i = 0, i < depictedArray.Length, i++)
+            {
+                Console.WriteLine(i+1 +") " + depictedArray[i]);
+            }
+        }
     }
 }
