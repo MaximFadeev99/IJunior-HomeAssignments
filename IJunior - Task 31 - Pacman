@@ -70,7 +70,14 @@ namespace CSTest2
                     Move('X', currentMap, ref enemy2PositionX, ref enemy2PositionY, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
                 }
 
-                if (currentMap[playerPositionX, playerPositionY] == currentMap[enemy1PositionX, enemy1PositionY] || currentMap[playerPositionX, playerPositionY] == currentMap[enemy2PositionX, enemy2PositionY]) 
+                if (playerPositionX == enemy1PositionX && playerPositionY == enemy1PositionY) 
+                {
+                    isPlaying = false;
+                    Console.SetCursorPosition(0, 19);
+                    Console.WriteLine("Вас съели!");
+                    Console.ReadKey();
+                }
+                else if (playerPositionX == enemy2PositionX && playerPositionY == enemy2PositionY)
                 {
                     isPlaying = false;
                     Console.SetCursorPosition(0, 19);
@@ -114,18 +121,21 @@ namespace CSTest2
                             playerPositionX = i;
                             playerPositionY = j;
                             map[i, j] = pointSymbol;
+                            totalPoints++;
                             break;
 
                         case 'G':
                             enemy1PositionX = i;
                             enemy1PositionY = j;
                             map[i, j] = pointSymbol;
+                            totalPoints++;
                             break;
 
                         case 'X':
                             enemy2PositionX = i;
                             enemy2PositionY = j;
                             map[i, j] = pointSymbol;
+                            totalPoints++;
                             break;
 
                         case ' ':
@@ -240,9 +250,6 @@ namespace CSTest2
                 collectedPoints++;
                 currentMap[playerPositionX, playerPositionY] = ' ';
             }       
-        }
-
-                
-        
+        }                    
     }
 }
