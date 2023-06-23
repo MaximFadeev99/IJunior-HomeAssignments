@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSTest1
 {
@@ -13,64 +8,50 @@ namespace CSTest1
         {
             Random random = new Random();
             int[] numbers = new int[10];
-            int[] reshuffledNumbers;
             int maxNumber = 100;
 
-            for (int i = 0; i < numbers.Length; i++) 
+            for (int i = 0; i < numbers.Length; i++)
             {
-                numbers[i] = random.Next(maxNumber);
+              numbers[i] = random.Next(maxNumber);
             }
 
-            Reshuffle(numbers, out reshuffledNumbers);
             Console.Write("Изначальный массив:");
-            Depict(ref numbers, 0, 1);
+            ShowArray(numbers, 0, 1);
+            Shuffle(ref numbers);         
             Console.SetCursorPosition(25, 0);
             Console.Write("Измененный массив:");
-            Depict(ref reshuffledNumbers, 25, 1);
+            ShowArray(numbers, 25, 1);
             Console.ReadKey();
         }
 
-        static int[] Reshuffle(int[] originalArray, out int[] reshuffledArray)
+        static void Shuffle(ref int[] originalArray)
         {
             Random random = new Random();
-            int minValue = 1;
-            int maxValue = originalArray.Length;
-            reshuffledArray = new int [maxValue];
-            int[] randomNumbers = new int [maxValue];
-            int positionCount;
-            int tempVariable;
+            int transferNumberPosition;
+            int transferNumber;
 
-            for (int i = 0; i < maxValue-1; i++)
+            for (int shuffleBorder = originalArray.Length - 1; shuffleBorder >= 0; shuffleBorder--) 
             {
-                tempVariable = random.Next(minValue, maxValue);
+                transferNumberPosition = random.Next(0, shuffleBorder);
+                transferNumber = originalArray[transferNumberPosition];
 
-                while (randomNumbers.Contains(tempVariable))
+                for (int i = transferNumberPosition + 1; i <= shuffleBorder; i++) 
                 {
-                    tempVariable = random.Next(minValue, maxValue);
+                    originalArray[i-1] = originalArray[i];
                 }
 
-                randomNumbers[i] = tempVariable;
+                originalArray[shuffleBorder] = transferNumber;
             }
-
-            positionCount = 0;
-
-            foreach (var number in randomNumbers)
-            {
-                reshuffledArray[number] = originalArray[positionCount];
-                positionCount++;
-            }
-
-            return reshuffledArray;
         }
 
-        static void Depict(ref int[] depictedArray, int cursorPositionX, int cursorPositionY)
+        static void ShowArray (int[] depictedArray, int cursorPositionX, int cursorPositionY)
         {
             Console.SetCursorPosition(cursorPositionX, cursorPositionY);
 
             for (int i = 0; i < depictedArray.Length; i++)
             {
                 Console.Write(i + 1 + ") " + depictedArray[i]);
-                Console.SetCursorPosition(cursorPositionX, cursorPositionY+i+1);
+                Console.SetCursorPosition(cursorPositionX, cursorPositionY + i + 1);
             }
         }
     }
