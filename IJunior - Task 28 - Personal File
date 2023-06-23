@@ -46,9 +46,7 @@ namespace CSTest2
                         break;
 
                     case CommandLastNameSearch:
-                        bool isFound = false;
-                        int targetRow = 0;
-                        LastNameSearch(ref employeeNames, ref employeePositions, ref isFound, out targetRow);
+                        LastNameSearch(ref employeeNames, ref employeePositions, out bool isFound, out int targetRow);
                         break;
 
                     case CommandExit:
@@ -97,7 +95,7 @@ namespace CSTest2
             }
         }
 
-        static int LastNameSearch(ref string[] employeeNames, ref string[] employeePositions, ref bool isFound, out int targetRow)
+        static int LastNameSearch(ref string[] employeeNames, ref string[] employeePositions, out bool isFound, out int targetRow)
         {
             string name;
             isFound = false;
@@ -131,11 +129,9 @@ namespace CSTest2
 
         static void DeleteEmployee(ref string[] employeeNames, ref string[] employeePositions)
         {
-            bool isFound = false;
-            int targetRow = 0;
             string userInput = "";
-            int rowCount = 0;
-            LastNameSearch(ref employeeNames, ref employeePositions, ref isFound, out targetRow);
+            int rowCount;
+            LastNameSearch(ref employeeNames, ref employeePositions, out bool isFound, out int targetRow);
 
             if (isFound == true)
             {
