@@ -1,11 +1,4 @@
 using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSTest2
 {
@@ -25,30 +18,33 @@ namespace CSTest2
             Console.ReadKey();
         }
 
-        static void DrawBar(int value, int maxValue, ConsoleColor color, int position, char emptySpace = '_')
+        static void DrawBar(int value, int maxValue, ConsoleColor color, int position)
         {
             string bar = "";
+            char startSymbol = '[';
+            char endSymbol = ']';
+            char mainSymbol = '#';
+            char emptySpaceSymbol = '_';
             ConsoleColor defaultColor = Console.BackgroundColor;
 
             Console.SetCursorPosition(0, position);
-
-            Console.Write('[');
+            Console.Write(startSymbol);
             Console.BackgroundColor = color;
-            for (int i = 0; i < value; i++)
-            {
-                bar += "#";
-            }
-
+            bar = FillBar(bar, 0, value, mainSymbol);
             Console.Write(bar);
             Console.BackgroundColor = defaultColor;
             bar = "";
+            bar = FillBar(bar, value, maxValue, emptySpaceSymbol);
+            Console.Write(bar + endSymbol);
+        }
 
-            for (int i = value; i < maxValue; i++)
+        static string FillBar(string bar, int startValue, int endValue, char filler) 
+        {
+            for (int i = startValue; i < endValue; i++) 
             {
-                bar += emptySpace;
+                bar += filler; 
             }
-
-            Console.Write(bar + ']');
+            return bar;
         }
     }
 }
