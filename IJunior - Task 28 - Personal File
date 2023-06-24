@@ -38,7 +38,7 @@ namespace CSTest2
                         break;
 
                     case CommandShowAll:
-                        ShowAll(employeeNames, employeePositions);
+                        ShowAllEmployees(employeeNames, employeePositions);
                         break;
 
                     case CommandDeleteEmployee:
@@ -46,7 +46,7 @@ namespace CSTest2
                         break;
 
                     case CommandLastNameSearch:
-                        Search(employeeNames, employeePositions, out _);
+                        FindEmployee(employeeNames, employeePositions, out _);
                         break;
 
                     case CommandExit:
@@ -61,36 +61,33 @@ namespace CSTest2
 
         static void AddEmployee(ref string[] employeeNames, ref string[] employeePositions)
         {
-            string name;
+            string fullName;
             string position;
 
             Console.WriteLine();
             Console.Write("Укажите ФИО нового сотрудника:");
-            name = Console.ReadLine();
+            fullName = Console.ReadLine();
+            AddElement(ref employeeNames, fullName);
             Console.Write("Укажите должность нового струдника:");
             position = Console.ReadLine();
-            IncreaseArray(ref employeeNames, ref employeePositions, name, position);         
+            AddElement(ref employeePositions, position);
             Console.Write("Новый сотрудник успешно добавлен!");
         }
 
-        static void IncreaseArray(ref string[] employeeNames, ref string[] employeePositions, string name , string position) 
+        static void AddElement(ref string[] targetArray,  string newElement) 
         {
-            string[] tempEmployeeNames = new string[employeeNames.Length + 1];
-            string[] tempEmployeePositions = new string[employeeNames.Length + 1];
-
-            for (int i = 0; i < employeeNames.Length; i++)
+            string[] tempTargetArray = new string[targetArray.Length + 1];
+            
+            for (int i = 0; i < targetArray.Length; i++)
             {
-                tempEmployeeNames[i] = employeeNames[i];
-                tempEmployeePositions[i] = employeePositions[i];
+                tempTargetArray[i] = targetArray[i];
             }
 
-            tempEmployeeNames[tempEmployeeNames.Length - 1] = name;
-            tempEmployeePositions[tempEmployeePositions.Length - 1] = position;
-            employeeNames = tempEmployeeNames;
-            employeePositions = tempEmployeePositions;
+            tempTargetArray[tempTargetArray.Length - 1] = newElement;
+            targetArray = tempTargetArray;
         }
 
-        static void ShowAll( string[] employeeNames, string[] employeePoistions)
+        static void ShowAllEmployees(string[] employeeNames, string[] employeePoistions)
         {
             Console.WriteLine();
 
@@ -100,26 +97,26 @@ namespace CSTest2
             }
         }
 
-        static void Search(string[] employeeNames, string[] employeePositions, out bool isFound)
+        static void FindEmployee(string[] employeeNames, string[] employeePositions, out bool isFound)
         {
-            string name;
+            string lastName;
             isFound = false;
             char delimiter = ' ';
 
             Console.WriteLine();
             Console.Write("Укажите фамилию для поиска сотрудника:");
-            name = Console.ReadLine().ToLower();
+            lastName = Console.ReadLine().ToLower();
 
             for (int i = 0; i < employeeNames.Length; i++)
             {
-                if (employeeNames[i].Split(delimiter)[0].ToLower() == name)
+                if (employeeNames[i].Split(delimiter)[0].ToLower() == lastName)
                 {
                     isFound = true;
-                    Console.WriteLine("Сотрудник найден: "+ (i + 1) + ") "+ employeeNames[i] + " - " + employeePositions[i]);
+                    Console.WriteLine("Сотрудник найден: " + (i + 1) + ") " + employeeNames[i] + " - " + employeePositions[i]);
                 }
             }
 
-            if (isFound == false)           
+            if (isFound == false)
             {
                 Console.Write("Сотрудник не найден.");
             }
@@ -127,46 +124,48 @@ namespace CSTest2
 
         static void DeleteEmployee(ref string[] employeeNames, ref string[] employeePositions)
         {
-            string userInput;
+            string userInput = "";
             string abortion = "отмена";
             int targetRow;
 
-            Search(employeeNames, employeePositions, out bool isFound);
+            ShowAllEmployees(employeeNames, employeePositions);            
+            Console.WriteLine();
+            Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
+            userInput = Console.ReadLine();
 
-            if (isFound == true)
+            while (int.TryParse(userInput, out int result) == false && userInput != abortion) 
             {
-                    Console.WriteLine();
-                    Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:") ;
-                    userInput = Console.ReadLine();
+                Console.WriteLine();
+                Console.WriteLine("Ошибка! Неверный ввод данных!");
+                Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
+                userInput = Console.ReadLine();
+            }              
 
-                if (userInput != abortion)
-                {
-                    targetRow = Convert.ToInt32(userInput) - 1;
-                    DecreaseArray (ref employeeNames, ref employeePositions, targetRow);
-                    Console.Write("Сотрудник удален.");
-                }
+            if (userInput != abortion)
+            {
+                targetRow = Convert.ToInt32(userInput) - 1;
+                RemoveElement(ref employeeNames, targetRow);
+                RemoveElement(ref employeePositions, targetRow);
+                Console.Write("Сотрудник удален.");
             }
+            
         }
 
-        static void DecreaseArray(ref string[] employeeNames, ref string[] employeePositions, int targetRow) 
+        static void RemoveElement(ref string[] targetArray, int targetRow) 
         {
-            int rowCount;
-            string[] tempEmployeeNames = new string[employeeNames.Length - 1];
-            string[] tempEmployeePositions = new string[employeeNames.Length - 1];
+            string[] tempTargetArray = new string[targetArray.Length - 1];
 
-            rowCount = 0;
-            for (int i = 0; i < employeeNames.Length; i++)
+            for (int i = 0; i < targetRow; i++) 
             {
-                if (i != targetRow)
-                {
-                    tempEmployeeNames[rowCount] = employeeNames[i];
-                    tempEmployeePositions[rowCount] = employeePositions[i];
-                    rowCount++;
-                }
+                tempTargetArray[i] = targetArray[i];
             }
 
-            employeeNames = tempEmployeeNames;
-            employeePositions = tempEmployeePositions;
+            for (int i = targetRow; i < tempTargetArray.Length; i++) 
+            {
+                tempTargetArray[i] = targetArray[i+1];
+            }
+
+            targetArray = tempTargetArray;
         }
     }
 }
