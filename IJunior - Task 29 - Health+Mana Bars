@@ -6,19 +6,24 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            int currentHealth = 4;
-            int maxHealth = 10;
+            double currentHealth;
+            double currentHealthPercent = 40;
+            double maxPercent = 100;
+            double maxHealth = 30;
             int healthbarPosition = 1;
-            int currentMana = 6;
-            int maxMana = 10;
+            double currentMana;
+            double currentManaPercent = 60;
+            double maxMana = 30;
             int manabarPosition = 4;
 
+            currentHealth = CalculateCurrentValue(currentHealthPercent,maxPercent, maxHealth);
             DrawBar(currentHealth, maxHealth, ConsoleColor.Red, healthbarPosition);
+            currentMana = CalculateCurrentValue (currentManaPercent, maxPercent, maxMana);
             DrawBar(currentMana, maxMana, ConsoleColor.Blue, manabarPosition);
             Console.ReadKey();
         }
 
-        static void DrawBar(int value, int maxValue, ConsoleColor color, int position)
+        static void DrawBar(double value, double maxValue, ConsoleColor color, int position)
         {
             string bar = "";
             char startSymbol = '[';
@@ -38,13 +43,22 @@ namespace CSTest2
             Console.Write(bar + endSymbol);
         }
 
-        static string FillBar(string bar, int startValue, int endValue, char filler) 
+        static string FillBar(string bar, double startValue, double endValue, char filler)
         {
-            for (int i = startValue; i < endValue; i++) 
+            for (double i = startValue; i < endValue; i++)
             {
-                bar += filler; 
+                bar += filler;
             }
+
             return bar;
+        }
+
+        static double CalculateCurrentValue(double percent, double maxPercent, double maxValue) 
+        {
+            double CurrentValue;
+
+            CurrentValue = maxValue / maxPercent * percent;
+            return CurrentValue;
         }
     }
 }
