@@ -16,9 +16,9 @@ namespace CSTest2
             double maxMana = 30;
             int manabarPosition = 4;
 
-            currentHealth = CalculateCurrentValue(currentHealthPercent,maxPercent, maxHealth);
+            currentHealth = CalculateCurrentValue(currentHealthPercent, maxPercent, maxHealth);
             DrawBar(currentHealth, maxHealth, ConsoleColor.Red, healthbarPosition);
-            currentMana = CalculateCurrentValue (currentManaPercent, maxPercent, maxMana);
+            currentMana = CalculateCurrentValue(currentManaPercent, maxPercent, maxMana);
             DrawBar(currentMana, maxMana, ConsoleColor.Blue, manabarPosition);
             Console.ReadKey();
         }
@@ -53,12 +53,20 @@ namespace CSTest2
             return bar;
         }
 
-        static double CalculateCurrentValue(double percent, double maxPercent, double maxValue) 
+        static double CalculateCurrentValue(double percent, double maxPercent, double maxValue)
         {
-            double CurrentValue;
+            double currentValue;
 
-            CurrentValue = maxValue / maxPercent * percent;
-            return CurrentValue;
+            if (percent > maxPercent)
+            {
+                currentValue = maxValue;
+            }
+            else 
+            {
+                currentValue = maxValue / maxPercent * percent;
+            }
+            
+            return currentValue;
         }
     }
 }
