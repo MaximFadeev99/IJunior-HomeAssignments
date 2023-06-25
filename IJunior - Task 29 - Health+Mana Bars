@@ -61,7 +61,11 @@ namespace CSTest2
             {
                 currentValue = maxValue;
             }
-            else 
+            else if (percent < 0) 
+            {
+                currentValue = 0;
+            }
+            else
             {
                 currentValue = maxValue / maxPercent * percent;
             }
@@ -70,3 +74,4 @@ namespace CSTest2
         }
     }
 }
+
