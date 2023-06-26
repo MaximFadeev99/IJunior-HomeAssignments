@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+
+namespace CSTest1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {           
+            Dictionary<string,string> words = new Dictionary<string,string>();
+            bool isLeaving = false;
+            string userInput;
+            string exitCommand = "exit";
+
+            words.Add("scenario", "a written outline of what happens in a film or play");
+            words.Add("access", "the opportunity or right to use something or to see somebody/something");
+            words.Add("career", "the series of jobs that a person has in a particular area of work");
+            words.Add("desire", "a strong wish to have or do something");
+            words.Add("butter", "a soft yellow food made from cream, used in cooking");
+
+            while (isLeaving == false)
+            {
+                Console.WriteLine($"Введите \"{exitCommand}\", чтобы выйти из программы.");
+                Console.WriteLine();
+                Console.Write("Введите английское слово: ");
+                userInput = Console.ReadLine().ToLower();
+
+                if (userInput != exitCommand)
+                {
+                    if (words.ContainsKey(userInput))
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine($"{userInput} - {words[userInput]}");
+                        WaitForInput();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Данного слова нет в словаре!");
+                        WaitForInput();
+                    }
+                }
+                else 
+                {
+                    isLeaving = true;
+                }
+            }
+        }
+
+        static void WaitForInput() 
+        {
+            Console.WriteLine();
+            Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+    }
+}
