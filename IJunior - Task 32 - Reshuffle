@@ -27,15 +27,15 @@ namespace CSTest1
         static int[] Shuffle(int[] originalArray)
         {
             Random random = new Random();
-            int transferNumberPosition;
-            int transferNumber;
+            int shuffledNumberPosition;
+            int shuffledNumber;
 
             for (int i = 0; i < originalArray.Length; i++) 
             {
-                transferNumberPosition = random.Next(originalArray.Length);
-                transferNumber = originalArray[transferNumberPosition];
-                originalArray[transferNumberPosition] = originalArray[i];
-                originalArray[i] = transferNumber;
+                shuffledNumberPosition = random.Next(originalArray.Length);
+                shuffledNumber = originalArray[shuffledNumberPosition];
+                originalArray[shuffledNumberPosition] = originalArray[i];
+                originalArray[i] = shuffledNumber;
             }
 
             return originalArray;
