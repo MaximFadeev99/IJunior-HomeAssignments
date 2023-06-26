@@ -67,24 +67,24 @@ namespace CSTest2
             Console.WriteLine();
             Console.Write("Укажите ФИО нового сотрудника:");
             fullName = Console.ReadLine();
-            AddElement(ref employeeNames, fullName);
+            employeeNames = AddElement(employeeNames, fullName);
             Console.Write("Укажите должность нового струдника:");
             position = Console.ReadLine();
-            AddElement(ref employeePositions, position);
+            employeePositions = AddElement(employeePositions, position);
             Console.Write("Новый сотрудник успешно добавлен!");
         }
 
-        static void AddElement(ref string[] targetArray,  string newElement) 
+        static string[] AddElement(string[] targetArray, string newElement)
         {
             string[] tempTargetArray = new string[targetArray.Length + 1];
-            
+
             for (int i = 0; i < targetArray.Length; i++)
             {
                 tempTargetArray[i] = targetArray[i];
             }
 
             tempTargetArray[tempTargetArray.Length - 1] = newElement;
-            targetArray = tempTargetArray;
+            return tempTargetArray;
         }
 
         static void ShowAllEmployees(string[] employeeNames, string[] employeePoistions)
@@ -128,44 +128,44 @@ namespace CSTest2
             string abortion = "отмена";
             int targetRow;
 
-            ShowAllEmployees(employeeNames, employeePositions);            
+            ShowAllEmployees(employeeNames, employeePositions);
             Console.WriteLine();
             Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
             userInput = Console.ReadLine();
 
-            while (int.TryParse(userInput, out int result) == false && userInput != abortion) 
+            while (int.TryParse(userInput, out int result) == false && userInput != abortion)
             {
                 Console.WriteLine();
                 Console.WriteLine("Ошибка! Неверный ввод данных!");
                 Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
                 userInput = Console.ReadLine();
-            }              
+            }
 
             if (userInput != abortion)
             {
                 targetRow = Convert.ToInt32(userInput) - 1;
-                RemoveElement(ref employeeNames, targetRow);
-                RemoveElement(ref employeePositions, targetRow);
+                employeeNames = RemoveElement(employeeNames, targetRow);
+                employeePositions = RemoveElement(employeePositions, targetRow);
                 Console.Write("Сотрудник удален.");
             }
-            
+
         }
 
-        static void RemoveElement(ref string[] targetArray, int targetRow) 
+        static string[] RemoveElement(string[] targetArray, int targetRow)
         {
             string[] tempTargetArray = new string[targetArray.Length - 1];
 
-            for (int i = 0; i < targetRow; i++) 
+            for (int i = 0; i < targetRow; i++)
             {
                 tempTargetArray[i] = targetArray[i];
             }
 
-            for (int i = targetRow; i < tempTargetArray.Length; i++) 
+            for (int i = targetRow; i < tempTargetArray.Length; i++)
             {
-                tempTargetArray[i] = targetArray[i+1];
+                tempTargetArray[i] = targetArray[i + 1];
             }
 
-            targetArray = tempTargetArray;
+            return tempTargetArray;
         }
     }
 }
