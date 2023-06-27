@@ -11,22 +11,27 @@ namespace CSTest2
             int[] originalNumbers2 = { 1, 2, 4, 5, 6, 7, 9, 10 };
             List<int> mergedNumbers = new List<int>();
 
-            mergedNumbers.AddRange(originalNumbers1);
+            AddToCollection (mergedNumbers, originalNumbers2);
+            AddToCollection(mergedNumbers, originalNumbers1);
 
-            for (int i = 0; i < originalNumbers2.Length; i++) 
-            {
-                if (!mergedNumbers.Contains(originalNumbers2[i]))
-                {
-                    mergedNumbers.Add(originalNumbers2[i]);
-                }
-            }
-
-            foreach (var  number in mergedNumbers) 
+            foreach (var number in mergedNumbers)
             {
                 Console.WriteLine(number);
             }
 
             Console.ReadKey();
+        }
+
+        static void AddToCollection (List <int> newList, int[] userArray) 
+        
+        {
+            for (int i = 0; i < userArray.Length; i++)
+            {
+                if (newList.Contains(userArray[i]) == false)
+                {
+                    newList.Add(userArray[i]);
+                }
+            }
         }
     }
 }
