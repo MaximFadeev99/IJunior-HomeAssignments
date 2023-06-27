@@ -1,0 +1,111 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandAdd = "1";
+            const string CommandShowAll = "2";
+            const string CommandDeleteEmployee = "3";
+            const string CommandExit = "4";
+
+            Dictionary<string, string> employees = new Dictionary<string, string>();
+            string userInput;
+            string commandsList = $"{CommandAdd} - добавить нового сотрудника\n" +
+                $"{CommandShowAll} - показать список всех действующих сотрудников\n" +
+                $"{CommandDeleteEmployee} - удалить досье сотрудника\n" +
+                $"{CommandExit} - выйти";
+            bool isLeaving = false;
+
+            employees.Add("Петров Михаил Юрьевич", "Водитель");
+            employees.Add("Русаков Дмитрий Павлович", "Охранник");
+            employees.Add("Сидоров Сергей Русланов", "Грузчик");
+            employees.Add("Русаков Степан Васильевич", "Водитель");
+
+            while (isLeaving == false)
+            {
+                Console.WriteLine("Добро пожаловать в систему управления кадрами!");
+                Console.WriteLine();
+                Console.WriteLine(commandsList);
+                Console.WriteLine();
+                Console.Write("Укажите команду:");
+                userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case CommandAdd:
+                        AddEmployee(ref employees);
+                        break;
+
+                    case CommandShowAll:
+                        ShowAllEmployees(ref employees);
+                        break;
+
+                    case CommandDeleteEmployee:
+                        DeleteEmployee(ref employees);
+                        break;
+
+                    case CommandExit:
+                        isLeaving = true;
+                        break;
+                }
+
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        static void AddEmployee(ref Dictionary<string, string> employeesList)
+        {
+            string fullName;
+            string position;
+
+            Console.WriteLine();
+            Console.Write("Укажите ФИО нового сотрудника:");
+            fullName = Console.ReadLine();
+            Console.Write("Укажите должность нового струдника:");
+            position = Console.ReadLine();
+            employeesList.Add(fullName, position);
+            Console.Write("Новый сотрудник успешно добавлен!");
+        }
+
+        static void ShowAllEmployees(ref Dictionary<string, string> employeesList)
+        {
+            Console.WriteLine();
+
+            for (int i = 0; i < employeesList.Count; i++) 
+            {
+                Console.WriteLine(i + 1 + ") " + employeesList.ElementAt(i).Key + " - " + employeesList.ElementAt(i).Value);            
+            }
+        }       
+
+        static void DeleteEmployee(ref Dictionary<string, string> employeesList)
+        {
+            string userInput;
+            string abortion = "отмена";
+
+            ShowAllEmployees(ref employeesList);
+            Console.WriteLine();
+            Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
+            userInput = Console.ReadLine();
+
+            while (int.TryParse(userInput, out int result) == false && userInput != abortion)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Ошибка! Неверный ввод данных!");
+                Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
+                userInput = Console.ReadLine();
+            }
+
+            if (userInput != abortion)
+            {
+                employeesList.Remove(employeesList.ElementAt(Convert.ToInt32(userInput)-1).Key);
+                Console.WriteLine("Сотрудник удален.");
+            }
+        }
+    }
+}
