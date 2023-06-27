@@ -11,7 +11,7 @@ namespace CSTest2
             const string CommandSummarize = "sum";
             const string CommandExit = "exit";
 
-            List <double> userNumbers = new List <double> ();
+            List<double> userNumbers = new List<double>();
             string userInput;
             bool isLeaving = false;
             string actionOptions = $"Чтобы просуммировать все числа в списке, введите - {CommandSummarize}\n" +
@@ -34,14 +34,15 @@ namespace CSTest2
                         break;
 
                     default:
-                        userNumbers.Add(Convert.ToDouble(userInput));
+                        AddNumber(ref userNumbers, userInput);
                         break;
                 }
+                
                 Console.Clear();
             }
         }
 
-        static void ShowInitialInfo(List<double> userList, string commandOptions) 
+        static void ShowInitialInfo(List<double> userList, string commandOptions)
         {
             Console.SetCursorPosition(0, 8);
             Console.Write("Числа в списке:");
@@ -56,7 +57,7 @@ namespace CSTest2
             Console.WriteLine();
         }
 
-        static void SummurizeNumbers(List<double> userList) 
+        static void SummurizeNumbers(List<double> userList)
         {
             double userNumbersSum;
 
@@ -64,6 +65,14 @@ namespace CSTest2
             Console.SetCursorPosition(0, 9);
             Console.Write($"Сумма всех чисел в массиве равняется {userNumbersSum}");
             Console.ReadKey();
+        }
+
+        static void AddNumber(ref List<double> userList, string userInput) 
+        {
+            if (double.TryParse(userInput, out double result) == true) 
+            {
+                userList.Add(result);
+            }       
         }
     }
 }
