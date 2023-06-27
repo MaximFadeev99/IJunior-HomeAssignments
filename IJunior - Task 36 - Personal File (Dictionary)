@@ -67,45 +67,51 @@ namespace CSTest2
             Console.WriteLine();
             Console.Write("Укажите ФИО нового сотрудника:");
             fullName = Console.ReadLine();
-            Console.Write("Укажите должность нового струдника:");
-            position = Console.ReadLine();
-            employeesList.Add(fullName, position);
-            Console.Write("Новый сотрудник успешно добавлен!");
+            if (employeesList.ContainsKey(fullName) == true)
+            {
+                Console.Write("Ошибка! Указанный человек уже является сотрудником компании!");
+            }
+            else           
+            {
+                Console.Write("Укажите должность нового струдника:");
+                position = Console.ReadLine();
+                employeesList.Add(fullName, position);
+                Console.Write("Новый сотрудник успешно добавлен!");
+            }                
         }
 
         static void ShowAllEmployees(ref Dictionary<string, string> employeesList)
         {
             Console.WriteLine();
 
-            for (int i = 0; i < employeesList.Count; i++) 
+            for (int i = 0; i < employeesList.Count; i++)
             {
-                Console.WriteLine(i + 1 + ") " + employeesList.ElementAt(i).Key + " - " + employeesList.ElementAt(i).Value);            
+                Console.WriteLine(i + 1 + ") " + employeesList.ElementAt(i).Key + " - " + employeesList.ElementAt(i).Value);
             }
-        }       
+        }
 
         static void DeleteEmployee(ref Dictionary<string, string> employeesList)
         {
             string userInput;
             string abortion = "отмена";
 
-            ShowAllEmployees(ref employeesList);
             Console.WriteLine();
-            Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
+            Console.Write($"Введите ФИО сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
             userInput = Console.ReadLine();
-
-            while (int.TryParse(userInput, out int result) == false && userInput != abortion)
-            {
-                Console.WriteLine();
-                Console.WriteLine("Ошибка! Неверный ввод данных!");
-                Console.Write($"Введите номер сотрудника для удаления, или \"{abortion}\", чтобы отменить удаление:");
-                userInput = Console.ReadLine();
-            }
 
             if (userInput != abortion)
             {
-                employeesList.Remove(employeesList.ElementAt(Convert.ToInt32(userInput)-1).Key);
-                Console.WriteLine("Сотрудник удален.");
-            }
+                if (employeesList.ContainsKey(userInput) == false)
+                {
+                    Console.WriteLine();
+                    Console.Write("Ошибка! Указанный сотрудник не найден!");
+                }
+                else 
+                {
+                    employeesList.Remove(userInput);
+                    Console.Write("Сотрудник удален.");
+                }
+            }            
         }
     }
 }
