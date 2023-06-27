@@ -1,0 +1,69 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandSummarize = "sum";
+            const string CommandExit = "exit";
+
+            List <double> userNumbers = new List <double> ();
+            string userInput;
+            bool isLeaving = false;
+            string actionOptions = $"Чтобы просуммировать все числа в списке, введите - {CommandSummarize}\n" +
+                $"Чтобы закрыть программу, введите - {CommandExit}";
+
+            while (isLeaving == false)
+            {
+                ShowInitialInfo(userNumbers, actionOptions);
+                Console.Write("Введите число или команду:");
+                userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case CommandSummarize:
+                        SummurizeNumbers(userNumbers);
+                        break;
+
+                    case CommandExit:
+                        isLeaving = true;
+                        break;
+
+                    default:
+                        userNumbers.Add(Convert.ToDouble(userInput));
+                        break;
+                }
+                Console.Clear();
+            }
+        }
+
+        static void ShowInitialInfo(List<double> userList, string commandOptions) 
+        {
+            Console.SetCursorPosition(0, 8);
+            Console.Write("Числа в списке:");
+
+            foreach (var number in userList)
+            {
+                Console.Write(number + " ");
+            }
+
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine(commandOptions);
+            Console.WriteLine();
+        }
+
+        static void SummurizeNumbers(List<double> userList) 
+        {
+            double userNumbersSum;
+
+            userNumbersSum = userList.Sum();
+            Console.SetCursorPosition(0, 9);
+            Console.Write($"Сумма всех чисел в массиве равняется {userNumbersSum}");
+            Console.ReadKey();
+        }
+    }
+}
