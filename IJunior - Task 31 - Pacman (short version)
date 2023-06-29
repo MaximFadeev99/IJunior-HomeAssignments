@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 
 namespace CSTest2
 {
@@ -9,6 +10,7 @@ namespace CSTest2
         static void Main(string[] args)
         {
             Random random = new Random();
+            List<int> directionKeysNumbers = new List<int> {38, 40, 39, 37};
             int playerDirectionChangeX = 0;
             int playerDirectionChangeY = 0;
             int collectedPoints = 0;
@@ -21,6 +23,7 @@ namespace CSTest2
             char mapWallsSymbol = '#';
             char playerSymbol = '@';
             char enemySymbol = 'G';
+            int pressedKeyNumber;
             Console.CursorVisible = false;
 
             DrawMap(currentMap);
@@ -28,16 +31,17 @@ namespace CSTest2
             while (isPlaying == true)
             {
                 Console.SetCursorPosition(0, 20);
-                Console.Write($"Собрано {collectedPoints} из {totalPoints}");                            
+                Console.Write($"Собрано {collectedPoints} из {totalPoints}");
 
                 if (Console.KeyAvailable == true)
                 {
                     ConsoleKeyInfo pressedKey = Console.ReadKey(true);
-                    ChangeDirection(pressedKey.Key, ref playerDirectionChangeX, ref playerDirectionChangeY);
+                    pressedKeyNumber = (int)pressedKey.Key;
+                    ChangeDirection(pressedKeyNumber, ref playerDirectionChangeX, ref playerDirectionChangeY);
                 }
 
                 Move(playerSymbol, currentMap, ref playerPositionX, ref playerPositionY, playerDirectionChangeX, playerDirectionChangeY);
-                CheckPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
+                VerifyPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
                 collectedPoints = CollectPoints(currentMap, playerPositionX, playerPositionY, collectedPoints);
 
                 if (currentMap[enemyPositionX + enemyDirectionChangeX, enemyPositionY + enemyDirectionChangeY] != mapWallsSymbol)
@@ -46,11 +50,12 @@ namespace CSTest2
                 }
                 else
                 {
-                    ChangeDirection(random, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
+                    pressedKeyNumber = directionKeysNumbers.ElementAt(random.Next(0, directionKeysNumbers.Count - 1));
+                    ChangeDirection(pressedKeyNumber, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
                     Move(enemySymbol, currentMap, ref enemyPositionX, ref enemyPositionY, enemyDirectionChangeX, enemyDirectionChangeY);
                 }
-                
-                CheckPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
+
+                VerifyPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
 
                 if (collectedPoints == totalPoints)
                 {
@@ -65,16 +70,16 @@ namespace CSTest2
         static char[,] ReadMap(string filePath, out int playerPositionX, out int playerPositionY, out int totalPoints,
             out int enemyPositionX, out int enemyPositionY)
         {
-            const char playerSymbol = '@';
-            const char enemySymbol = 'G';
-            const char emptySpace = ' ';
-            const char initialWallSymbol = '&';
+            const char PlayerSymbol = '@';
+            const char EnemySymbol = 'G';
+            const char EmptySpace = ' ';
+            const char InitialWallSymbol = '&';
 
             string[] mapFile = File.ReadAllLines($"Maps/{filePath}.txt");
             char[,] map = new char[mapFile.Length, mapFile[0].Length];
             char mapWallsSymbol = '#';
             char pointSymbol = '.';
-            
+
 
             playerPositionX = 0;
             playerPositionY = 0;
@@ -90,26 +95,26 @@ namespace CSTest2
 
                     switch (map[i, j])
                     {
-                        case playerSymbol:
+                        case PlayerSymbol:
                             playerPositionX = i;
                             playerPositionY = j;
                             map[i, j] = pointSymbol;
                             totalPoints++;
                             break;
 
-                        case enemySymbol:
+                        case EnemySymbol:
                             enemyPositionX = i;
                             enemyPositionY = j;
                             map[i, j] = pointSymbol;
                             totalPoints++;
                             break;
 
-                        case emptySpace:
+                        case EmptySpace:
                             map[i, j] = pointSymbol;
                             totalPoints++;
                             break;
 
-                        case initialWallSymbol:
+                        case InitialWallSymbol:
                             map[i, j] = mapWallsSymbol;
                             break;
                     }
@@ -132,60 +137,31 @@ namespace CSTest2
             }
         }
 
-        static void ChangeDirection(ConsoleKey pressedKey, ref int directionChangeX,ref int directionChangeY)
+        static void ChangeDirection(int pressedKeyNumber, ref int directionChangeX, ref int directionChangeY)
         {
-            switch (pressedKey)
+            const int UpArrowKeyNumber = 38;
+            const int DownArrowKeyNumber = 40;
+            const int RightArrowKeyNumber = 39;
+            const int LeftArrowKeyNumber = 37;
+
+            switch (pressedKeyNumber)
             {
-                case ConsoleKey.UpArrow:
+                case UpArrowKeyNumber:
                     directionChangeX = -1;
                     directionChangeY = 0;
                     break;
 
-                case ConsoleKey.DownArrow:
+                case DownArrowKeyNumber:
                     directionChangeX = 1;
                     directionChangeY = 0;
                     break;
 
-                case ConsoleKey.RightArrow:
+                case RightArrowKeyNumber:
                     directionChangeX = 0;
                     directionChangeY = 1;
                     break;
 
-                case ConsoleKey.LeftArrow:
-                    directionChangeX = 0;
-                    directionChangeY = -1;
-                    break;
-            }
-        }
-
-        static void ChangeDirection(Random random, ref int directionChangeX, ref int directionChangeY)
-        {
-            const int DirectionChangeVariant1 = 1;
-            const int DirectionChangeVariant2 = 2;
-            const int DirectionChangeVariant3 = 3;
-            const int DirectionChangeVariant4 = 4;
-
-            int minValue = 1;
-            int maxValue = 5;
-            
-            switch (random.Next(minValue, maxValue))
-            {
-                case DirectionChangeVariant1:
-                    directionChangeX = -1;
-                    directionChangeY = 0;
-                    break;
-
-                case DirectionChangeVariant2:
-                    directionChangeX = 1;
-                    directionChangeY = 0;
-                    break;
-
-                case DirectionChangeVariant3:
-                    directionChangeX = 0;
-                    directionChangeY = 1;
-                    break;
-
-                case DirectionChangeVariant4:
+                case LeftArrowKeyNumber:
                     directionChangeX = 0;
                     directionChangeY = -1;
                     break;
@@ -199,12 +175,10 @@ namespace CSTest2
 
             if (currentMap[currentPositionX + directionChangeX, currentPositionY + directionChangeY] != mapWallsSymbol)
             {
-                Console.SetCursorPosition(currentPositionY, currentPositionX);
-                Console.Write(currentMap[currentPositionX, currentPositionY]);
+                DrawSymbol(currentPositionX, currentPositionY, currentMap[currentPositionX, currentPositionY]);
                 currentPositionX += directionChangeX;
                 currentPositionY += directionChangeY;
-                Console.SetCursorPosition(currentPositionY, currentPositionX);
-                Console.Write(mainSymbol);
+                DrawSymbol(currentPositionX, currentPositionY, mainSymbol);
             }
 
             if (directionChangeX != 0)
@@ -219,28 +193,35 @@ namespace CSTest2
 
         static int CollectPoints(char[,] currentMap, int playerPositionX, int playerPositionY, int collectedPoints, char pointSymbol = '.')
         {
+            char emptySpace = ' ';
+            
             if (currentMap[playerPositionX, playerPositionY] == pointSymbol)
             {
                 collectedPoints++;
-                currentMap[playerPositionX, playerPositionY] = ' ';
+                currentMap[playerPositionX, playerPositionY] = emptySpace;
             }
 
             return collectedPoints;
         }
 
-        static void CheckPositions(int playerPositionX, int playerPositionY, int enemyPositionX, int enemyPositionY) 
+        static void VerifyPositions(int playerPositionX, int playerPositionY, int enemyPositionX, int enemyPositionY)
         {
             char graveSymbol = 'X';
 
             if (playerPositionX == enemyPositionX && playerPositionY == enemyPositionY)
             {
-                Console.SetCursorPosition(playerPositionY, playerPositionX);
-                Console.Write(graveSymbol);
+                DrawSymbol(playerPositionX, playerPositionY, graveSymbol);
                 Console.SetCursorPosition(0, 19);
                 Console.WriteLine("Вас съели!");
                 Console.ReadKey();
                 Environment.Exit(0);
             }
+        }
+
+        static void DrawSymbol(int coordinateX, int coordinateY, char symbol) 
+        {
+            Console.SetCursorPosition(coordinateY, coordinateX);
+            Console.Write(symbol);
         }
     }
 }
