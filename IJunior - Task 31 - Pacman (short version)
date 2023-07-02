@@ -10,7 +10,7 @@ namespace CSTest2
         static void Main(string[] args)
         {
             Random random = new Random();
-            List<int> directionKeysNumbers = new List<int> {38, 40, 39, 37};
+            List<int> directionKeysNumbers = new List<int> {39, 38, 40, 39, 37, 38, 40, 39, 37, 39};
             int playerDirectionChangeX = 0;
             int playerDirectionChangeY = 0;
             int collectedPoints = 0;
@@ -44,17 +44,13 @@ namespace CSTest2
                 VerifyPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
                 collectedPoints = CollectPoints(currentMap, playerPositionX, playerPositionY, collectedPoints);
 
-                if (currentMap[enemyPositionX + enemyDirectionChangeX, enemyPositionY + enemyDirectionChangeY] != mapWallsSymbol)
-                {
-                    Move(enemySymbol, currentMap, ref enemyPositionX, ref enemyPositionY, enemyDirectionChangeX, enemyDirectionChangeY);
-                }
-                else
+                while (currentMap[enemyPositionX + enemyDirectionChangeX, enemyPositionY + enemyDirectionChangeY] == mapWallsSymbol)
                 {
                     pressedKeyNumber = directionKeysNumbers.ElementAt(random.Next(0, directionKeysNumbers.Count - 1));
                     ChangeDirection(pressedKeyNumber, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
-                    Move(enemySymbol, currentMap, ref enemyPositionX, ref enemyPositionY, enemyDirectionChangeX, enemyDirectionChangeY);
                 }
-
+                
+                Move(enemySymbol, currentMap, ref enemyPositionX, ref enemyPositionY, enemyDirectionChangeX, enemyDirectionChangeY);
                 VerifyPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
 
                 if (collectedPoints == totalPoints)
@@ -79,7 +75,6 @@ namespace CSTest2
             char[,] map = new char[mapFile.Length, mapFile[0].Length];
             char mapWallsSymbol = '#';
             char pointSymbol = '.';
-
 
             playerPositionX = 0;
             playerPositionY = 0;
@@ -194,7 +189,7 @@ namespace CSTest2
         static int CollectPoints(char[,] currentMap, int playerPositionX, int playerPositionY, int collectedPoints, char pointSymbol = '.')
         {
             char emptySpace = ' ';
-            
+
             if (currentMap[playerPositionX, playerPositionY] == pointSymbol)
             {
                 collectedPoints++;
@@ -218,10 +213,12 @@ namespace CSTest2
             }
         }
 
-        static void DrawSymbol(int coordinateX, int coordinateY, char symbol) 
+        static void DrawSymbol(int coordinateX, int coordinateY, char symbol)
         {
             Console.SetCursorPosition(coordinateY, coordinateX);
             Console.Write(symbol);
         }
+    }
+}
     }
 }
