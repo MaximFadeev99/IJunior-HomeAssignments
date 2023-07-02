@@ -1,38 +1,40 @@
 using System;
 
-
 namespace CSTest2
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Player user1 = new Player (20,10);
             Console.CursorVisible = false;
+            Renderer renderer = new Renderer();
+            Player user1 = new Player(10, 10, 'G');
 
-            user1.DrawPlayer(user1.X,user1.Y);
+            renderer.DrawCharacter(user1.positionX, user1.positionY, user1.playerSymbol);
             Console.ReadKey();
         }
-            
-        class Player 
+
+        class Player
         {
-            private int _x;
-            private int _y;
+            public int positionX { get; private set; }
+            public int positionY { get; private set; }
+            public char playerSymbol { get; private set; }
 
-            public Player(int x, int y) 
+            public Player (int coordinateX, int coordinateY, char mainSymbol)
             {
-                _x = x;
-                _y = y;                
+                positionX = coordinateX;
+                positionY = coordinateY;
+                playerSymbol = mainSymbol;
             }
+        }
 
-            public int X { get => _x; }
-            public int Y { get => _y; }
-
-            public void DrawPlayer (int x, int y, char playerSymbol = '@') 
+        class Renderer 
+        {
+            public void DrawCharacter(int coordinateX, int coordinateY, char symbol) 
             {
-                Console.SetCursorPosition (x, y);
-                Console.WriteLine(playerSymbol);            
-            }       
+                Console.SetCursorPosition(coordinateX, coordinateY);
+                Console.WriteLine(symbol);
+            }
         }
     }
 }
