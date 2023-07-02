@@ -1,38 +1,36 @@
 using System;
 
-
 namespace CSTest2
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Player user1 = new Player ("John");
+            Player user1 = new Player("John");
 
             user1.ShowStats();
             Console.ReadKey();
         }
 
-        class Player 
+        class Player
         {
             private string _name;
             private int _health = 100;
             private int _armor = 0;
             private int _damage = 10;
 
-            public Player(string name) 
+            public Player(string name)
             {
-                _name = name; 
+                _name = name;
             }
 
-            public void ShowStats() 
+            public void ShowStats()
             {
                 Console.WriteLine($"Характеристики игрока {_name}:\n" +
                     $"Здоровье - {_health}\n" +
                     $"Броня - {_armor}\n" +
                     $"Урон - {_damage}\n");
             }
-
         }
     }
 }
