@@ -10,27 +10,27 @@ namespace CSTest2
             Renderer renderer = new Renderer();
             Player user1 = new Player(10, 10, 'G');
 
-            renderer.DrawCharacter(user1.positionX, user1.positionY, user1.playerSymbol);
+            renderer.DrawCharacter(user1.PositionX, user1.PositionY, user1.PlayerSymbol);
             Console.ReadKey();
         }
 
         class Player
-        {
-            public int positionX { get; private set; }
-            public int positionY { get; private set; }
-            public char playerSymbol { get; private set; }
-
-            public Player (int coordinateX, int coordinateY, char mainSymbol)
+        {           
+            public Player(int coordinateX, int coordinateY, char mainSymbol)
             {
-                positionX = coordinateX;
-                positionY = coordinateY;
-                playerSymbol = mainSymbol;
+                PositionX = coordinateX;
+                PositionY = coordinateY;
+                PlayerSymbol = mainSymbol;
             }
+
+            public int PositionX { get; private set; }
+            public int PositionY { get; private set; }
+            public char PlayerSymbol { get; private set; }
         }
 
-        class Renderer 
+        class Renderer
         {
-            public void DrawCharacter(int coordinateX, int coordinateY, char symbol) 
+            public void DrawCharacter(int coordinateX, int coordinateY, char symbol)
             {
                 Console.SetCursorPosition(coordinateX, coordinateY);
                 Console.WriteLine(symbol);
