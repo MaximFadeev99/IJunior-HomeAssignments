@@ -1,10 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSTest2
 {
@@ -19,7 +14,6 @@ namespace CSTest2
             const string CommandExit = "5";
 
             PlayersDataBase  mainDataBase = new PlayersDataBase();
-            mainDataBase.AddInitialPlayers();
             string commandOptions = $"\n{CommandAddPlayer} - добавить игрока" +
                 $"\n{CommandRemovePlayer} - удалить игрока" +
                 $"\n{CommandBanPlayer} - забанить игрока" +
@@ -41,41 +35,49 @@ namespace CSTest2
                     case CommandAddPlayer:
                         mainDataBase.AddPlayer();
                         break;
+
                     case CommandRemovePlayer:
                         mainDataBase.RemovePlayer();
                         break;
+
                     case CommandBanPlayer:
                         mainDataBase.BanPlayer(userInput);
                         break;
+
                     case CommandUnbanPlayer:
+                        mainDataBase.UnbanPlayer(userInput);
                         break;
+
                     case CommandExit:
                         isWorking = false;
                         break;
 
+                    default:
+                        Console.WriteLine("Неизвестная команда!");
+                        break;
                 }
-
-                 
-
+                
                 Console.ReadKey();
                 Console.Clear();
-            }
-             
+            }            
         }
 
         class PlayersDataBase
         {
             private List<Player> _playersDataBase = new List<Player>();
 
-            public void AddInitialPlayers() 
+            public PlayersDataBase() 
             {
-                _playersDataBase.Add(new Player("Игрок1"));
-                _playersDataBase.Add(new Player("Игрок2"));
+                _playersDataBase.Add(new Player("Лютик"));
+                _playersDataBase.Add(new Player("Геральт"));
+                _playersDataBase.Add(new Player("Цири"));
+                _playersDataBase.Add(new Player("Олаф"));
+                _playersDataBase.Add(new Player("Маки"));
             }
 
             public void ShowAllPlayers() 
             {
-                Console.WriteLine("ID - Никнейм - Уровень - Статус аккаунта");
+                Console.Write("ID - Никнейм - Уровень - Статус аккаунта");
 
                 foreach (Player player in _playersDataBase)
                 {                   
@@ -95,80 +97,83 @@ namespace CSTest2
             public void AddPlayer() 
             {
                 string newPlayerName;
-                newPlayerName = EnquireNickname();
+                Console.Write("Введите никнейм игрока: ");
+                newPlayerName = Console.ReadLine();
                 _playersDataBase.Add(new Player(newPlayerName));
                 Console.WriteLine("Новый игрок успешно добавлен!");
             }
 
             public void RemovePlayer()
             {
-                string playerName;
-                playerName = EnquireNickname();
-                _playersDataBase.Remove(new Player(playerName));
+                EnquirePlayerID(out string playerID);
+                _playersDataBase.RemoveAt(GetPosition(_playersDataBase, playerID));
                 Console.WriteLine("Игрок успешно удален!");
             }
 
             public void BanPlayer(string commandNumber)
             {
-                string playerID;
-                playerID = EnquirePlayerID();
-                _playersDataBase[1].ChangeStatus(commandNumber);
-
+                EnquirePlayerID(out string playerID);
+                _playersDataBase[GetPosition(_playersDataBase, playerID)].ChangeStatus(commandNumber);
                 Console.WriteLine("Игрок забанен!");
             }
 
-            public string EnquireNickname()
+            public void UnbanPlayer(string commandNumber)
             {
-                string playerNickname;
-
-                Console.WriteLine("Введите никнейм игрока: ");
-                playerNickname = Console.ReadLine();
-                return playerNickname;
+                EnquirePlayerID(out string playerID);
+                _playersDataBase[GetPosition(_playersDataBase, playerID)].ChangeStatus(commandNumber);
+                Console.WriteLine("Игрок разбанен!");
             }
 
-            public int GetPosition(List<Player> mainList, string playerID) 
+            public int GetPosition(List<Player> mainList, string playerID)
             {
                 int positionInList = 0;
+                bool isFound = false;
 
-                foreach (var player in mainList) 
+                while (isFound == false)
                 {
-                    if (player.uniqueID == playerID) 
+                    foreach (var player in mainList)
                     {
-                        positionInList = mainList.IndexOf(player);
-                        break;                       
+                        if (player.uniqueID == playerID)
+                        {
+                            positionInList = mainList.IndexOf(player);
+                            isFound = true;
+                            break;
+                        }
+                    }
+                    
+                    if (isFound == false)
+                    {
+                        Console.WriteLine("Ошибка: Игрока с указанным ID номером не существует. Повторите ввод!");
+                        EnquirePlayerID(out playerID);
                     }
                 }
-
-                mainList.Contains(Player[])
 
                 return positionInList;
             }
 
-            public string EnquirePlayerID()
+            public void EnquirePlayerID(out string playerID)
             {
-                //проверка на существование 
-                string playerID;
-
-                Console.WriteLine("Введите ID игрока: ");
+                Console.Write("Введите ID игрока: ");
                 playerID = Console.ReadLine();
-                return playerID;
             }
         }
 
         class Player 
         {
-            public string uniqueID { get; private set; }
-            public string nickName;
-            public int level { get; private set; } = 0;
             private static int _playersCount = 0;
+
             private string _idFixedPart = "plr";
-            public bool _isBanned { get; private set; } = false;
 
             public Player(string nickName) 
             {
                 uniqueID = GenerateNewID();
                 this.nickName = nickName;            
             }
+
+            public string uniqueID { get; private set; }
+            public string nickName { get; private set; }
+            public int level { get; private set; } = 0;
+            public bool _isBanned { get; private set; } = false;          
 
             public string GenerateNewID() 
             {
@@ -192,8 +197,6 @@ namespace CSTest2
                     _isBanned = false;
                 }
             }
-        }
-
-        
+        }       
     }
 }
