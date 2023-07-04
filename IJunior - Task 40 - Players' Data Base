@@ -1,0 +1,199 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandAddPlayer = "1";
+            const string CommandRemovePlayer = "2";
+            const string CommandBanPlayer = "3";
+            const string CommandUnbanPlayer = "4";
+            const string CommandExit = "5";
+
+            PlayersDataBase  mainDataBase = new PlayersDataBase();
+            mainDataBase.AddInitialPlayers();
+            string commandOptions = $"\n{CommandAddPlayer} - добавить игрока" +
+                $"\n{CommandRemovePlayer} - удалить игрока" +
+                $"\n{CommandBanPlayer} - забанить игрока" +
+                $"\n{CommandUnbanPlayer} - разбанить игрока" +
+                $"\n{CommandExit} - выйти из базы данных";
+            bool isWorking = true;
+            string userInput;
+            
+            while (isWorking == true) 
+            {
+                mainDataBase.ShowAllPlayers();
+                Console.WriteLine(commandOptions);
+                Console.WriteLine();
+                Console.Write("Укажите команду:");
+                userInput = Console.ReadLine();
+
+                switch (userInput) 
+                {
+                    case CommandAddPlayer:
+                        mainDataBase.AddPlayer();
+                        break;
+                    case CommandRemovePlayer:
+                        mainDataBase.RemovePlayer();
+                        break;
+                    case CommandBanPlayer:
+                        mainDataBase.BanPlayer(userInput);
+                        break;
+                    case CommandUnbanPlayer:
+                        break;
+                    case CommandExit:
+                        isWorking = false;
+                        break;
+
+                }
+
+                 
+
+                Console.ReadKey();
+                Console.Clear();
+            }
+             
+        }
+
+        class PlayersDataBase
+        {
+            private List<Player> _playersDataBase = new List<Player>();
+
+            public void AddInitialPlayers() 
+            {
+                _playersDataBase.Add(new Player("PussyBoy99"));
+                _playersDataBase.Add(new Player("rashodOCHKA"));
+            }
+
+            public void ShowAllPlayers() 
+            {
+                Console.WriteLine("ID - Никнейм - Уровень - Статус аккаунта");
+
+                foreach (Player player in _playersDataBase)
+                {                   
+                    Console.Write(player.uniqueID + " - " + player.nickName + " - " + player.level + " - ");
+                    if (player._isBanned == true)
+                    {
+                        Console.Write("Забанен");
+                    }
+                    else 
+                    {
+                        Console.Write("Активный");
+                    }
+                    Console.WriteLine();
+                }
+            }
+
+            public void AddPlayer() 
+            {
+                string newPlayerName;
+                newPlayerName = EnquireNickname();
+                _playersDataBase.Add(new Player(newPlayerName));
+                Console.WriteLine("Новый игрок успешно добавлен!");
+            }
+
+            public void RemovePlayer()
+            {
+                string playerName;
+                playerName = EnquireNickname();
+                _playersDataBase.Remove(new Player(playerName));
+                Console.WriteLine("Игрок успешно удален!");
+            }
+
+            public void BanPlayer(string commandNumber)
+            {
+                string playerID;
+                playerID = EnquirePlayerID();
+                _playersDataBase[1].ChangeStatus(commandNumber);
+
+                Console.WriteLine("Игрок забанен!");
+            }
+
+            public string EnquireNickname()
+            {
+                string playerNickname;
+
+                Console.WriteLine("Введите никнейм игрока: ");
+                playerNickname = Console.ReadLine();
+                return playerNickname;
+            }
+
+            public int GetPosition(List<Player> mainList, string playerID) 
+            {
+                int positionInList = 0;
+
+                foreach (var player in mainList) 
+                {
+                    if (player.uniqueID == playerID) 
+                    {
+                        positionInList = mainList.IndexOf(player);
+                        break;                       
+                    }
+                }
+
+                mainList.Contains(Player[])
+
+                return positionInList;
+            }
+
+            public string EnquirePlayerID()
+            {
+                //проверка на существование 
+                string playerID;
+
+                Console.WriteLine("Введите ID игрока: ");
+                playerID = Console.ReadLine();
+                return playerID;
+            }
+        }
+
+        class Player 
+        {
+            public string uniqueID { get; private set; }
+            public string nickName;
+            public int level { get; private set; } = 0;
+            private static int _playersCount = 0;
+            private string _idFixedPart = "plr";
+            public bool _isBanned { get; private set; } = false;
+
+            public Player(string nickName) 
+            {
+                uniqueID = GenerateNewID();
+                this.nickName = nickName;            
+            }
+
+            public string GenerateNewID() 
+            {
+                string newID;
+                newID = _idFixedPart + _playersCount;
+                _playersCount++;
+                return newID;
+            }
+
+            public void ChangeStatus(string commandNumber) 
+            {
+                string commandBanPlayer = "3";
+                string commandUnbanPlayer = "4";
+
+                if (commandNumber == commandBanPlayer) 
+                {
+                    _isBanned = true;
+                }
+                else if (commandNumber == commandUnbanPlayer) 
+                {
+                    _isBanned = false;
+                }
+            }
+        }
+
+        
+    }
+}
