@@ -1,1 +1,157 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            PackOfCards packOfCards = new PackOfCards();
+            Player player1 = new Player();
+            string userInput;
+            bool isLeaving = false;
+            
+            while (!isLeaving) 
+            {
+                Console.WriteLine("Укажите 1, чтобы взять карту, или 2 , чтобы показать все карты");
+                userInput = Console.ReadLine();
+
+                switch (userInput) 
+                {
+                    case "1":
+                        player1.TakeAnotherCard(packOfCards);
+                        break;
+
+                    case "2":
+                        player1.ShowPlayerCards(packOfCards);
+                        break;
+
+                    case "3":
+                        isLeaving = true;
+                        break;
+
+                        
+
+                }
+                Console.ReadKey();
+                Console.Clear();
+            }
+
+        }
+
+        class Player 
+        {
+            private int maxCards = 5; 
+            private int cardsInDisposal = 0;
+            private List<int> playerCards = new List <int>();
+
+            public void TakeAnotherCard(PackOfCards allCards) 
+            {
+                if (cardsInDisposal < maxCards) 
+                {
+                    playerCards.Add (allCards.TakeRandomCard());
+                    cardsInDisposal++;
+                }
+            }
+
+            public void ShowPlayerCards(PackOfCards allCards) 
+            {
+                Console.Write("У игрока следующие карты");
+                foreach (var card in playerCards) 
+                {
+                    Console.WriteLine(allCards.AllCards[card, 0] + " " + allCards.AllCards[card, 1]); 
+                }
+            
+            }
+
+        
+        }
+
+        class PackOfCards
+        {
+            private const string Spades = "Пики";
+            private const string Hearts = "Черви";
+            private const string Diamonds = "Бубны";
+            private const string Clubs = "Трефы";
+
+            public string[,] AllCards { get; private set; } = new string[52, 3];
+
+            public PackOfCards() 
+            {
+                AllCards = CreateCardRow(AllCards, Spades);
+                AllCards = CreateCardRow(AllCards, Hearts);
+                AllCards = CreateCardRow(AllCards, Diamonds);
+                AllCards = CreateCardRow(AllCards, Clubs);
+            }
+
+            private string[,] CreateCardRow(string[,] packOfCards, string cardSuit) 
+            {
+                int cardNumber = 1;
+                int startPosition = 0;
+
+                switch (cardSuit) 
+                {
+                    case Spades:
+                        startPosition = 0;
+                        break;
+
+                    case Hearts:
+                        startPosition = 13;
+                        break;
+
+                    case Diamonds:
+                        startPosition = 26;
+                        break;
+
+                    case Clubs:
+                        startPosition = 39;
+                        break;
+                }
+
+                for (int i = startPosition; i <= startPosition+12; i++)
+                {
+                    AllCards[i, 0] = Convert.ToString(cardNumber);
+                    cardNumber++;
+                    AllCards[i, 1] = cardSuit;
+                    AllCards[i, 2] = "false";
+                }
+
+                return packOfCards;
+            }
+
+            public int TakeRandomCard() 
+            {
+                Random random = new Random();
+                int minValue = 0; 
+                int maxValue = 51;                
+                int cardPosition = random.Next(minValue, maxValue);
+
+                while (AllCards[cardPosition, 2] == "true") 
+                {
+                    cardPosition = random.Next(minValue, maxValue);
+                }
+
+                AllCards[cardPosition, 2] = "true";
+
+                return cardPosition;
+            }
+        }
+
+        class Card 
+        {
+            private bool isAvailable = true;
+
+            public Card() 
+            {
+            
+            }
+
+            public int cardNumber { get; private set; }
+            public string cardSuit { get; private set; }
+
+        }
+
+    }
+}
