@@ -10,7 +10,7 @@ namespace CSTest2
         static void Main(string[] args)
         {
             Random random = new Random();
-            List<int> directionKeysNumbers = new List<int> {39, 38, 40, 39, 37, 38, 40, 39, 37, 39};
+            List<int> directionKeysNumbers = new List<int> { 39, 38, 40, 39, 37, 38, 40, 39, 37, 39 };
             int playerDirectionChangeX = 0;
             int playerDirectionChangeY = 0;
             int collectedPoints = 0;
@@ -40,8 +40,8 @@ namespace CSTest2
                     ChangeDirection(pressedKeyNumber, ref playerDirectionChangeX, ref playerDirectionChangeY);
                 }
 
-                Move(playerSymbol, currentMap, ref playerPositionX, ref playerPositionY, playerDirectionChangeX, playerDirectionChangeY);
-                VerifyPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
+                TryMove(playerSymbol, currentMap, ref playerPositionX, ref playerPositionY, playerDirectionChangeX, playerDirectionChangeY);
+                TryEatPlayer(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
                 collectedPoints = CollectPoints(currentMap, playerPositionX, playerPositionY, collectedPoints);
 
                 while (currentMap[enemyPositionX + enemyDirectionChangeX, enemyPositionY + enemyDirectionChangeY] == mapWallsSymbol)
@@ -49,9 +49,9 @@ namespace CSTest2
                     pressedKeyNumber = directionKeysNumbers.ElementAt(random.Next(0, directionKeysNumbers.Count - 1));
                     ChangeDirection(pressedKeyNumber, ref enemyDirectionChangeX, ref enemyDirectionChangeY);
                 }
-                
-                Move(enemySymbol, currentMap, ref enemyPositionX, ref enemyPositionY, enemyDirectionChangeX, enemyDirectionChangeY);
-                VerifyPositions(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
+
+                TryMove(enemySymbol, currentMap, ref enemyPositionX, ref enemyPositionY, enemyDirectionChangeX, enemyDirectionChangeY);
+                TryEatPlayer(playerPositionX, playerPositionY, enemyPositionX, enemyPositionY);
 
                 if (collectedPoints == totalPoints)
                 {
@@ -91,17 +91,11 @@ namespace CSTest2
                     switch (map[i, j])
                     {
                         case PlayerSymbol:
-                            playerPositionX = i;
-                            playerPositionY = j;
-                            map[i, j] = pointSymbol;
-                            totalPoints++;
+                            AssignCharacterPositions(ref map, ref playerPositionX, ref playerPositionY, i, j, ref totalPoints);
                             break;
 
                         case EnemySymbol:
-                            enemyPositionX = i;
-                            enemyPositionY = j;
-                            map[i, j] = pointSymbol;
-                            totalPoints++;
+                            AssignCharacterPositions(ref map, ref enemyPositionX, ref enemyPositionY, i, j, ref totalPoints);
                             break;
 
                         case EmptySpace:
@@ -163,7 +157,7 @@ namespace CSTest2
             }
         }
 
-        static void Move(char mainSymbol, char[,] currentMap, ref int currentPositionX, ref int currentPositionY,
+        static void TryMove(char mainSymbol, char[,] currentMap, ref int currentPositionX, ref int currentPositionY,
             int directionChangeX, int directionChangeY)
         {
             char mapWallsSymbol = '#';
@@ -199,7 +193,7 @@ namespace CSTest2
             return collectedPoints;
         }
 
-        static void VerifyPositions(int playerPositionX, int playerPositionY, int enemyPositionX, int enemyPositionY)
+        static void TryEatPlayer(int playerPositionX, int playerPositionY, int enemyPositionX, int enemyPositionY)
         {
             char graveSymbol = 'X';
 
@@ -218,7 +212,14 @@ namespace CSTest2
             Console.SetCursorPosition(coordinateY, coordinateX);
             Console.Write(symbol);
         }
+
+        static void AssignCharacterPositions(ref char[,] map, ref int positionX, ref int poistionY, int mapCoordinateX, int mapCoordinateY, ref int totalPoints) 
+        {
+            char pointSymbol = '.';
+
+            positionX = mapCoordinateX;
+            poistionY = mapCoordinateY;
+            map [mapCoordinateX, mapCoordinateY] = pointSymbol;
+            totalPoints++;
+        }
     }
-}
-    }
-}
