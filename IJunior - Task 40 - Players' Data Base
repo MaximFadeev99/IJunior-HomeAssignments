@@ -69,8 +69,8 @@ namespace CSTest2
 
             public void AddInitialPlayers() 
             {
-                _playersDataBase.Add(new Player("PussyBoy99"));
-                _playersDataBase.Add(new Player("rashodOCHKA"));
+                _playersDataBase.Add(new Player("Игрок1"));
+                _playersDataBase.Add(new Player("Игрок2"));
             }
 
             public void ShowAllPlayers() 
