@@ -74,7 +74,7 @@ namespace CSTest2
 
         public void ShowAllPlayers()
         {
-            Console.Write("ID - Никнейм - Уровень - Статус аккаунта");
+            Console.WriteLine("ID - Никнейм - Уровень - Статус аккаунта");
 
             foreach (Player player in _database)
             {
@@ -103,21 +103,21 @@ namespace CSTest2
         public void RemovePlayer()
         {
             EnquirePlayerId(out string playerID);
-            _database.RemoveAt(GetPosition(playerID));
+            _database.Remove(GetTargetPlayer(playerID));
             Console.WriteLine("Игрок успешно удален!");
         }
 
         public void BanPlayer()
         {
             EnquirePlayerId(out string playerID);
-            _database[GetPosition(playerID)].BanPlayer();
+            GetTargetPlayer(playerID).BanPlayer();
             Console.WriteLine("Игрок забанен!");
         }
 
         public void UnbanPlayer()
         {
             EnquirePlayerId(out string playerID);
-            _database[GetPosition(playerID)].UnbanPlayer();
+            GetTargetPlayer(playerID).UnbanPlayer();
             Console.WriteLine("Игрок разбанен!");
         }
 
@@ -130,9 +130,9 @@ namespace CSTest2
             _database.Add(new Player("Маки"));
         }
 
-        private int GetPosition(string playerID)
+        private Player GetTargetPlayer(string playerID)
         {
-            int positionInList = 0;
+            Player targetPlayer = new Player("");
             bool isFound = false;
 
             while (isFound == false)
@@ -141,7 +141,7 @@ namespace CSTest2
                 {
                     if (player.UniqueId == playerID)
                     {
-                        positionInList = _database.IndexOf(player);
+                        targetPlayer = player;
                         isFound = true;
                         break;
                     }
@@ -154,7 +154,7 @@ namespace CSTest2
                 }
             }
 
-            return positionInList;
+            return targetPlayer;
         }
 
         private void EnquirePlayerId(out string playerID)
@@ -178,7 +178,7 @@ namespace CSTest2
 
         public string UniqueId { get; private set; }
         public string NickName { get; private set; }
-        public int Level { get; private set; } = 0;
+        public int Level { get; private set; } = 1;
         public bool IsBanned { get; private set; } = false;
 
         private string GenerateNewId()
