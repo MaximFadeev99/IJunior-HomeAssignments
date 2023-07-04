@@ -13,7 +13,7 @@ namespace CSTest2
             const string CommandUnbanPlayer = "4";
             const string CommandExit = "5";
 
-            PlayersDataBase  mainDataBase = new PlayersDataBase();
+            Database mainDatabase = new Database();
             string commandOptions = $"\n{CommandAddPlayer} - добавить игрока" +
                 $"\n{CommandRemovePlayer} - удалить игрока" +
                 $"\n{CommandBanPlayer} - забанить игрока" +
@@ -21,31 +21,31 @@ namespace CSTest2
                 $"\n{CommandExit} - выйти из базы данных";
             bool isWorking = true;
             string userInput;
-            
-            while (isWorking == true) 
+
+            while (isWorking == true)
             {
-                mainDataBase.ShowAllPlayers();
+                mainDatabase.ShowAllPlayers();
                 Console.WriteLine(commandOptions);
                 Console.WriteLine();
                 Console.Write("Укажите команду:");
                 userInput = Console.ReadLine();
 
-                switch (userInput) 
+                switch (userInput)
                 {
                     case CommandAddPlayer:
-                        mainDataBase.AddPlayer();
+                        mainDatabase.AddPlayer();
                         break;
 
                     case CommandRemovePlayer:
-                        mainDataBase.RemovePlayer();
+                        mainDatabase.RemovePlayer();
                         break;
 
                     case CommandBanPlayer:
-                        mainDataBase.BanPlayer(userInput);
+                        mainDatabase.BanPlayer();
                         break;
 
                     case CommandUnbanPlayer:
-                        mainDataBase.UnbanPlayer(userInput);
+                        mainDatabase.UnbanPlayer();
                         break;
 
                     case CommandExit:
@@ -56,147 +56,147 @@ namespace CSTest2
                         Console.WriteLine("Неизвестная команда!");
                         break;
                 }
-                
+
                 Console.ReadKey();
                 Console.Clear();
-            }            
+            }
+        }        
+    }
+
+    class Database
+    {
+        private List<Player> _database = new List<Player>();
+
+        public Database()
+        {
+            AddInitialPlayers();
         }
 
-        class PlayersDataBase
+        public void ShowAllPlayers()
         {
-            private List<Player> _playersDataBase = new List<Player>();
+            Console.Write("ID - Никнейм - Уровень - Статус аккаунта");
 
-            public PlayersDataBase() 
+            foreach (Player player in _database)
             {
-                _playersDataBase.Add(new Player("Лютик"));
-                _playersDataBase.Add(new Player("Геральт"));
-                _playersDataBase.Add(new Player("Цири"));
-                _playersDataBase.Add(new Player("Олаф"));
-                _playersDataBase.Add(new Player("Маки"));
-            }
-
-            public void ShowAllPlayers() 
-            {
-                Console.Write("ID - Никнейм - Уровень - Статус аккаунта");
-
-                foreach (Player player in _playersDataBase)
-                {                   
-                    Console.Write(player.uniqueID + " - " + player.nickName + " - " + player.level + " - ");
-                    if (player._isBanned == true)
-                    {
-                        Console.Write("Забанен");
-                    }
-                    else 
-                    {
-                        Console.Write("Активный");
-                    }
-                    Console.WriteLine();
-                }
-            }
-
-            public void AddPlayer() 
-            {
-                string newPlayerName;
-                Console.Write("Введите никнейм игрока: ");
-                newPlayerName = Console.ReadLine();
-                _playersDataBase.Add(new Player(newPlayerName));
-                Console.WriteLine("Новый игрок успешно добавлен!");
-            }
-
-            public void RemovePlayer()
-            {
-                EnquirePlayerID(out string playerID);
-                _playersDataBase.RemoveAt(GetPosition(_playersDataBase, playerID));
-                Console.WriteLine("Игрок успешно удален!");
-            }
-
-            public void BanPlayer(string commandNumber)
-            {
-                EnquirePlayerID(out string playerID);
-                _playersDataBase[GetPosition(_playersDataBase, playerID)].ChangeStatus(commandNumber);
-                Console.WriteLine("Игрок забанен!");
-            }
-
-            public void UnbanPlayer(string commandNumber)
-            {
-                EnquirePlayerID(out string playerID);
-                _playersDataBase[GetPosition(_playersDataBase, playerID)].ChangeStatus(commandNumber);
-                Console.WriteLine("Игрок разбанен!");
-            }
-
-            public int GetPosition(List<Player> mainList, string playerID)
-            {
-                int positionInList = 0;
-                bool isFound = false;
-
-                while (isFound == false)
+                Console.Write(player.UniqueId + " - " + player.NickName + " - " + player.Level + " - ");
+                if (player.IsBanned == true)
                 {
-                    foreach (var player in mainList)
-                    {
-                        if (player.uniqueID == playerID)
-                        {
-                            positionInList = mainList.IndexOf(player);
-                            isFound = true;
-                            break;
-                        }
-                    }
-                    
-                    if (isFound == false)
-                    {
-                        Console.WriteLine("Ошибка: Игрока с указанным ID номером не существует. Повторите ввод!");
-                        EnquirePlayerID(out playerID);
-                    }
+                    Console.Write("Забанен");
                 }
-
-                return positionInList;
-            }
-
-            public void EnquirePlayerID(out string playerID)
-            {
-                Console.Write("Введите ID игрока: ");
-                playerID = Console.ReadLine();
+                else
+                {
+                    Console.Write("Активный");
+                }
+                Console.WriteLine();
             }
         }
 
-        class Player 
+        public void AddPlayer()
         {
-            private static int _playersCount = 0;
+            string newPlayerName;
+            Console.Write("Введите никнейм игрока: ");
+            newPlayerName = Console.ReadLine();
+            _database.Add(new Player(newPlayerName));
+            Console.WriteLine("Новый игрок успешно добавлен!");
+        }
 
-            private string _idFixedPart = "plr";
+        public void RemovePlayer()
+        {
+            EnquirePlayerId(out string playerID);
+            _database.RemoveAt(GetPosition(playerID));
+            Console.WriteLine("Игрок успешно удален!");
+        }
 
-            public Player(string nickName) 
+        public void BanPlayer()
+        {
+            EnquirePlayerId(out string playerID);
+            _database[GetPosition(playerID)].BanPlayer();
+            Console.WriteLine("Игрок забанен!");
+        }
+
+        public void UnbanPlayer()
+        {
+            EnquirePlayerId(out string playerID);
+            _database[GetPosition(playerID)].UnbanPlayer();
+            Console.WriteLine("Игрок разбанен!");
+        }
+
+        private void AddInitialPlayers() 
+        {
+            _database.Add(new Player("Лютик"));
+            _database.Add(new Player("Геральт"));
+            _database.Add(new Player("Цири"));
+            _database.Add(new Player("Олаф"));
+            _database.Add(new Player("Маки"));
+        }
+
+        private int GetPosition(string playerID)
+        {
+            int positionInList = 0;
+            bool isFound = false;
+
+            while (isFound == false)
             {
-                uniqueID = GenerateNewID();
-                this.nickName = nickName;            
-            }
-
-            public string uniqueID { get; private set; }
-            public string nickName { get; private set; }
-            public int level { get; private set; } = 0;
-            public bool _isBanned { get; private set; } = false;          
-
-            public string GenerateNewID() 
-            {
-                string newID;
-                newID = _idFixedPart + _playersCount;
-                _playersCount++;
-                return newID;
-            }
-
-            public void ChangeStatus(string commandNumber) 
-            {
-                string commandBanPlayer = "3";
-                string commandUnbanPlayer = "4";
-
-                if (commandNumber == commandBanPlayer) 
+                foreach (var player in _database)
                 {
-                    _isBanned = true;
+                    if (player.UniqueId == playerID)
+                    {
+                        positionInList = _database.IndexOf(player);
+                        isFound = true;
+                        break;
+                    }
                 }
-                else if (commandNumber == commandUnbanPlayer) 
+
+                if (isFound == false)
                 {
-                    _isBanned = false;
+                    Console.WriteLine("Ошибка: Игрока с указанным ID номером не существует. Повторите ввод!");
+                    EnquirePlayerId(out playerID);
                 }
             }
-        }       
+
+            return positionInList;
+        }
+
+        private void EnquirePlayerId(out string playerID)
+        {
+            Console.Write("Введите ID игрока: ");
+            playerID = Console.ReadLine();
+        }
+    }
+
+    class Player
+    {
+        private static int _playersCount = 0;
+
+        private string _idFixedPart = "plr";
+
+        public Player(string nickName)
+        {
+            UniqueId = GenerateNewId();
+            NickName = nickName;
+        }
+
+        public string UniqueId { get; private set; }
+        public string NickName { get; private set; }
+        public int Level { get; private set; } = 0;
+        public bool IsBanned { get; private set; } = false;
+
+        private string GenerateNewId()
+        {
+            string newId;
+            newId = _idFixedPart + _playersCount;
+            _playersCount++;
+            return newId;
+        }
+
+        public void BanPlayer()
+        {
+            IsBanned = true;
+        }
+
+        public void UnbanPlayer()
+        {
+            IsBanned = false;
+        }
     }
 }
