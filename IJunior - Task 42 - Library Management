@@ -1,0 +1,325 @@
+using System;
+using System.Collections.Generic;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandAddBook = "1";
+            const string CommandRemoveBook = "2";
+            const string CommandSearchForBook= "3";
+            const string CommandShowAllBooks = "4";
+            const string CommandExit = "5";
+
+            Database books = new Database();
+            string commandOptions = $"\n{CommandAddBook} - добавить книгу" +
+                $"\n{CommandRemoveBook} - удалить книгу" +
+                $"\n{CommandSearchForBook} - поиск книг по параметру" +
+                $"\n{CommandShowAllBooks} - показать все книги" +
+                $"\n{CommandExit} - выйти из системы";
+            string userInput;
+            bool isLeaving = false;
+
+            while (isLeaving == false) 
+            {
+                Console.WriteLine("Добро пожаловать в библиотеку!");
+                Console.WriteLine(commandOptions);
+                Console.Write("\nВыберите действие: ");
+                userInput = Console.ReadLine();
+
+                switch (userInput) 
+                {
+                    case CommandAddBook:
+                        books.AddNewBook();
+                        break;
+
+                    case CommandRemoveBook:
+                        books.RemoveBook();
+                        break;
+                        
+                    case CommandSearchForBook:
+                        books.SearchForBooks();
+                        break;
+                        
+                    case CommandShowAllBooks:
+                        books.ShowBooks();
+                        break;
+                        
+                    case CommandExit:
+                        isLeaving = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Ошибка: неизвестная команда!");
+                        Console.ReadKey();
+                        break;
+                }
+
+                Console.Clear();
+            }            
+        }
+    }
+
+    class Database
+    {
+        private const string SearchParameterTitle = "название";
+        private const string SearchParameterAuthor = "автор";
+        private const string SearchParameterYear = "год";
+        private const string SearchParameterPublishingHouse = "издательство";
+
+        private List<Book> _books = new List<Book>();
+
+        public Database() 
+        {
+            AddInitialBooks();
+        }
+
+        private void AddInitialBooks() 
+        {
+            _books.Add(new Book ("Мастер и Маргарита","Булгаков Михаил",1929,"СССР Пресс"));
+            _books.Add(new Book("Собачье сердце", "Булгаков Михаил", 1925, "СССР Пресс"));
+            _books.Add(new Book("Граф Монте-Кристо", "Дюма Александр", 1844, "Империя Пресс"));
+            _books.Add(new Book("Три мушкетера", "Дюма Александр", 1879, "Империя Пресс"));
+            _books.Add(new Book("Идиот", "Достоевский Федор", 1868, "Империя Пресс"));
+            _books.Add(new Book("Братья Карамазовы", "Достоевский Федор", 1879, "Империя Пресс"));
+            _books.Add(new Book("Униженные и оскорбленные", "Достоевский Федор", 1868, "Империя Пресс"));
+        }
+
+        public void AddNewBook() 
+        {           
+            _books.Add(new Book(EnquireTitle(), EnquireAuthor(), EnquireYear(), EnquirePublishingHouse()));
+            Console.WriteLine("Новая книга успешно добавлена!");
+            Console.ReadKey();
+        }
+
+        public void RemoveBook() 
+        {
+            FindTargetBooks(out List<Book> foundBooks, ShowSearchParameters());
+
+            if (foundBooks.Count == 0) 
+            {
+                Console.WriteLine("По Вашему запросу не найдено ни одной книги!");
+            }
+            else 
+            {
+                Console.WriteLine($"Количество найденных книг: {foundBooks.Count}");
+                
+                foreach (var book in foundBooks) 
+                {
+                    _books.Remove(book);
+                }
+                
+                Console.WriteLine("Все найденные книги удалены!");
+            }
+
+            Console.ReadKey();
+        }
+
+        public void SearchForBooks() 
+        {
+            FindTargetBooks(out List<Book> foundBooks, ShowSearchParameters());
+
+            if (foundBooks.Count == 0)
+            {
+                Console.WriteLine("По Вашему запросу не найдено ни одной книги!");
+            }
+            else
+            {
+                ShowBooks(foundBooks);
+            } 
+            
+            Console.ReadKey ();
+        }
+
+        public void ShowBooks() 
+        {
+            Console.WriteLine("\nНазвание     -     Автор    -    Год    -    Издательство\n");
+
+            foreach (var book in _books) 
+            {
+                Console.WriteLine(book.Title + " - " + book.Author + " - " + book.PublicationYear + " - " + book.PublishingHouse);
+            }
+
+            Console.ReadKey ();
+        }
+
+        private void ShowBooks(List<Book> books)
+        {
+            Console.WriteLine("\nНазвание     -     Автор    -    Год    -    Издательство\n");
+
+            foreach (var book in books)
+            {
+                Console.WriteLine(book.Title + " - " + book.Author + " - " + book.PublicationYear + " - " + book.PublishingHouse);
+            }
+
+            Console.ReadKey();
+        }
+
+        private string ShowSearchParameters() 
+        {
+            Console.WriteLine("\nДоступны следующие параметры для поиска книг:");
+            Console.WriteLine(SearchParameterTitle);
+            Console.WriteLine(SearchParameterAuthor);
+            Console.WriteLine(SearchParameterYear);
+            Console.WriteLine(SearchParameterPublishingHouse);
+            Console.Write("\nУкажите параметр:");
+            return Console.ReadLine();
+        }
+
+        private void FindTargetBooks(out List<Book> foundBooks, string searchParameter)                 
+        {                      
+            foundBooks = new List<Book>();
+            string userInput;
+
+            switch (searchParameter.ToLower()) 
+            {
+                case SearchParameterTitle:
+                    userInput = EnquireTitle().ToLower();
+
+                    foreach (var book in _books) 
+                    {
+                        if (book.Title.ToLower() == userInput) 
+                        {
+                            foundBooks.Add(book);
+                        }
+                    }
+                    break;
+
+                case SearchParameterAuthor:
+                    userInput = EnquireAuthor().ToLower();
+
+                    foreach (var book in _books)
+                    {
+                        if (book.Author.Split(' ')[0].ToLower() == userInput)
+                        {
+                            foundBooks.Add(book);
+                        }
+                    }
+                    break;
+
+                case SearchParameterYear:
+                    userInput = Convert.ToString(EnquireYear());
+
+                    foreach (var book in _books)
+                    {
+                        if (book.PublicationYear == Convert.ToInt32(userInput))
+                        {
+                            foundBooks.Add(book);
+                        }
+                    }
+                    break;
+
+                case SearchParameterPublishingHouse:
+                    userInput = EnquirePublishingHouse().ToLower();
+
+                    foreach (var book in _books)
+                    {
+                        if (book.PublishingHouse.ToLower() == userInput)
+                        {
+                            foundBooks.Add(book);
+                        }
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine("Ошибка: неизвестный параметр поиска!");
+                    break;
+            }
+        }
+
+        private string EnquireTitle() 
+        {
+            string userInputTitle;
+
+            Console.Write("Укажите название книги:");
+            userInputTitle = Console.ReadLine();
+
+            while (CheckString(userInputTitle) == true)
+            {
+                Console.Write("\nОшибка: Вы не указали название! Повторите попытку:");
+                userInputTitle = Console.ReadLine();
+            }
+
+            return userInputTitle;
+        }
+
+        private string EnquireAuthor()
+        {
+            string userInputAuthor;
+
+            Console.Write("Укажите фамилию автора:");
+            userInputAuthor = Console.ReadLine();
+
+            while (CheckString(userInputAuthor) == true)
+            {
+                Console.Write("\nОшибка: Вы не указали автора! Повторите попытку:");
+                userInputAuthor = Console.ReadLine();
+            }
+
+            return userInputAuthor;
+        }
+
+        private int EnquireYear()
+        {
+            int userInputYear;
+
+            Console.Write("Укажите год издания книги:");
+
+            while (int.TryParse(Console.ReadLine(), out userInputYear) == false) 
+            {
+                Console.Write("\nОшибка: неверный формат даты! Введите год еще раз:");
+            }
+
+            return userInputYear;
+        }
+
+        private string EnquirePublishingHouse()
+        {
+            string userInputPublishingHouse;
+
+            Console.Write("Укажите издательство книги:");
+            userInputPublishingHouse = Console.ReadLine();
+
+            while (CheckString(userInputPublishingHouse) == true) 
+            {
+                Console.Write("\nОшибка: Вы не указали издательство! Повторите попытку:");
+                userInputPublishingHouse = Console.ReadLine();
+            }
+
+            return userInputPublishingHouse;
+        }
+
+        private bool CheckString(string userInput) 
+        {
+            bool isEmpty;
+            if (userInput == string.Empty)
+            {
+                isEmpty = true;
+            }
+            else 
+            {
+                isEmpty = false;
+            }
+
+            return isEmpty;
+        }
+    }
+
+    class Book 
+    {
+        public string Title { get; private set; }
+        public string Author { get; private set; }
+        public int PublicationYear { get; private set; }
+        public string PublishingHouse { get; private set; }
+
+        public Book(string title, string author, int publicationYear, string publishingHouse) 
+        {
+            Title = title;
+            Author = author;
+            PublicationYear = publicationYear;
+            PublishingHouse = publishingHouse;
+        }        
+    }
+}
