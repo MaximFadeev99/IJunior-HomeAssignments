@@ -13,7 +13,7 @@ namespace CSTest2
             const string CommandUnbanPlayer = "4";
             const string CommandExit = "5";
 
-            Database mainDatabase = new Database();
+            Database players = new Database();
             string commandOptions = $"\n{CommandAddPlayer} - добавить игрока" +
                 $"\n{CommandRemovePlayer} - удалить игрока" +
                 $"\n{CommandBanPlayer} - забанить игрока" +
@@ -24,7 +24,7 @@ namespace CSTest2
 
             while (isWorking == true)
             {
-                mainDatabase.ShowAllPlayers();
+                players.ShowAllPlayers();
                 Console.WriteLine(commandOptions);
                 Console.WriteLine();
                 Console.Write("Укажите команду:");
@@ -33,19 +33,19 @@ namespace CSTest2
                 switch (userInput)
                 {
                     case CommandAddPlayer:
-                        mainDatabase.AddPlayer();
+                        players.AddPlayer();
                         break;
 
                     case CommandRemovePlayer:
-                        mainDatabase.RemovePlayer();
+                        players.RemovePlayer();
                         break;
 
                     case CommandBanPlayer:
-                        mainDatabase.BanPlayer();
+                        players.BanPlayer();
                         break;
 
                     case CommandUnbanPlayer:
-                        mainDatabase.UnbanPlayer();
+                        players.UnbanPlayer();
                         break;
 
                     case CommandExit:
@@ -56,16 +56,15 @@ namespace CSTest2
                         Console.WriteLine("Неизвестная команда!");
                         break;
                 }
-
-                Console.ReadKey();
+               
                 Console.Clear();
             }
-        }        
+        }
     }
 
     class Database
     {
-        private List<Player> _database = new List<Player>();
+        private List<Player> _players = new List<Player>();
 
         public Database()
         {
@@ -74,9 +73,9 @@ namespace CSTest2
 
         public void ShowAllPlayers()
         {
-            Console.WriteLine("ID - Никнейм - Уровень - Статус аккаунта");
+            Console.WriteLine("Id - Никнейм - Уровень - Статус аккаунта");
 
-            foreach (Player player in _database)
+            foreach (Player player in _players)
             {
                 Console.Write(player.UniqueId + " - " + player.NickName + " - " + player.Level + " - ");
                 if (player.IsBanned == true)
@@ -96,71 +95,89 @@ namespace CSTest2
             string newPlayerName;
             Console.Write("Введите никнейм игрока: ");
             newPlayerName = Console.ReadLine();
-            _database.Add(new Player(newPlayerName));
+            _players.Add(new Player(newPlayerName));
             Console.WriteLine("Новый игрок успешно добавлен!");
+            Console.ReadKey();
         }
 
         public void RemovePlayer()
         {
-            EnquirePlayerId(out string playerID);
-            _database.Remove(GetTargetPlayer(playerID));
-            Console.WriteLine("Игрок успешно удален!");
+            Player foundPlayer = TryGetPlayer();
+
+            if (foundPlayer == null)
+            {
+                Console.WriteLine("Ошибка: Игрока с указанным Id номером не существует!");
+            }
+            else
+            {
+                _players.Remove(foundPlayer);
+                Console.WriteLine("Игрок успешно удален!");
+            }
+
+            Console.ReadKey();
         }
 
         public void BanPlayer()
         {
-            EnquirePlayerId(out string playerID);
-            GetTargetPlayer(playerID).BanPlayer();
-            Console.WriteLine("Игрок забанен!");
+            Player foundPlayer = TryGetPlayer();
+
+            if (foundPlayer == null)
+            {
+                Console.WriteLine("Ошибка: Игрока с указанным Id номером не существует!");
+            }
+            else
+            {
+               foundPlayer.Ban();
+               Console.WriteLine("Игрок забанен!");
+            }
+
+            Console.ReadKey();
         }
 
         public void UnbanPlayer()
         {
-            EnquirePlayerId(out string playerID);
-            GetTargetPlayer(playerID).UnbanPlayer();
-            Console.WriteLine("Игрок разбанен!");
-        }
+            Player foundPlayer = TryGetPlayer();
 
-        private void AddInitialPlayers() 
-        {
-            _database.Add(new Player("Лютик"));
-            _database.Add(new Player("Геральт"));
-            _database.Add(new Player("Цири"));
-            _database.Add(new Player("Олаф"));
-            _database.Add(new Player("Маки"));
-        }
-
-        private Player GetTargetPlayer(string playerID)
-        {
-            Player targetPlayer = new Player("");
-            bool isFound = false;
-
-            while (isFound == false)
+            if (foundPlayer == null)
             {
-                foreach (var player in _database)
-                {
-                    if (player.UniqueId == playerID)
-                    {
-                        targetPlayer = player;
-                        isFound = true;
-                        break;
-                    }
-                }
+                Console.WriteLine("Ошибка: Игрока с указанным Id номером не существует!");
+            }
+            else
+            {
+                foundPlayer.Unban();
+                Console.WriteLine("Игрок разбанен!");
+            }
 
-                if (isFound == false)
+            Console.ReadKey();
+        }
+
+        private void AddInitialPlayers()
+        {
+            _players.Add(new Player("Лютик"));
+            _players.Add(new Player("Геральт"));
+            _players.Add(new Player("Цири"));
+            _players.Add(new Player("Олаф"));
+            _players.Add(new Player("Маки"));
+        }
+
+        private Player TryGetPlayer()
+        {
+            string playerId;
+            Player foundPlayer = null;
+
+            Console.Write("Введите ID игрока: ");
+            playerId = Console.ReadLine();
+            
+            foreach (var player in _players)
+            {
+                if (player.UniqueId == playerId)
                 {
-                    Console.WriteLine("Ошибка: Игрока с указанным ID номером не существует. Повторите ввод!");
-                    EnquirePlayerId(out playerID);
+                    foundPlayer = player;
+                    break;
                 }
             }
 
-            return targetPlayer;
-        }
-
-        private void EnquirePlayerId(out string playerID)
-        {
-            Console.Write("Введите ID игрока: ");
-            playerID = Console.ReadLine();
+            return foundPlayer;           
         }
     }
 
@@ -181,22 +198,22 @@ namespace CSTest2
         public int Level { get; private set; } = 1;
         public bool IsBanned { get; private set; } = false;
 
+        public void Ban()
+        {
+            IsBanned = true;
+        }
+
+        public void Unban()
+        {
+            IsBanned = false;
+        }
+
         private string GenerateNewId()
         {
             string newId;
             newId = _idFixedPart + _playersCount;
             _playersCount++;
             return newId;
-        }
-
-        public void BanPlayer()
-        {
-            IsBanned = true;
-        }
-
-        public void UnbanPlayer()
-        {
-            IsBanned = false;
-        }
+        }       
     }
 }
