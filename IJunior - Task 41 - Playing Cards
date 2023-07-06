@@ -125,12 +125,15 @@ namespace CSTest2
         public Card ChooseRandomCard()
         {
             Random random = new Random();
-            Card randomCard = new Card(0,"",false);
+            Card randomCard;
+            int cardPosition;
 
-            while (randomCard.IsAvailable != true)
+            do
             {
-                randomCard = _packOfCards[random.Next(0, _packOfCards.Count)];
+                cardPosition = random.Next(0, _packOfCards.Count);
+                randomCard = _packOfCards[cardPosition];
             }
+            while (randomCard.IsAvailable != true);
 
             randomCard.MakeUnavailable();
             return randomCard;
