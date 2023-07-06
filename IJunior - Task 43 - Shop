@@ -1,0 +1,109 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+
+        }
+
+    }
+    class Player
+    {
+
+    }
+
+    class PlayerInventory
+    {
+
+    }
+
+    class Merchant
+    {
+
+    }
+
+    class MerchantInventory
+    {
+        private const int MaxItems = 100;
+
+        private List<Goods> itemsAtDisposal = new List<Goods>();
+
+        public MerchantInventory()
+        {
+            AddInitialItems(IronOre, 40);
+            AddInitialItems(HealingPotion, 20);
+            AddInitialItems(LegendarySword, 1);
+
+        }
+
+        private void AddInitialItems(int ironOreQuantity, int healingPotionsQuantity, int legendarySwordQuantity) 
+        {
+            int itemsCount = 0;
+            while (itemsCount < ironOreQuantity)
+            {
+                itemsAtDisposal.Add(new IronOre());
+                itemsCount++;
+            }
+
+            itemsCount = 0;
+            while (itemsCount < healingPotionsQuantity)
+            {
+                itemsAtDisposal.Add(new HealingPotion());
+                itemsCount++;
+            }
+
+            itemsCount = 0;
+            while (itemsCount < legendarySwordQuantity)
+            {
+                itemsAtDisposal.Add(new LegendarySword());
+                itemsCount++;
+            }
+        }
+
+        private void AddInitialItems(Goods goods, int quantity)
+        {
+            int itemsCount = 0;
+            while (itemsCount < quantity)
+            {
+                itemsAtDisposal.Add(new goods());
+                itemsCount++;
+            }
+
+            
+        }
+    }
+
+    class Goods 
+    {
+    
+    }
+
+    class IronOre : Goods
+    {
+        private static string name = "Железная руда";
+        private static string description = "Природный минерал, необходимый для крафта стальной брони и оружия";
+    }
+
+    class HealingPotion : Goods
+    {
+        private static string name = "Зелье исцеления";
+        private static string description = "Отвар из трав, незначительно восстанавливающий здоровье";
+    }
+
+    class LegendarySword : Goods
+    {
+        private static string name = "Легендарный меч";
+        private static string description = "Меч из адамантия, принадлежавший легендарному герою прошлого. Наносит колоссальный урон.";
+    }
+
+    class SpoilsOfWar : Goods
+    {
+        private static string name = "Трофеи";
+        private static string description = "Одежда, оружие и припасы, добытые потом и кровью в бою";    
+    }
+}
