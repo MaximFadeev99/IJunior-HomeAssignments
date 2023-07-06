@@ -10,7 +10,7 @@ namespace CSTest2
             const string CommandTakeCard = "1";
             const string CommandShowCards = "2";
             const string CommandExit = "3";
-            
+
             PackOfCards packOfCards = new PackOfCards();
             Player player1 = new Player();
             string showCommands = $"{CommandTakeCard} - взять карту" +
@@ -19,21 +19,21 @@ namespace CSTest2
             string userInput;
             bool isLeaving = false;
 
-            while (!isLeaving)
+            while (isLeaving == false)
             {
                 Console.WriteLine(showCommands);
-                Console.WriteLine($"\nКоличество карт на руках: {player1.CardsAtDisposal} / {Player.maxCards}");
+                Console.WriteLine($"\nКоличество карт на руках: {player1.CardsAtDisposal} / {player1.ShowMaxCards()}");
                 Console.Write("\nУкажите команду:");
                 userInput = Console.ReadLine();
 
                 switch (userInput)
                 {
                     case CommandTakeCard:
-                        player1.TakeAnotherCard(packOfCards);
+                        player1.TryTakeCard(packOfCards);
                         break;
 
                     case CommandShowCards:
-                        player1.ShowPlayerCards(packOfCards);
+                        player1.ShowCards();
                         break;
 
                     case CommandExit:
@@ -47,135 +47,123 @@ namespace CSTest2
 
                 Console.Clear();
             }
-        }      
+        }
     }
 
     class Player
     {
-        public const int maxCards = 5;
+        private const int MaxCards  = 5;
 
         private List<Card> _playerCards = new List<Card>();
 
         public int CardsAtDisposal { get; private set; } = 0;
 
-        public void TakeAnotherCard(PackOfCards packOfCards)
+        public void TryTakeCard(PackOfCards packOfCards)
         {
-            if (CardsAtDisposal < maxCards)
+            if (CardsAtDisposal < MaxCards)
             {
                 _playerCards.Add(packOfCards.ChooseRandomCard());
                 CardsAtDisposal++;
             }
-            else 
+            else
             {
                 Console.WriteLine("У Вас на руках максимальное количетсво карт! Взять еще одну невозможно!");
                 Console.ReadKey();
             }
         }
 
-        public void ShowPlayerCards(PackOfCards packOfCards)
+        public void ShowCards()
         {
-
             if (CardsAtDisposal != 0)
             {
                 Console.WriteLine("\nВам выпали следующие карты:");
 
                 foreach (var card in _playerCards)
                 {
-                    Console.WriteLine(card.CardNumber + " " + card.CardSuit);
+                    Console.WriteLine(card.Number + " " + card.Suit);
                 }
             }
-            else 
+            else
             {
                 Console.WriteLine("Вы не взяли ни одной карты!");
             }
 
-            Console.ReadKey ();
+            Console.ReadKey();
+        }
+
+        public int ShowMaxCards() 
+        {
+            return MaxCards;
         }
     }
 
     class PackOfCards
     {
-        private const int maxCardsInPack = 51; 
-
-        public PackOfCards()
-        {
-            while (_packOfCards.Count <= maxCardsInPack) 
-            {
-                _packOfCards.Add(new Card());
-            }
-        }
-
-        public List<Card> _packOfCards { get; private set; } = new List<Card>();
-
-        public Card ChooseRandomCard() 
-        {
-            Random random = new Random();
-            Card randomCard = new Card();
-
-            while (randomCard.IsAvailable != true) 
-            {
-                randomCard = _packOfCards[random.Next(0, _packOfCards.Count)];
-            }
-
-            randomCard.MakeCardUnavailable();
-            return randomCard;
-        }        
-    }
-
-    class Card
-    {
-        private const string Spades = "Пики";
-        private const string Hearts = "Черви";
-        private const string Diamonds = "Бубны";
-        private const string Clubs = "Трефы";
-        private const int maxCardsInOneSuit = 13;
-
         private static int SpadesCount = 1;
         private static int HeartsCount = 1;
         private static int DiamondsCount = 1;
         private static int ClubsCount = 1;
 
+        private const string Spades = "Пики";
+        private const string Hearts = "Черви";
+        private const string Diamonds = "Бубны";
+        private const string Clubs = "Трефы";
+        private const int MaxCardsInOneSuit = 13;
+        private const int MaxCardsInPack = 51;
 
-        public Card()
+        private List<Card> _packOfCards = new List<Card>();
+
+        public PackOfCards()
         {
-            GenerateCard(out int cardNumber, out string cardSuit, out bool isAvailable);
-            CardNumber = cardNumber;
-            CardSuit = cardSuit;
-            IsAvailable = isAvailable;
+            while (_packOfCards.Count <= MaxCardsInPack)
+            {
+                GenerateCard(out int cardNumber, out string cardSuit, out bool isAvailable);
+                _packOfCards.Add(new Card(cardNumber,cardSuit, isAvailable));
+            }
         }
 
-        public int CardNumber { get; private set; }
-        public string CardSuit { get; private set; }
-        public bool IsAvailable { get; private set; }
+        public Card ChooseRandomCard()
+        {
+            Random random = new Random();
+            Card randomCard = null;
 
-        private void GenerateCard(out int cardNumber, out string cardSuit, out bool isAvailable) 
+            while (randomCard.IsAvailable != true)
+            {
+                randomCard = _packOfCards[random.Next(0, _packOfCards.Count)];
+            }
+
+            randomCard.MakeUnavailable();
+            return randomCard;
+        }
+
+        private void GenerateCard(out int cardNumber, out string cardSuit, out bool isAvailable)
         {
             cardNumber = 0;
             cardSuit = string.Empty;
             isAvailable = false;
 
-            if (SpadesCount <= maxCardsInOneSuit)
+            if (SpadesCount <= MaxCardsInOneSuit)
             {
                 cardSuit = Spades;
                 cardNumber = SpadesCount;
                 isAvailable = true;
                 SpadesCount++;
             }
-            else if (HeartsCount <= maxCardsInOneSuit) 
+            else if (HeartsCount <= MaxCardsInOneSuit)
             {
                 cardSuit = Hearts;
                 cardNumber = HeartsCount;
                 isAvailable = true;
                 HeartsCount++;
             }
-            else if (DiamondsCount <= maxCardsInOneSuit)
+            else if (DiamondsCount <= MaxCardsInOneSuit)
             {
                 cardSuit = Diamonds;
                 cardNumber = DiamondsCount;
                 isAvailable = true;
                 DiamondsCount++;
             }
-            else if (ClubsCount <= maxCardsInOneSuit)
+            else if (ClubsCount <= MaxCardsInOneSuit)
             {
                 cardSuit = Clubs;
                 cardNumber = ClubsCount;
@@ -183,8 +171,22 @@ namespace CSTest2
                 ClubsCount++;
             }
         }
+    }
 
-        public void MakeCardUnavailable() 
+    class Card
+    {
+        public Card(int cardNumber, string cardSuit, bool isAvailable)
+        {
+            Number = cardNumber;
+            Suit = cardSuit;
+            IsAvailable = isAvailable;
+        }
+
+        public int Number { get; private set; }
+        public string Suit { get; private set; }
+        public bool IsAvailable { get; private set; }      
+
+        public void MakeUnavailable()
         {
             IsAvailable = false;
         }
