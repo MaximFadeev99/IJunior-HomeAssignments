@@ -125,7 +125,7 @@ namespace CSTest2
         public Card ChooseRandomCard()
         {
             Random random = new Random();
-            Card randomCard = null;
+            Card randomCard = new Card(0,"",false);
 
             while (randomCard.IsAvailable != true)
             {
