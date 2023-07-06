@@ -9,7 +9,7 @@ namespace CSTest2
         {
             const string CommandAddBook = "1";
             const string CommandRemoveBook = "2";
-            const string CommandSearchForBook= "3";
+            const string CommandSearchForBook = "3";
             const string CommandShowAllBooks = "4";
             const string CommandExit = "5";
 
@@ -22,14 +22,14 @@ namespace CSTest2
             string userInput;
             bool isLeaving = false;
 
-            while (isLeaving == false) 
+            while (isLeaving == false)
             {
                 Console.WriteLine("Добро пожаловать в библиотеку!");
                 Console.WriteLine(commandOptions);
                 Console.Write("\nВыберите действие: ");
                 userInput = Console.ReadLine();
 
-                switch (userInput) 
+                switch (userInput)
                 {
                     case CommandAddBook:
                         books.AddNewBook();
@@ -38,15 +38,15 @@ namespace CSTest2
                     case CommandRemoveBook:
                         books.RemoveBook();
                         break;
-                        
+
                     case CommandSearchForBook:
                         books.SearchForBooks();
                         break;
-                        
+
                     case CommandShowAllBooks:
                         books.ShowBooks();
                         break;
-                        
+
                     case CommandExit:
                         isLeaving = true;
                         break;
@@ -58,7 +58,7 @@ namespace CSTest2
                 }
 
                 Console.Clear();
-            }            
+            }
         }
     }
 
@@ -71,14 +71,14 @@ namespace CSTest2
 
         private List<Book> _books = new List<Book>();
 
-        public Database() 
+        public Database()
         {
             AddInitialBooks();
         }
 
-        private void AddInitialBooks() 
+        private void AddInitialBooks()
         {
-            _books.Add(new Book ("Мастер и Маргарита","Булгаков Михаил",1929,"СССР Пресс"));
+            _books.Add(new Book("Мастер и Маргарита", "Булгаков Михаил", 1929, "СССР Пресс"));
             _books.Add(new Book("Собачье сердце", "Булгаков Михаил", 1925, "СССР Пресс"));
             _books.Add(new Book("Граф Монте-Кристо", "Дюма Александр", 1844, "Империя Пресс"));
             _books.Add(new Book("Три мушкетера", "Дюма Александр", 1879, "Империя Пресс"));
@@ -87,37 +87,37 @@ namespace CSTest2
             _books.Add(new Book("Униженные и оскорбленные", "Достоевский Федор", 1868, "Империя Пресс"));
         }
 
-        public void AddNewBook() 
-        {           
+        public void AddNewBook()
+        {
             _books.Add(new Book(EnquireTitle(), EnquireAuthor(), EnquireYear(), EnquirePublishingHouse()));
             Console.WriteLine("Новая книга успешно добавлена!");
             Console.ReadKey();
         }
 
-        public void RemoveBook() 
+        public void RemoveBook()
         {
             FindTargetBooks(out List<Book> foundBooks, ShowSearchParameters());
 
-            if (foundBooks.Count == 0) 
+            if (foundBooks.Count == 0)
             {
                 Console.WriteLine("По Вашему запросу не найдено ни одной книги!");
             }
-            else 
+            else
             {
                 Console.WriteLine($"Количество найденных книг: {foundBooks.Count}");
-                
-                foreach (var book in foundBooks) 
+
+                foreach (var book in foundBooks)
                 {
                     _books.Remove(book);
                 }
-                
+
                 Console.WriteLine("Все найденные книги удалены!");
             }
 
             Console.ReadKey();
         }
 
-        public void SearchForBooks() 
+        public void SearchForBooks()
         {
             FindTargetBooks(out List<Book> foundBooks, ShowSearchParameters());
 
@@ -128,21 +128,19 @@ namespace CSTest2
             else
             {
                 ShowBooks(foundBooks);
-            } 
-            
-            Console.ReadKey ();
+            }
         }
 
-        public void ShowBooks() 
+        public void ShowBooks()
         {
             Console.WriteLine("\nНазвание     -     Автор    -    Год    -    Издательство\n");
 
-            foreach (var book in _books) 
+            foreach (var book in _books)
             {
                 Console.WriteLine(book.Title + " - " + book.Author + " - " + book.PublicationYear + " - " + book.PublishingHouse);
             }
 
-            Console.ReadKey ();
+            Console.ReadKey();
         }
 
         private void ShowBooks(List<Book> books)
@@ -157,7 +155,7 @@ namespace CSTest2
             Console.ReadKey();
         }
 
-        private string ShowSearchParameters() 
+        private string ShowSearchParameters()
         {
             Console.WriteLine("\nДоступны следующие параметры для поиска книг:");
             Console.WriteLine(SearchParameterTitle);
@@ -168,19 +166,19 @@ namespace CSTest2
             return Console.ReadLine();
         }
 
-        private void FindTargetBooks(out List<Book> foundBooks, string searchParameter)                 
-        {                      
+        private void FindTargetBooks(out List<Book> foundBooks, string searchParameter)
+        {
             foundBooks = new List<Book>();
             string userInput;
 
-            switch (searchParameter.ToLower()) 
+            switch (searchParameter.ToLower())
             {
                 case SearchParameterTitle:
                     userInput = EnquireTitle().ToLower();
 
-                    foreach (var book in _books) 
+                    foreach (var book in _books)
                     {
-                        if (book.Title.ToLower() == userInput) 
+                        if (book.Title.ToLower() == userInput)
                         {
                             foundBooks.Add(book);
                         }
@@ -229,7 +227,7 @@ namespace CSTest2
             }
         }
 
-        private string EnquireTitle() 
+        private string EnquireTitle()
         {
             string userInputTitle;
 
@@ -267,7 +265,7 @@ namespace CSTest2
 
             Console.Write("Укажите год издания книги:");
 
-            while (int.TryParse(Console.ReadLine(), out userInputYear) == false) 
+            while (int.TryParse(Console.ReadLine(), out userInputYear) == false)
             {
                 Console.Write("\nОшибка: неверный формат даты! Введите год еще раз:");
             }
@@ -282,7 +280,7 @@ namespace CSTest2
             Console.Write("Укажите издательство книги:");
             userInputPublishingHouse = Console.ReadLine();
 
-            while (CheckString(userInputPublishingHouse) == true) 
+            while (CheckString(userInputPublishingHouse) == true)
             {
                 Console.Write("\nОшибка: Вы не указали издательство! Повторите попытку:");
                 userInputPublishingHouse = Console.ReadLine();
@@ -291,14 +289,14 @@ namespace CSTest2
             return userInputPublishingHouse;
         }
 
-        private bool CheckString(string userInput) 
+        private bool CheckString(string userInput)
         {
             bool isEmpty;
             if (userInput == string.Empty)
             {
                 isEmpty = true;
             }
-            else 
+            else
             {
                 isEmpty = false;
             }
@@ -307,19 +305,19 @@ namespace CSTest2
         }
     }
 
-    class Book 
+    class Book
     {
-        public string Title { get; private set; }
-        public string Author { get; private set; }
-        public int PublicationYear { get; private set; }
-        public string PublishingHouse { get; private set; }
-
-        public Book(string title, string author, int publicationYear, string publishingHouse) 
+        public Book(string title, string author, int publicationYear, string publishingHouse)
         {
             Title = title;
             Author = author;
             PublicationYear = publicationYear;
             PublishingHouse = publishingHouse;
-        }        
+        }
+
+        public string Title { get; private set; }
+        public string Author { get; private set; }
+        public int PublicationYear { get; private set; }
+        public string PublishingHouse { get; private set; }
     }
 }
