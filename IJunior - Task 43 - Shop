@@ -8,8 +8,13 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            
+
+
+
+
         }
+
+        
 
     }
     class Player
@@ -17,16 +22,26 @@ namespace CSTest2
         private int AvailableMoney = 300;
         private PlayerInventory _inventory = new PlayerInventory();
 
-        public void Buy() 
+        public void Buy()
         {
             string itemName = EnquireItemName();
             int itemQuantity = EnquireItemQuantity();
 
+        }
 
+        public bool isEnoughMoney(string itemName, int itemQuantity) 
+        {
+            bool isEnoughMoney;
+            int sellPrice;
+
+            if (itemName == "Железная руда") 
+            {
+                sellPrice =
+            }
 
         }
 
-        public string EnquireItemName() 
+        public string EnquireItemName()
         {
             string userInputItemName;
 
@@ -43,6 +58,7 @@ namespace CSTest2
             userInputQuantity = Convert.ToInt32(Console.ReadLine());
             return userInputQuantity;
         }
+
     }
 
     class PlayerInventory
@@ -58,15 +74,18 @@ namespace CSTest2
 
         private void AddInitialItems(string item1, string item2)
         {
+            int item1Quantity = 41;
+            int item2Quantity = 61;
+
             int itemsCount = 1;
 
-            while (itemsCount < 21)
+            while (itemsCount < item1Quantity)
             {
                 AvailableItems.Add(new Item(item1));
                 itemsCount++;
             }
 
-            while (itemsCount < 31)
+            while (itemsCount < item2Quantity)
             {
                 AvailableItems.Add(new Item(item2));
                 itemsCount++;
@@ -82,24 +101,7 @@ namespace CSTest2
         public int IronOreSellPrice { get; private set; } = 25;
         public int IronOreBuyPrice { get; private set; } = 20;
         public int HealingPotionSellPrice { get; private set; } = 50;
-        public int HealingPotionBuyPrice { get; private set; } = 45;
-
-        public void Buy(string itemName, int quantity) 
-        {
-            switch (itemName) 
-            {
-                case "Железная руда":
-                    if (IronOreBuyPrice * quantity <= AvailableMoney) 
-                    {
-                        
-                    }
-                    break;
-
-                case "Исцеляющее зелье":
-                    break;
-            }
-        }
-
+        public int HealingPotionBuyPrice { get; private set; } = 45;    
     }
 
     class MerchantInventory
@@ -112,18 +114,20 @@ namespace CSTest2
         {
             AddInitialItems("Железная руда", "Исцеляющее зелье");
         }
-      
+
         private void AddInitialItems(string item1, string item2)
         {
             int itemsCount = 1;
+            int item1Quantity = 41;
+            int item2Quantity = 61;
 
-            while (itemsCount < 41)
+            while (itemsCount < item1Quantity)
             {
                 AvailableItems.Add(new Item(item1));
                 itemsCount++;
             }
 
-            while (itemsCount < 61)
+            while (itemsCount < item2Quantity)
             {
                 AvailableItems.Add(new Item(item2));
                 itemsCount++;
@@ -131,13 +135,15 @@ namespace CSTest2
         }
     }
 
-    class Item 
+    class Item
     {
         public string _name { get; private set; }
 
-        public Item (string name)
+        public Item(string name)
         {
             _name = name;
         }
     }
+
+   
 }
