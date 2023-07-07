@@ -8,22 +8,97 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-
+            
         }
 
     }
     class Player
     {
+        private int AvailableMoney = 300;
+        private PlayerInventory _inventory = new PlayerInventory();
 
+        public void Buy() 
+        {
+            string itemName = EnquireItemName();
+            int itemQuantity = EnquireItemQuantity();
+
+
+
+        }
+
+        public string EnquireItemName() 
+        {
+            string userInputItemName;
+
+            Console.WriteLine("\nУкажите название товара:");
+            userInputItemName = Console.ReadLine();
+            return userInputItemName;
+        }
+
+        public int EnquireItemQuantity()
+        {
+            int userInputQuantity;
+
+            Console.WriteLine("\nУкажите название товара:");
+            userInputQuantity = Convert.ToInt32(Console.ReadLine());
+            return userInputQuantity;
+        }
     }
 
     class PlayerInventory
     {
+        private const int MaxItems = 50;
 
+        private List<Item> AvailableItems = new List<Item>();
+
+        public PlayerInventory()
+        {
+            AddInitialItems("Железная руда", "Исцеляющее зелье");
+        }
+
+        private void AddInitialItems(string item1, string item2)
+        {
+            int itemsCount = 1;
+
+            while (itemsCount < 21)
+            {
+                AvailableItems.Add(new Item(item1));
+                itemsCount++;
+            }
+
+            while (itemsCount < 31)
+            {
+                AvailableItems.Add(new Item(item2));
+                itemsCount++;
+            }
+        }
     }
 
     class Merchant
     {
+        private int AvailableMoney = 1000;
+        private MerchantInventory _inventory = new MerchantInventory();
+
+        public int IronOreSellPrice { get; private set; } = 25;
+        public int IronOreBuyPrice { get; private set; } = 20;
+        public int HealingPotionSellPrice { get; private set; } = 50;
+        public int HealingPotionBuyPrice { get; private set; } = 45;
+
+        public void Buy(string itemName, int quantity) 
+        {
+            switch (itemName) 
+            {
+                case "Железная руда":
+                    if (IronOreBuyPrice * quantity <= AvailableMoney) 
+                    {
+                        
+                    }
+                    break;
+
+                case "Исцеляющее зелье":
+                    break;
+            }
+        }
 
     }
 
@@ -31,79 +106,38 @@ namespace CSTest2
     {
         private const int MaxItems = 100;
 
-        private List<Goods> itemsAtDisposal = new List<Goods>();
+        private List<Item> AvailableItems = new List<Item>();
 
         public MerchantInventory()
         {
-            AddInitialItems(IronOre, 40);
-            AddInitialItems(HealingPotion, 20);
-            AddInitialItems(LegendarySword, 1);
-
+            AddInitialItems("Железная руда", "Исцеляющее зелье");
         }
-
-        private void AddInitialItems(int ironOreQuantity, int healingPotionsQuantity, int legendarySwordQuantity) 
+      
+        private void AddInitialItems(string item1, string item2)
         {
-            int itemsCount = 0;
-            while (itemsCount < ironOreQuantity)
+            int itemsCount = 1;
+
+            while (itemsCount < 41)
             {
-                itemsAtDisposal.Add(new IronOre());
+                AvailableItems.Add(new Item(item1));
                 itemsCount++;
             }
 
-            itemsCount = 0;
-            while (itemsCount < healingPotionsQuantity)
+            while (itemsCount < 61)
             {
-                itemsAtDisposal.Add(new HealingPotion());
-                itemsCount++;
-            }
-
-            itemsCount = 0;
-            while (itemsCount < legendarySwordQuantity)
-            {
-                itemsAtDisposal.Add(new LegendarySword());
+                AvailableItems.Add(new Item(item2));
                 itemsCount++;
             }
         }
+    }
 
-        private void AddInitialItems(Goods goods, int quantity)
+    class Item 
+    {
+        public string _name { get; private set; }
+
+        public Item (string name)
         {
-            int itemsCount = 0;
-            while (itemsCount < quantity)
-            {
-                itemsAtDisposal.Add(new goods());
-                itemsCount++;
-            }
-
-            
+            _name = name;
         }
-    }
-
-    class Goods 
-    {
-    
-    }
-
-    class IronOre : Goods
-    {
-        private static string name = "Железная руда";
-        private static string description = "Природный минерал, необходимый для крафта стальной брони и оружия";
-    }
-
-    class HealingPotion : Goods
-    {
-        private static string name = "Зелье исцеления";
-        private static string description = "Отвар из трав, незначительно восстанавливающий здоровье";
-    }
-
-    class LegendarySword : Goods
-    {
-        private static string name = "Легендарный меч";
-        private static string description = "Меч из адамантия, принадлежавший легендарному герою прошлого. Наносит колоссальный урон.";
-    }
-
-    class SpoilsOfWar : Goods
-    {
-        private static string name = "Трофеи";
-        private static string description = "Одежда, оружие и припасы, добытые потом и кровью в бою";    
     }
 }
