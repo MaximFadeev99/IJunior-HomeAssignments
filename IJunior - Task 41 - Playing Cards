@@ -39,7 +39,7 @@ namespace CSTest2
                         break;
 
                     case CommandFoldCards:
-                        player1.FoldCards();
+                        player1.FoldCards(packOfCards);
                         break;
 
                     case CommandExit:
@@ -67,7 +67,8 @@ namespace CSTest2
         {
             if (AvailableCards < MaxCards)
             {
-                _cardsOnHands.Add(packOfCards.ChooseRandomCard());
+                packOfCards.GiveTopCard(out Card topCard);
+                _cardsOnHands.Add(topCard);
                 AvailableCards++;
             }
             else
@@ -96,17 +97,13 @@ namespace CSTest2
             Console.ReadKey();
         }
 
-        public void FoldCards() 
+        public void FoldCards(PackOfCards packOfCards)
         {
             if (AvailableCards != 0)
             {
-                foreach (var card in _cardsOnHands)
-                {
-                    card.MakeAvailable();
-                }
-
-                _cardsOnHands = new List<Card>();
+                packOfCards.TakeBackCards(_cardsOnHands);
                 AvailableCards = 0;
+                _cardsOnHands = new List<Card>();
                 Console.WriteLine("Вы сбросили карты!");
             }
             else
@@ -120,85 +117,69 @@ namespace CSTest2
 
     class PackOfCards
     {
-        private const string Spades = "Пики";
-        private const string Hearts = "Черви";
-        private const string Diamonds = "Бубны";
-        private const string Clubs = "Трефы";
-        private const string Trump = "Туз";
-        private const string One = "1";
-        private const string Two = "2";
-        private const string Three = "3";
-        private const string Four = "4";
-        private const string Five = "5";
-        private const string Six = "6";
-        private const string Seven = "7";
-        private const string Eight = "8";
-        private const string Nine = "9";
-        private const string Ten = "10";
-        private const string Jack = "Валет";
-        private const string Queen = "Дама";
-        private const string King = "Король";
-
         private List<Card> _packOfCards = new List<Card>();
 
         public PackOfCards()
         {
             Generate();
+            ShuffleCards();
         }
 
-        public Card ChooseRandomCard()
+        public void GiveTopCard(out Card topCard) 
         {
-            Random random = new Random();
-            Card randomCard;
-            int cardPosition;
-
-            do
-            {
-                cardPosition = random.Next(0, _packOfCards.Count);
-                randomCard = _packOfCards[cardPosition];
-            }
-            while (randomCard.IsAvailable != true);
-
-            randomCard.MakeUnavailable();
-            return randomCard;
+            topCard = _packOfCards[0];
+            _packOfCards.RemoveAt(0);
         }
 
         private void Generate()
         {
-            List<string> suits = new List<string> { Spades, Hearts, Diamonds, Clubs};
-            List<string> values = new List<string> { Trump, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King};
+            List<string> suits = new List<string> { "Пики", "Черви", "Бубны", "Трефы" };
+            List<string> values = new List<string> { "Туз", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Валет", "Дама", "Король" };
 
-            foreach (var suit in suits) 
+            foreach (var suit in suits)
             {
-                foreach (var value in values) 
+                foreach (var value in values)
                 {
-                    _packOfCards.Add(new Card(value, suit, true));
+                    _packOfCards.Add(new Card(value, suit));
                 }
             }
         }
+
+        public void TakeBackCards(List<Card> playerCards)
+        {
+            foreach (var card in playerCards)
+            {
+                _packOfCards.Add(card);
+            }
+
+            ShuffleCards();
+        }
+
+        private void ShuffleCards()
+        {
+            Random random = new Random();
+            Card bufferCard;
+            int shuffledCardPosition;
+
+            for (int i = 0; i < _packOfCards.Count; i++)
+            {
+                shuffledCardPosition = random.Next(0,_packOfCards.Count);
+                bufferCard = _packOfCards[i];
+                _packOfCards[i] = _packOfCards[shuffledCardPosition];
+                _packOfCards[shuffledCardPosition] = bufferCard;
+            }
+        }       
     }
 
     class Card
     {
-        public Card(string value, string cardSuit, bool isAvailable)
+        public Card(string value, string cardSuit)
         {
             Value = value;
             Suit = cardSuit;
-            IsAvailable = isAvailable;
         }
 
         public string Value { get; private set; }
         public string Suit { get; private set; }
-        public bool IsAvailable { get; private set; }
-
-        public void MakeUnavailable()
-        {
-            IsAvailable = false;
-        }
-
-        public void MakeAvailable()
-        {
-            IsAvailable = true;
-        }
     }
 }
