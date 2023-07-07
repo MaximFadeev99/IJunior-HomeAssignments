@@ -79,7 +79,7 @@ namespace CSTest2
 
         public void AddNewBook()
         {
-            string newTitle; 
+            string newTitle;
             string newAuthor;
             string newYear;
             string newPublishingHouse;
@@ -96,27 +96,66 @@ namespace CSTest2
         public void RemoveBook()
         {
             int userInput;
-            
+
             ShowBooks();
             Console.Write("\nУкажите номер книги для удаления:");
 
-            while (int.TryParse(Console.ReadLine(), out userInput) == false && userInput < 0 && userInput > -_books.Count)
+            while (int.TryParse(Console.ReadLine(), out userInput) == false || userInput < 0 || userInput > _books.Count)
             {
                 Console.Write("\nОшибка: неверный номер! Повторите попытку:");
             }
 
-            _books.RemoveAt(userInput-1);
+            _books.RemoveAt(userInput - 1);
             Console.Write("\nКнига успешно удалена!");
             Console.ReadKey();
         }
 
         public void SearchForBooks()
         {
-            List<Book> foundBooks = FindTargetBooks(ShowSearchParameters());
+            const string Option1 = "1";
+            const string Option2 = "2";
+            const string Option3 = "3";
+            const string Option4 = "4";
+
+            List<Book> foundBooks = new List<Book>();
+            string userInput;
+
+            Console.WriteLine("\nДоступны следующие параметры для поиска книг:");
+            Console.WriteLine(Option1 + ") " + BookTitle);
+            Console.WriteLine(Option2 + ") " + BookAuthor);
+            Console.WriteLine(Option3 + ") " + BookYear);
+            Console.WriteLine(Option4 + ") " + BookPublishingHouse);
+            Console.Write("\nУкажите номер параметра:");
+            userInput = Console.ReadLine();
+
+            while (userInput != Option1 && userInput != Option2 && userInput != Option3 && userInput != Option4)
+            {
+                Console.Write("Ошибка: Вы указали неизвестный параметр! Повторите попытку:");
+                userInput = Console.ReadLine();
+            }
+
+            switch (userInput)
+            {
+                case Option1:
+                    foundBooks = SearchParameterTitle(BookTitle);
+                    break;
+
+                case Option2:
+                    foundBooks = SearchParameterAuthor(BookAuthor);
+                    break;
+
+                case Option3:
+                    foundBooks = SearchParameterYear(BookYear);
+                    break;
+
+                case Option4:
+                    foundBooks = SearchParameterPublishingHouse(BookPublishingHouse);
+                    break;
+            }
 
             if (foundBooks.Count == 0)
             {
-                Console.WriteLine("По Вашему запросу не найдено ни одной книги!");               
+                Console.WriteLine("По Вашему запросу не найдено ни одной книги!");
             }
             else
             {
@@ -159,48 +198,7 @@ namespace CSTest2
             }
         }
 
-        private string ShowSearchParameters()
-        {
-            Console.WriteLine("\nДоступны следующие параметры для поиска книг:");
-            Console.WriteLine(BookTitle);
-            Console.WriteLine(BookAuthor);
-            Console.WriteLine(BookYear);
-            Console.WriteLine(BookPublishingHouse);
-            Console.Write("\nУкажите параметр:");
-            return Console.ReadLine();
-        }
-
-        private List<Book> FindTargetBooks(string searchParameter)
-        {
-            List<Book> foundBooks = new List<Book>();
-
-            switch (searchParameter.ToLower())
-            {
-                case BookTitle:
-                    foundBooks = SearchParameterTitle(searchParameter);
-                    break;
-
-                case BookAuthor:
-                    foundBooks = SearchParameterAuthor(searchParameter);
-                    break;
-
-                case BookYear:
-                    foundBooks = SearchParameterYear(searchParameter);
-                    break;
-
-                case BookPublishingHouse:
-                    foundBooks = SearchParameterPublishingHouse(searchParameter);
-                    break;
-
-                default:
-                    Console.WriteLine("Ошибка: неизвестный параметр поиска!");
-                    break;
-            }
-
-            return foundBooks;
-        }
-
-        private List<Book> SearchParameterTitle(string searchParameter) 
+        private List<Book> SearchParameterTitle(string searchParameter)
         {
             List<Book> foundBooks = new List<Book>();
             string userInput = EnquireStringParameter(searchParameter).ToLower();
@@ -224,7 +222,7 @@ namespace CSTest2
 
             foreach (var book in _books)
             {
-                if (book.Author.Split(delimiter) [0].ToLower() == userInput)
+                if (book.Author.Split(delimiter)[0].ToLower() == userInput)
                 {
                     foundBooks.Add(book);
                 }
@@ -269,7 +267,7 @@ namespace CSTest2
         {
             string userInput;
 
-            Console.Write($"Детализируйте параметр \"{searchParameter}\":");
+            Console.Write($"Детализируйте параметр \"{searchParameter}\": ");
             userInput = Console.ReadLine();
 
             while (userInput == string.Empty)
