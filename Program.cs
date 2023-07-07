@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+do
+            {
+                switch (userInput)
+                {
+                    case Option1:
+                        return BookTitle;
 
-namespace CSTest1
-{
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            byte level = 1;
-            sbyte stamina = 50;
-            short curseEffect = -70;
-            ushort armor = 600;
-            uint money = 130000;
-            int paymentBalance = -9500;
-            float oxygenReductionRate = -2.5f;
-            double experiencePerKill = 10.7;
-            char villageEmblem = '!';
-            string victoryNote = "Вы победили!";
-            bool isDead = false;
-            bool isWorking = true;
-        }
-    }
-}
+                    case Option2:
+                        return BookAuthor;
+
+                    case Option3:
+                        return BookYear;
+
+                    case Option4:
+                        return BookPublishingHouse;
+
+                    default:
+                        Console.WriteLine("Ошибка: Вы указали неизвестный параметр! Повторите попытку:");
+                        userInput = Console.ReadLine();
+                        break;
+                }
+
+            } while (userInput != Option1 || userInput != Option2 || userInput != Option3 || userInput != Option4);
