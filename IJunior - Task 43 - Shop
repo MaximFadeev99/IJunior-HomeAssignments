@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace CSTest2
 {
@@ -9,141 +10,298 @@ namespace CSTest2
         static void Main(string[] args)
         {
 
+            Player player1 = new Player("Sosok69");
+            Shop unviversalStore = new Shop();
+
+            while (true) 
+            {
+                unviversalStore.Work(player1);
+            }
+
+
+            
+
+
 
 
 
         }
 
+
+
+    }
+    class Shop 
+    {
+        public const string CommandShowItems = "1";
+        public const string CommandBuy = "2";
+        public const string CommandSell = "3";
+        public const string CommandLeave = "4";
+
+        private Merchant merchant = new Merchant();
         
+        public void Work(Player player) 
+        {
+            merchant.IntroduceYearself();
 
+            switch (player.DefineNextAction()) 
+            {
+                case CommandShowItems:
+                    merchant.ShowInventory();
+                    break;
+
+                case CommandBuy:
+                    merchant.ShowInventory();
+                    player.EnquireDesiredItem();
+                    break;
+
+                case CommandSell:
+                    break;
+
+                case CommandLeave:
+                    break;
+
+            }
+
+            Console.Clear();
+        }
     }
-    class Player
+    
+    class Player : Person 
     {
-        private int AvailableMoney = 300;
-        private PlayerInventory _inventory = new PlayerInventory();
+        private string commandOptions = $"\n{Shop.CommandShowItems} - \"покажи мне свои товары...\"" +
+            $"\n{Shop.CommandBuy} - \"хочу кое-что прикупить...\"" +
+            $"\n{Shop.CommandSell} - \"есть кое-что на продажу...\"" +
+            $"\n{Shop.CommandLeave} - \"извини, до следующего раза\"";
 
-        public void Buy()
+        private int _initialIronOreAmount = 25;
+        private int _initialHealingPostionsAmount = 25;
+
+        public Player(string name) : base(name, 100, 500)        
         {
-            string itemName = EnquireItemName();
-            int itemQuantity = EnquireItemQuantity();
-
+            _bag.AddInitialItems(_initialIronOreAmount, _initialHealingPostionsAmount);
         }
 
-        public bool isEnoughMoney(string itemName, int itemQuantity) 
+        public string DefineNextAction ()
         {
-            bool isEnoughMoney;
-            int sellPrice;
-
-            if (itemName == "Железная руда") 
+            string playerInput;
+            
+            Console.WriteLine(commandOptions);
+            
+            do
             {
-                sellPrice =
-            }
+                Console.Write("\nВыберите одно из действий выше:");
+                playerInput = Console.ReadLine();
+            } while (playerInput != Shop.CommandShowItems && playerInput != Shop.CommandBuy && 
+            playerInput != Shop.CommandSell && playerInput != Shop.CommandLeave);
 
+            return playerInput;
         }
 
-        public string EnquireItemName()
+        public void EnquireDesiredItem(out string itemNumber, out int desiredQuantity) 
         {
-            string userInputItemName;
-
-            Console.WriteLine("\nУкажите название товара:");
-            userInputItemName = Console.ReadLine();
-            return userInputItemName;
-        }
-
-        public int EnquireItemQuantity()
-        {
-            int userInputQuantity;
-
-            Console.WriteLine("\nУкажите название товара:");
-            userInputQuantity = Convert.ToInt32(Console.ReadLine());
-            return userInputQuantity;
-        }
-
-    }
-
-    class PlayerInventory
-    {
-        private const int MaxItems = 50;
-
-        private List<Item> AvailableItems = new List<Item>();
-
-        public PlayerInventory()
-        {
-            AddInitialItems("Железная руда", "Исцеляющее зелье");
-        }
-
-        private void AddInitialItems(string item1, string item2)
-        {
-            int item1Quantity = 41;
-            int item2Quantity = 61;
-
-            int itemsCount = 1;
-
-            while (itemsCount < item1Quantity)
-            {
-                AvailableItems.Add(new Item(item1));
-                itemsCount++;
-            }
-
-            while (itemsCount < item2Quantity)
-            {
-                AvailableItems.Add(new Item(item2));
-                itemsCount++;
-            }
+            Console.Write("Введите номер желаемого товара: ");
+            itemNumber = Console.ReadLine();
+            Console.Write("Введите желаемое количество: ");
+            desiredQuantity = Convert.ToInt32(Console.ReadLine());
         }
     }
 
-    class Merchant
+    class Merchant : Person
     {
-        private int AvailableMoney = 1000;
-        private MerchantInventory _inventory = new MerchantInventory();
-
+        private int _initialIronOreAmount = 100;
+        private int _initialHealingPostionsAmount = 50;
         public int IronOreSellPrice { get; private set; } = 25;
         public int IronOreBuyPrice { get; private set; } = 20;
         public int HealingPotionSellPrice { get; private set; } = 50;
-        public int HealingPotionBuyPrice { get; private set; } = 45;    
-    }
+        public int HealingPotionBuyPrice { get; private set; } = 45;
 
-    class MerchantInventory
-    {
-        private const int MaxItems = 100;
-
-        private List<Item> AvailableItems = new List<Item>();
-
-        public MerchantInventory()
+        public Merchant() : base("Торговец Джек", 200, 1000) 
         {
-            AddInitialItems("Железная руда", "Исцеляющее зелье");
+            _bag.AddInitialItems(_initialIronOreAmount, _initialHealingPostionsAmount);
         }
 
-        private void AddInitialItems(string item1, string item2)
+        public void IntroduceYearself() 
         {
+            Console.WriteLine($"{Name}: \"Добро пожаловать в наш Магазин!\"");
+            Console.WriteLine($"{Name}: \"Меня зовут {Name}.\"");
+            Console.WriteLine($"{Name}: \"Чем я могу Вам помочь?\"");
+        }
+
+        public void ShowSalePrices(Dictionary<string, int> countItems) 
+        {
+            foreach (var item in _bag.CountItems()) 
+            {
+                if (item.Key == )
+            }
+            Console.WriteLine($"{Name}: \"Мы продаем {_bag.CountItems[1]}");
+        }
+
+    }
+
+    class Person 
+    {
+        public string Name { get; protected set; }
+        public int MaxSlots { get; protected set; }
+        public int InitialMoney { get; protected set; }
+
+        protected Inventory _bag;
+
+        public Person(string name, int maxSlots, int initialMoney)
+        {
+            Name = name;
+            MaxSlots = maxSlots;
+            InitialMoney = initialMoney;
+            _bag = new Inventory(maxSlots);
+        }
+
+        public void ShowStats() 
+        {
+            Console.WriteLine(Name);
+            Console.WriteLine(MaxSlots);
+            Console.WriteLine(InitialMoney);
+            Console.WriteLine(_bag.CountOccupiedSlots());
+        }
+
+        public void ShowInventory() 
+        {
+            Dictionary<string, int> countedItems = _bag.CountItems();
             int itemsCount = 1;
-            int item1Quantity = 41;
-            int item2Quantity = 61;
 
-            while (itemsCount < item1Quantity)
+            Console.WriteLine($"\n{Name}: \"У меня в наличии следующие предметы:\"");
+
+            foreach (var item in countedItems) 
             {
-                AvailableItems.Add(new Item(item1));
+                Console.WriteLine(itemsCount +") " + item.Value + " x " + item.Key);
                 itemsCount++;
             }
 
-            while (itemsCount < item2Quantity)
-            {
-                AvailableItems.Add(new Item(item2));
-                itemsCount++;
-            }
+            Console.ReadKey();
         }
     }
 
-    class Item
+    class Inventory
     {
-        public string _name { get; private set; }
+        public int MaxSlots { get; private set; }
+        private List<Item> _items = new List<Item>();
 
-        public Item(string name)
+        public Inventory(int maxSlots)
         {
-            _name = name;
+            MaxSlots = maxSlots;
+        }
+
+        public void AddInitialItems(int ironOreAmmount, int healingPostionAmount)
+        {
+            IronOre ironOre = new IronOre();
+            HealingPotion healingPotion = new HealingPotion();
+
+            if (ironOreAmmount + healingPostionAmount > MaxSlots)
+            {
+                ironOreAmmount = MaxSlots / 2;
+                healingPostionAmount = MaxSlots / 2;
+            }
+
+            for (int i = 1; i <= ironOreAmmount; i++)
+            {
+                _items.Add(ironOre);
+            }
+
+            for (int i = 1; i <= healingPostionAmount; i++)
+            {
+                _items.Add(healingPotion);
+            }
+        }
+
+        public void TryAddItem(int addedAmount, Item addedItem)
+        {
+
+            if (_items.Count + addedAmount > MaxSlots)
+            {
+                Console.WriteLine("У меня недостаточно места в инвентаре!");
+            }
+            else
+            {
+                for (int i = 1; i <= addedAmount; i++)
+                {
+                    _items.Add(addedItem);
+                }
+
+                Console.WriteLine("Товар получен!");
+            }
+        }
+
+        public void TryRemoveItem(int removedAmount, Item removedItem)
+        {
+
+            int removedItemCount = 0;
+
+            foreach (var item in _items)
+            {
+                if (item.Name == removedItem.Name)
+                    removedItemCount++;
+            }
+
+            if (removedItemCount < removedAmount)
+            {
+                Console.WriteLine("У меня недостаточно товара!");
+            }
+            else
+            {
+                for (int i = 1; i <= removedAmount; i++)
+                {
+                    _items.Remove(removedItem);
+                }
+                Console.WriteLine("Товары переданы!");
+            }
+        }
+
+        public int CountOccupiedSlots()
+        {
+            return _items.Count;
+        }
+
+        public Dictionary<string, int> CountItems() 
+        {
+            Dictionary<string, int> countedItems= new Dictionary<string, int>();
+
+            foreach (var item in _items)
+            {
+                if (countedItems.ContainsKey(item.Name) == false)
+                {
+                    countedItems.Add(item.Name, 1);
+                }
+                else 
+                {
+                    countedItems[item.Name]++;
+                }
+            }
+
+            return countedItems;
         }
     }
 
-   
+    abstract class Item
+    {
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+
+        public Item (string name, string description)
+        {
+            Name = name;
+            Description = description;
+        }
+    }
+
+    class IronOre : Item
+    {
+        public IronOre() : base("Железная руда", "Описание железной руды") { }
+
+    }
+
+    class HealingPotion : Item
+    {
+        public HealingPotion() : base("Зельe исцеления", "Описание зелья исцеления") { }
+
+    }
+
+
 }
