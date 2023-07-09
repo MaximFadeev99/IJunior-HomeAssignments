@@ -1,0 +1,240 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            TrainStaion trainStaion = new TrainStaion();
+
+            while (true) 
+            {
+                trainStaion.Work();
+            }
+        }
+           
+    }
+    class TrainStaion 
+    {
+        private const string DepartureCity = "Москва";
+        private const string ArrivalCityMinsk = "Минкс";
+        private const string ArrivalCityBerlin = "Берлин";
+        private const string ArrivalCityMadrid = "Мадрид";
+        private const string ArrivalCityBeijing = "Пекин";
+
+        private Queue<Passanger> _passangers = new Queue<Passanger>();
+        private List<Train> _trains = new List<Train>();
+        private int _totalRevenue;
+
+        public void Work() 
+        {
+            Console.WriteLine("Добро пожаловать на вокзал!");
+            SetCource(out int ticketPrice, out string destination,out int transitTime);
+            Console.WriteLine($"\nСледующий поезд отправится в {destination}. Дней в пути: {transitTime}");
+            Console.WriteLine($"Цена билета - {ticketPrice} долларов с человека.");
+            GeneratePassangers();
+            Console.WriteLine($"\nЧисло потенциальных пассажиров: {_passangers.Count}");
+            SellTickets(ticketPrice, out int soldTicketsCount, out int revenue);
+            Console.WriteLine($"Количество проданных билетов в шт.: {soldTicketsCount}");
+            Console.WriteLine($"Выручка с поезда в долларах: {revenue}");
+            _totalRevenue += revenue;
+            GenerateTrain(soldTicketsCount, transitTime, destination);
+            ChangeTransitTime();
+            ShowAllTrains();
+            Console.Write("\nНажмите любую клавищу, чтобы запустить следующий поезд...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        private void SetCource (out int ticketPrice, out string destination, out int transitTime) 
+        {
+            const int Minsk = 1;
+            const int Berlin = 2;
+            const int Madrid = 3;
+            const int Beijing = 4;
+            
+            Random random = new Random();
+            int randomOption = random.Next(1,5);
+
+            ticketPrice = 0;
+            transitTime = 0;
+            destination = string.Empty;
+
+            switch (randomOption) 
+            {
+                case Minsk:
+                    destination = ArrivalCityMinsk;
+                    ticketPrice = 300;
+                    transitTime = 2;
+                    break;
+
+                case Berlin:
+                    destination = ArrivalCityBerlin;
+                    ticketPrice = 700;
+                    transitTime = 4;
+                    break;
+
+                case Madrid:
+                    destination = ArrivalCityMadrid;
+                    ticketPrice = 1100;
+                    transitTime = 5;
+                    break;
+
+                case Beijing:
+                    destination = ArrivalCityBeijing;
+                    ticketPrice = 1500;
+                    transitTime = 7;
+                    break;
+            }
+        }
+
+        private void GeneratePassangers() 
+        {
+            Random random = new Random();
+            int minCount = 200;
+            int maxCount = 800;
+            int passangersCount = random.Next(minCount, maxCount); 
+
+            for (int i = 1; i < passangersCount; i++) 
+            {
+                _passangers.Enqueue(new Passanger());
+            }
+
+        }
+
+        private void SellTickets(int ticketPrice, out int soldTicketsCount, out int revenue) 
+        {
+            revenue = 0;
+            soldTicketsCount = 0;
+
+            while (_passangers.Count != 0) 
+            {
+                if (_passangers.ElementAt(0).Money >= ticketPrice)
+                {
+                    soldTicketsCount++;
+                    revenue += ticketPrice;                    
+                    _passangers.Dequeue();
+                }
+                else 
+                {
+                    _passangers.Dequeue();
+                }
+            }
+        }
+
+        private void GenerateTrain(int soldTicketsCount, int transitTime, string destination) 
+        {
+            _trains.Add(new Train(soldTicketsCount, transitTime, destination));
+        }
+       
+        
+        private void ChangeTransitTime() 
+        {
+            List<int> removedTrainsNumbers = new List<int>();
+
+            foreach (var train in _trains) 
+            {
+                if (train.TransitTime == 0)
+                {
+                    removedTrainsNumbers.Add(_trains.IndexOf(train));
+                }
+                else 
+                {
+                    train.ChangeTransitTime(-1);
+                }
+            }
+
+            foreach (var number in removedTrainsNumbers) 
+            {
+                _trains.RemoveAt(number);
+            }
+        }
+
+        private void ShowAllTrains() 
+        {
+            Console.SetCursorPosition(0, 10);
+            Console.WriteLine($"Всего поездов в пути: {_trains.Count}");
+            Console.WriteLine($"Валовая выручка станции в долларах: {_totalRevenue}");
+            Console.WriteLine("\nНомер поезда - Город отправления - Город прибытия " +
+                "- Число вагонов - Осталось дней в пути\n");
+
+            foreach (var train in _trains) 
+            {
+                Console.WriteLine($"{train.TrainNumber}      -      {TrainStaion.DepartureCity}      -      {train.Destination}" +
+                    $"      -      {train.ShowCarsNumber()}      -      {train.TransitTime}");
+            }
+        }
+    }
+
+    class Train 
+    {
+        private static int _trainCount;
+        private static string _fixedPartOfNumber = "trn-";
+
+        private List<Car> _cars = new List<Car>();
+
+        public Train(int passangersCount, int transitTime, string destination)
+        {
+            Capacity = 0;
+
+            while (Capacity < passangersCount) 
+            {
+                _cars.Add(new Car());
+                Capacity += _cars.Last().Capacity;
+            }
+
+            TransitTime = transitTime;
+            TrainNumber = _fixedPartOfNumber + _trainCount;
+            _trainCount++;
+            Destination = destination;
+        }
+
+        public int Capacity { get; private set; }
+        public int TransitTime { get; private set; } = 0;
+        public string TrainNumber { get; private set; }
+        public string Destination { get; private set; }
+
+        public void ChangeTransitTime(int transitTime)
+        {
+            TransitTime += transitTime;
+        }
+
+        public int ShowCarsNumber() 
+        {
+            return _cars.Count;
+        }
+    }
+
+    class Car 
+    {
+        private static int _minValue = 50;
+        private static int _maxValue = 100;        
+
+        public Car() 
+        { 
+            Random random = new Random();
+
+            Capacity = random.Next(_minValue, _maxValue);        
+        }
+
+        public int Capacity { get; private set; }
+    }
+
+    class Passanger 
+    {
+        private static int _minMoney = 500;
+        private static int _maxMoney = 2000;
+
+        public Passanger() 
+        {
+            Random random = new Random();
+
+            Money = random.Next(_minMoney, _maxMoney);   
+        }
+
+        public int Money { get; private set; }
+    }
+}
