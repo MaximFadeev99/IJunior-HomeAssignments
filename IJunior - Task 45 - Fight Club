@@ -83,13 +83,6 @@ namespace CSTest2
 
     abstract class Champion 
     {
-
-        public string Name { get; set; }
-        public int Health { get; set; }
-        public int Armor { get; set; }
-        public int Damage { get; set; }
-        public int Initiative { get; set; }
-
         public Champion(string name, int health, int armor, int damage, int initiative) 
         {
             Name = name;
@@ -99,13 +92,39 @@ namespace CSTest2
             Initiative = initiative;
         }
 
+        public string Name { get; set; }
+        public int Health { get; set; }
+        public int Armor { get; set; }
+        public int Damage { get; set; }
+        public int Initiative { get; set; }
+
         public void ShowStats() 
         {
             Console.Write($"{Name}      -     {Health}      -      {Armor}     -     {Damage}     -     {Initiative}\n");
         }
 
-        public abstract int DealDamage();
-        public abstract void TakeDamage(int incomingDamage);
+        public virtual int DealDamage() 
+        {
+            return Damage;
+        }
+
+        public virtual void TakeDamage(int incomingDamage) 
+        {
+            Health -= incomingDamage;
+            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
+            Health = LimitHealthFall(Health);
+            Console.WriteLine($"Оставшееся здоровье - {Health}");
+        }
+
+        protected int LimitHealthFall(int currentHealth) 
+        {
+            if (currentHealth < 0)
+            {
+                currentHealth = 0;
+            }
+
+            return currentHealth;
+        }
     }
 
     class LightFighter : Champion
@@ -125,17 +144,8 @@ namespace CSTest2
                 incomingDamage = 0;
             }
 
-            if (Health < 0)
-            {
-                Health = 0;
-            }
-
+            Health = LimitHealthFall(Health);
             Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона. \nОставшееся здоровье - {Health}");
-        }
-
-        public override int DealDamage()
-        {
-            return Damage;
         }
 
         private bool IsDodging() 
@@ -171,22 +181,13 @@ namespace CSTest2
         {
             Health -= incomingDamage;
             Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
-            isHealing();
+            IsHealing();
 
-            if (Health < 0) 
-            {
-                Health = 0; 
-            }
-
+            Health = LimitHealthFall(Health);
             Console.WriteLine($"Оставшееся здоровье - {Health}");
         }
 
-        public override int DealDamage()
-        {
-            return Damage;
-        }
-
-        private void isHealing() 
+        private void IsHealing() 
         {
             int minValue = 1;
             int maxValue = 7;
@@ -220,19 +221,6 @@ namespace CSTest2
         private Random _random = new Random();
 
         public BackStabber() : base("Крыса", 280, 0, 50, 90) { }
-
-        public override void TakeDamage(int incomingDamage) 
-        {
-            Health -= incomingDamage;
-            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
-
-            if (Health < 0)
-            {
-                Health = 0;
-            }
-
-            Console.WriteLine($"Оставшееся здоровье - {Health}");
-        }
 
         public override int DealDamage()
         {
@@ -289,12 +277,8 @@ namespace CSTest2
 
             reducedDamage = incomingDamage * ((maxPercent - Armor) / maxPercent);
             Health -= Convert.ToInt32(reducedDamage);
-            
-            if (Health < 0)
-            {
-                Health = 0;
-            }
 
+            Health = LimitHealthFall(Health);
             Console.WriteLine($"\n{Name} получает {Convert.ToInt32(reducedDamage)} ед. урона");
             Console.WriteLine($"Оставшееся здоровье - {Health}");
         }
@@ -306,19 +290,6 @@ namespace CSTest2
         private double _damageModifier = 1.2;
 
         public Boxer() : base("Боксер", 270, 0, 55, 55) { }
-
-        public override void TakeDamage(int incomingDamage)
-        {
-            Health -= incomingDamage;
-            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
-
-            if (Health < 0)
-            {
-                Health = 0;
-            }
-
-            Console.WriteLine($"Оставшееся здоровье - {Health}");
-        }
 
         public override int DealDamage()
         {
@@ -338,7 +309,8 @@ namespace CSTest2
          
             return Damage;
         }
-    }
+    }  
+}
 
    
 }
