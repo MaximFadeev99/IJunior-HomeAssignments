@@ -1,1 +1,344 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List <Champion> champions = new List<Champion>() {new LightFighter(), new MediumFighter(), new BackStabber(),
+            new FatGuy(), new Boxer()};
+            Champion firstChampion;
+            Champion secondChampion;
+
+            Console.WriteLine("Имя бойца    -   Здоровье    -    Броня   -   " +
+            "Урон   -   Инициатива\n");
+
+            for (int i = 0; i < champions.Count; i++)
+            {
+                Console.Write(i + 1 + ") ");
+                champions.ElementAt(i).ShowStats();
+            }
+
+            firstChampion = EnquireChampionNumber();
+            secondChampion = EnquireChampionNumber();
+
+            while (firstChampion == secondChampion) 
+            {
+                Console.Write("Ошибка!Второй боец уже занят!");
+                secondChampion = EnquireChampionNumber();
+            }
+
+            while (firstChampion.Health > 0 && secondChampion.Health > 0) 
+            {
+                if (firstChampion.Initiative > secondChampion.Initiative)
+                {
+                    secondChampion.TakeDamage(firstChampion.DealDamage());
+                    firstChampion.TakeDamage(secondChampion.DealDamage());
+                }
+                else 
+                {
+                    secondChampion.TakeDamage(firstChampion.DealDamage());
+                    firstChampion.TakeDamage(secondChampion.DealDamage());
+                }
+            }
+
+            if (firstChampion.Health == 0 && secondChampion.Health == 0)
+            {
+                Console.WriteLine("\nНичья!");
+            }
+            else if (firstChampion.Health <= 0)
+            {
+                Console.WriteLine($"\nПобедил {secondChampion.Name}!");
+            }
+            else if (secondChampion.Health <= 0)
+            {
+                Console.WriteLine($"\nПобедил {firstChampion.Name}!");
+            }
+
+            Console.ReadKey ();
+
+            Champion EnquireChampionNumber()
+            {
+                Champion champion;
+                string userInput;
+                int championNumber;
+
+                Console.Write("\nВведите номер бойца: ");
+                userInput = Console.ReadLine();
+
+                while (int.TryParse(userInput, out championNumber) == false || championNumber - 1 < 0 || championNumber > champions.Count)
+                {
+                    Console.Write("Ошибка! Введите повторно номер бойца: ");
+                    userInput = Console.ReadLine();
+                }
+
+                champion = champions.ElementAt(championNumber - 1);
+                return champion;
+            }
+        }        
+    }
+
+    abstract class Champion 
+    {
+
+        public string Name { get; set; }
+        public int Health { get; set; }
+        public int Armor { get; set; }
+        public int Damage { get; set; }
+        public int Initiative { get; set; }
+
+        public Champion(string name, int health, int armor, int damage, int initiative) 
+        {
+            Name = name;
+            Health = health;
+            Armor = armor;
+            Damage = damage;
+            Initiative = initiative;
+        }
+
+        public void ShowStats() 
+        {
+            Console.Write($"{Name}      -     {Health}      -      {Armor}     -     {Damage}     -     {Initiative}\n");
+        }
+
+        public abstract int DealDamage();
+        public abstract void TakeDamage(int incomingDamage);
+    }
+
+    class LightFighter : Champion
+    {       
+        private Random _random = new Random();
+
+        public LightFighter(): base ("Дрыщ", 300,0,50,80) { }
+
+        public override void TakeDamage(int incomingDamage) 
+        {
+            if (IsDodging() == false)
+            {
+                Health -= incomingDamage;
+            }
+            else 
+            {
+                incomingDamage = 0;
+            }
+
+            if (Health < 0)
+            {
+                Health = 0;
+            }
+
+            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона. \nОставшееся здоровье - {Health}");
+        }
+
+        public override int DealDamage()
+        {
+            return Damage;
+        }
+
+        private bool IsDodging() 
+        {
+            int minValue = 1;
+            int maxValue = 7;
+            int successValue1 = 3;
+            int successValue2 = 5;
+            int dodgeChance = _random.Next(minValue, maxValue);
+            bool isDodging;
+
+            if (dodgeChance == successValue1 || dodgeChance == successValue2) 
+            {
+                isDodging = true;
+                Console.Write($"\n{Name} уклоняется от вражеской атаки");
+            }
+            else 
+            {
+                isDodging = false;
+            }
+
+            return isDodging;
+        }
+    }
+
+    class MediumFighter : Champion 
+    {
+        private Random _random = new Random();
+
+        public MediumFighter() : base("Крепыш", 350, 0, 55, 60) { }
+
+        public override void TakeDamage(int incomingDamage)
+        {
+            Health -= incomingDamage;
+            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
+            isHealing();
+
+            if (Health < 0) 
+            {
+                Health = 0; 
+            }
+
+            Console.WriteLine($"Оставшееся здоровье - {Health}");
+        }
+
+        public override int DealDamage()
+        {
+            return Damage;
+        }
+
+        private void isHealing() 
+        {
+            int minValue = 1;
+            int maxValue = 7;
+            int successValue1 = 1;
+            int successValue2 = 6;
+            int healChance = _random.Next(minValue, maxValue);
+            double healPercent = 0.1;
+            double restoredHealth;
+            int initialHealth = 350;
+
+            if (healChance == successValue1 || healChance == successValue2) 
+            {
+                restoredHealth = Health * healPercent;
+
+                if (Health + Convert.ToInt32(restoredHealth) > initialHealth)
+                {
+                    Health = initialHealth;
+                }
+                else 
+                {
+                    Health += Convert.ToInt32(restoredHealth);
+                }
+                
+                Console.WriteLine($"{Name} восстанавливает {Convert.ToInt32(restoredHealth)} о.з.");
+            }
+        }
+    }
+
+    class BackStabber : Champion 
+    {
+        private Random _random = new Random();
+
+        public BackStabber() : base("Крыса", 280, 0, 50, 90) { }
+
+        public override void TakeDamage(int incomingDamage) 
+        {
+            Health -= incomingDamage;
+            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
+
+            if (Health < 0)
+            {
+                Health = 0;
+            }
+
+            Console.WriteLine($"Оставшееся здоровье - {Health}");
+        }
+
+        public override int DealDamage()
+        {
+            int initialDamage = 50;
+
+            if (TryUseShiv() == true)
+            {
+                Damage *= 2;
+                Console.WriteLine($"\n{Name} использует заточку и удваивает урон");
+            }
+            else 
+            {
+                Damage = initialDamage;
+            }
+
+            return Damage;
+        }
+
+        private bool TryUseShiv() 
+        {
+            int minValue = 1;
+            int maxValue = 7;
+            int successValue1 = 2;
+            int successValue2 = 4;
+            int useChance = _random.Next(minValue, maxValue);
+            bool isSuccessful;
+
+            if (useChance == successValue1 || useChance == successValue2)
+            {
+                isSuccessful = true;
+            }
+            else 
+            {
+                isSuccessful = false;
+            }
+
+            return isSuccessful;
+        }
+    }
+
+    class FatGuy : Champion 
+    {
+        public FatGuy() : base("Жиробас", 300, 25, 60, 50) { }
+
+        public override int DealDamage()
+        {
+            return Damage;
+        }
+
+        public override void TakeDamage(int incomingDamage)
+        {
+            double reducedDamage;
+            double maxPercent = 100;
+
+            reducedDamage = incomingDamage * ((maxPercent - Armor) / maxPercent);
+            Health -= Convert.ToInt32(reducedDamage);
+            
+            if (Health < 0)
+            {
+                Health = 0;
+            }
+
+            Console.WriteLine($"\n{Name} получает {Convert.ToInt32(reducedDamage)} ед. урона");
+            Console.WriteLine($"Оставшееся здоровье - {Health}");
+        }
+    }
+
+    class Boxer : Champion
+    {
+        private int _hitsCount = 0;
+        private double _damageModifier = 1.2;
+
+        public Boxer() : base("Боксер", 270, 0, 55, 55) { }
+
+        public override void TakeDamage(int incomingDamage)
+        {
+            Health -= incomingDamage;
+            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
+
+            if (Health < 0)
+            {
+                Health = 0;
+            }
+
+            Console.WriteLine($"Оставшееся здоровье - {Health}");
+        }
+
+        public override int DealDamage()
+        {
+            double modifiedDamage;
+
+            if (_hitsCount == 3)
+            {
+                modifiedDamage = Damage * _damageModifier;
+                Damage += Convert.ToInt32(modifiedDamage);
+                _hitsCount = 0;
+                Console.WriteLine($"\n{Name} бьет коронный и увеличивает урон");
+            }
+            else 
+            {
+                _hitsCount++;
+            }
+         
+            return Damage;
+        }
+    }
+
+   
+}
