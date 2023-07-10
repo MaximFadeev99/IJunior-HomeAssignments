@@ -1,0 +1,243 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Supermarket supermarket = new Supermarket();
+
+            supermarket.Work();    
+        }
+    }
+
+    class Supermarket 
+    {
+        private const string CheeseName = "Сыр";
+        private const string StrawberryName = "Клубника";
+        private const string WineName = "Вино";
+
+        private int _cheesePrice = 800;
+        private int _strawBerryPrice = 500;
+        private int _winePrice = 1200;
+        private Random _random = new Random();  
+        private List<Product> _products = new List<Product>()
+            {new Cheese(), new Strawberry(), new Wine()};
+        private Queue<Buyer> _buyers = new Queue<Buyer>();
+        private Dictionary<string, int> _priceList = new Dictionary<string, int>();
+        private int _totalRevenue = 0;
+
+        public Supermarket() 
+        {
+            GenerateBuyers();
+            SetPrices();
+        }
+
+        public void Work() 
+        {
+            while (_buyers.Count != 0)
+            {
+                Console.WriteLine("Добро пожаловать в систему управления супермаркетом!\n");             
+                ShowGeneralInfo();
+                ServeBuyer();
+                Console.Clear();
+            }
+        }
+
+        private void GenerateBuyers() 
+        {
+            int minNumber = 5;
+            int maxNumber = 21;
+            int randomNumber = _random.Next(minNumber, maxNumber);
+
+            for (int i = 1; i <= randomNumber; i++)
+            {
+                _buyers.Enqueue(new Buyer());
+            }
+        }
+
+        private void SetPrices() 
+        {
+            foreach (var product in _products) 
+            {
+                switch (product.Name) 
+                {
+                    case CheeseName:
+                        _priceList.Add(product.Name, _cheesePrice);
+                        break;
+
+                    case StrawberryName:
+                        _priceList.Add(product.Name, _strawBerryPrice);
+                        break;
+
+                    case WineName:
+                        _priceList.Add(product.Name, _winePrice);
+                        break;
+                }           
+            }        
+        }
+
+        private void ServeBuyer() 
+        {
+            int revenuePerCheck;
+            List<Product> productsToSell;
+
+            productsToSell = _buyers.ElementAt(0).ChooseProducts(_products);
+            revenuePerCheck = DrawCheck(productsToSell);
+
+            while (revenuePerCheck > _buyers.ElementAt(0).Money) 
+            {
+                _buyers.ElementAt(0).TakeSomethingOut();
+                revenuePerCheck = DrawCheck(productsToSell);
+            }
+
+            _buyers.ElementAt(0).DeductMoney(revenuePerCheck);
+            _totalRevenue += revenuePerCheck;
+            _buyers.Dequeue();
+            Console.ReadKey();
+        }
+
+        private int DrawCheck(List<Product> chosenProducts) 
+        {           
+            int checkSum = 0;
+
+            Console.WriteLine("\n\nТоварный чек клиента:\n");
+
+            foreach (var product in chosenProducts) 
+            {
+                switch (product.Name)
+                {
+                    case CheeseName:
+                        Console.WriteLine(product.Name + " - " + _cheesePrice + " руб.");
+                        checkSum += _cheesePrice;
+                        break;
+
+                    case StrawberryName:
+                        Console.WriteLine(product.Name + " - " + _strawBerryPrice + " руб.");
+                        checkSum += _strawBerryPrice;
+                        break;
+
+                    case WineName:
+                        Console.WriteLine(product.Name + " - " + _winePrice + " руб.");
+                        checkSum += _winePrice;
+                        break;
+                }
+            }
+
+            Console.WriteLine($"\nИтого: {checkSum} руб.");
+            return checkSum;
+        }
+
+        private void ShowGeneralInfo() 
+        {
+            Console.WriteLine($"Цена на сыр - {_cheesePrice} руб.");
+            Console.WriteLine($"Цена на клубнику - {_strawBerryPrice} руб.");
+            Console.WriteLine($"Цена на вино - {_winePrice} руб.");
+            Console.WriteLine($"\nКлиентов ожидает обслуживания: {_buyers.Count}");
+            Console.WriteLine($"Общая выручка магазина: {_totalRevenue}");
+        }
+    }
+
+    class Buyer 
+    {
+        private static int _minMoney = 3000;
+        private static int _maxMoney = 5001;
+
+        private List<Product> _productsToBuy = new List<Product>();
+
+        public Buyer() 
+        {
+            Random random = new Random();
+            Money = random.Next(_minMoney, _maxMoney);                     
+        }
+
+        public int Money { get; private set; }
+
+        public List<Product> ChooseProducts(List<Product> availableProducts) 
+        {
+            Random random = new Random();
+            int minNumber = 1;
+            int maxNumber = 7;
+            int randomQuantity = random.Next(minNumber, maxNumber);
+
+            for (int i = 1; i <= randomQuantity; i++) 
+            {
+                _productsToBuy.Add(availableProducts.ElementAt(random.Next(0, availableProducts.Count)));
+            }  
+            
+            return _productsToBuy;
+        }
+
+        public List<Product> TakeSomethingOut() 
+        {
+            Random random = new Random();
+            int randomPosition = random.Next(0, _productsToBuy.Count);
+
+            Console.WriteLine($"\n\nПокупатель выкладывает позицию: {_productsToBuy.ElementAt(randomPosition).Name}");
+            _productsToBuy.Remove(_productsToBuy.ElementAt(randomPosition));
+            return _productsToBuy;
+        }
+
+        public void DeductMoney(int deductedAmount) 
+        {
+            if (deductedAmount < Money)
+            {
+                Money = 0;
+            }
+            else 
+            {
+                Money -= deductedAmount;
+            }
+        }
+    }
+
+    abstract class Product 
+    {
+        public string Name { get; protected set; }
+
+        protected abstract void SetName();
+    }
+
+    class Cheese : Product
+    {
+        public Cheese()
+        {
+            SetName();
+        }
+
+        protected override void SetName()        
+        {
+            Name = "Сыр";
+        }
+
+    }
+
+    class Strawberry : Product
+    {
+        public Strawberry()
+        {
+            SetName();
+        }
+
+        protected override void SetName()
+        {
+            Name = "Клубника";
+        }
+    }
+
+    class Wine : Product
+    {
+        public Wine() 
+        {
+            SetName();       
+        }
+
+        protected override void SetName()
+        {
+            Name = "Вино";
+        }
+    }
+}
