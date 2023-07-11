@@ -10,48 +10,61 @@ namespace CSTest2
         {
             Supermarket supermarket = new Supermarket();
 
-            supermarket.Work();    
+            supermarket.Work();
         }
     }
 
-    class Supermarket 
+    static class RandomNumber
     {
-        private const string CheeseName = "Сыр";
-        private const string StrawberryName = "Клубника";
-        private const string WineName = "Вино";
+        private static Random _random = new Random();
 
-        private int _cheesePrice = 800;
-        private int _strawBerryPrice = 500;
-        private int _winePrice = 1200;
-        private Random _random = new Random();  
-        private List<Product> _products = new List<Product>()
-            {new Cheese(), new Strawberry(), new Wine()};
-        private Queue<Buyer> _buyers = new Queue<Buyer>();
-        private Dictionary<string, int> _priceList = new Dictionary<string, int>();
-        private int _totalRevenue = 0;
-
-        public Supermarket() 
+        public static int GenerateRandomNumber(int minValue, int maxValue)
         {
-            GenerateBuyers();
-            SetPrices();
+            NewRandomNumber = _random.Next(minValue, maxValue);
+            return NewRandomNumber;
         }
 
-        public void Work() 
+        public static int NewRandomNumber { get; private set; }
+    }
+
+    class Supermarket
+    {
+        private Queue<Buyer> _buyers = new Queue<Buyer>();
+        private List<Product> _products = new List<Product>();
+        private int _totalRevenue = 0;
+
+        public Supermarket()
+        {
+            GenerateProducts();
+            GenerateBuyers();
+        }
+
+        public void Work()
         {
             while (_buyers.Count != 0)
             {
-                Console.WriteLine("Добро пожаловать в систему управления супермаркетом!\n");             
+                Console.WriteLine("Добро пожаловать в систему управления супермаркетом!\n");
                 ShowGeneralInfo();
                 ServeBuyer();
                 Console.Clear();
             }
+
+            Console.WriteLine("Все клиенты обслужены!");
+            Console.ReadKey();
         }
 
-        private void GenerateBuyers() 
+        private void GenerateProducts() 
+        {
+            _products.Add(new Product("Сыр", 800));
+            _products.Add(new Product("Клубника", 500));
+            _products.Add(new Product("Вино", 1200));
+        }
+
+        private void GenerateBuyers()
         {
             int minNumber = 5;
             int maxNumber = 21;
-            int randomNumber = _random.Next(minNumber, maxNumber);
+            int randomNumber = RandomNumber.GenerateRandomNumber(minNumber, maxNumber);
 
             for (int i = 1; i <= randomNumber; i++)
             {
@@ -59,185 +72,112 @@ namespace CSTest2
             }
         }
 
-        private void SetPrices() 
-        {
-            foreach (var product in _products) 
-            {
-                switch (product.Name) 
-                {
-                    case CheeseName:
-                        _priceList.Add(product.Name, _cheesePrice);
-                        break;
-
-                    case StrawberryName:
-                        _priceList.Add(product.Name, _strawBerryPrice);
-                        break;
-
-                    case WineName:
-                        _priceList.Add(product.Name, _winePrice);
-                        break;
-                }           
-            }        
-        }
-
-        private void ServeBuyer() 
+        private void ServeBuyer()
         {
             int revenuePerCheck;
             List<Product> productsToSell;
 
-            productsToSell = _buyers.ElementAt(0).ChooseProducts(_products);
-            revenuePerCheck = DrawCheck(productsToSell);
+            productsToSell = _buyers.Peek().ChooseProducts(_products);
+            revenuePerCheck = CalculateCheckSum(productsToSell);
 
-            while (revenuePerCheck > _buyers.ElementAt(0).Money) 
+            while (revenuePerCheck > _buyers.Peek().Money)
             {
-                _buyers.ElementAt(0).TakeSomethingOut();
-                revenuePerCheck = DrawCheck(productsToSell);
+                _buyers.Peek().TakeSomethingOut();
+                revenuePerCheck = CalculateCheckSum(productsToSell);
             }
 
-            _buyers.ElementAt(0).DeductMoney(revenuePerCheck);
+            _buyers.Dequeue().DeductMoney(revenuePerCheck);
             _totalRevenue += revenuePerCheck;
-            _buyers.Dequeue();
             Console.ReadKey();
         }
 
-        private int DrawCheck(List<Product> chosenProducts) 
-        {           
+        private int CalculateCheckSum(List<Product> chosenProducts)
+        {
             int checkSum = 0;
 
             Console.WriteLine("\n\nТоварный чек клиента:\n");
 
-            foreach (var product in chosenProducts) 
-            {
-                switch (product.Name)
-                {
-                    case CheeseName:
-                        Console.WriteLine(product.Name + " - " + _cheesePrice + " руб.");
-                        checkSum += _cheesePrice;
-                        break;
-
-                    case StrawberryName:
-                        Console.WriteLine(product.Name + " - " + _strawBerryPrice + " руб.");
-                        checkSum += _strawBerryPrice;
-                        break;
-
-                    case WineName:
-                        Console.WriteLine(product.Name + " - " + _winePrice + " руб.");
-                        checkSum += _winePrice;
-                        break;
-                }
+            foreach (var product in chosenProducts)
+            {               
+                Console.WriteLine(product.Name + " - " + product.Price + " руб.");
+                checkSum += product.Price;                
             }
 
             Console.WriteLine($"\nИтого: {checkSum} руб.");
             return checkSum;
         }
 
-        private void ShowGeneralInfo() 
+        private void ShowGeneralInfo()
         {
-            Console.WriteLine($"Цена на сыр - {_cheesePrice} руб.");
-            Console.WriteLine($"Цена на клубнику - {_strawBerryPrice} руб.");
-            Console.WriteLine($"Цена на вино - {_winePrice} руб.");
+            foreach (var product in _products) 
+            {
+                Console.WriteLine($"Цена на позицию: {product.Name} - {product.Price} руб.");
+            }
+
             Console.WriteLine($"\nКлиентов ожидает обслуживания: {_buyers.Count}");
             Console.WriteLine($"Общая выручка магазина: {_totalRevenue}");
         }
     }
 
-    class Buyer 
+    class Buyer
     {
-        private static int _minMoney = 3000;
-        private static int _maxMoney = 5001;
-
         private List<Product> _productsToBuy = new List<Product>();
 
-        public Buyer() 
+        public Buyer()
         {
-            Random random = new Random();
-            Money = random.Next(_minMoney, _maxMoney);                     
+            int minMoney = 3500;
+            int maxMoney = 5551;
+
+            Money = RandomNumber.GenerateRandomNumber(minMoney, maxMoney);
         }
 
         public int Money { get; private set; }
 
-        public List<Product> ChooseProducts(List<Product> availableProducts) 
+        public List<Product> ChooseProducts(List<Product> availableProducts)
         {
-            Random random = new Random();
             int minNumber = 1;
             int maxNumber = 7;
-            int randomQuantity = random.Next(minNumber, maxNumber);
+            int randomQuantity = RandomNumber.GenerateRandomNumber(minNumber, maxNumber);
 
-            for (int i = 1; i <= randomQuantity; i++) 
+            for (int i = 1; i <= randomQuantity; i++)
             {
-                _productsToBuy.Add(availableProducts.ElementAt(random.Next(0, availableProducts.Count)));
-            }  
-            
+                _productsToBuy.Add(availableProducts.ElementAt(RandomNumber.GenerateRandomNumber(0, availableProducts.Count)));
+            }
+
             return _productsToBuy;
         }
 
-        public List<Product> TakeSomethingOut() 
+        public List<Product> TakeSomethingOut()
         {
-            Random random = new Random();
-            int randomPosition = random.Next(0, _productsToBuy.Count);
+            int randomPosition = RandomNumber.GenerateRandomNumber(0, _productsToBuy.Count);
 
             Console.WriteLine($"\n\nПокупатель выкладывает позицию: {_productsToBuy.ElementAt(randomPosition).Name}");
             _productsToBuy.Remove(_productsToBuy.ElementAt(randomPosition));
             return _productsToBuy;
         }
 
-        public void DeductMoney(int deductedAmount) 
+        public void DeductMoney(int deductedAmount)
         {
             if (deductedAmount < Money)
             {
                 Money = 0;
             }
-            else 
+            else
             {
                 Money -= deductedAmount;
             }
         }
     }
 
-    abstract class Product 
+    class Product
     {
+        public Product(string name, int price)
+        {
+            Name = name;
+            Price = price;
+        }
+
         public string Name { get; protected set; }
-
-        protected abstract void SetName();
-    }
-
-    class Cheese : Product
-    {
-        public Cheese()
-        {
-            SetName();
-        }
-
-        protected override void SetName()        
-        {
-            Name = "Сыр";
-        }
-
-    }
-
-    class Strawberry : Product
-    {
-        public Strawberry()
-        {
-            SetName();
-        }
-
-        protected override void SetName()
-        {
-            Name = "Клубника";
-        }
-    }
-
-    class Wine : Product
-    {
-        public Wine() 
-        {
-            SetName();       
-        }
-
-        protected override void SetName()
-        {
-            Name = "Вино";
-        }
+        public int Price { get; protected set; }
     }
 }
