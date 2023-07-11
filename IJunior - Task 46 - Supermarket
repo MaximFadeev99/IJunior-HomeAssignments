@@ -20,11 +20,11 @@ namespace CSTest2
 
         public static int GenerateRandomNumber(int minValue, int maxValue)
         {
-            NewRandomNumber = _random.Next(minValue, maxValue);
-            return NewRandomNumber;
-        }
+            int newRandomNumber;
 
-        public static int NewRandomNumber { get; private set; }
+            newRandomNumber = _random.Next(minValue, maxValue);
+            return newRandomNumber;
+        }
     }
 
     class Supermarket
