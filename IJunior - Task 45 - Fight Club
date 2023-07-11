@@ -8,10 +8,16 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            List <Champion> champions = new List<Champion>() {new LightFighter(), new MediumFighter(), new BackStabber(),
-            new FatGuy(), new Boxer()};
+            List<Champion> champions = new List<Champion>() 
+                {new LightFighter(), 
+                new MediumFighter(), 
+                new BackStabber(),           
+                new FatGuy(), 
+                new Boxer()};
             Champion firstChampion;
             Champion secondChampion;
+            int firstChampionDamage;
+            int secondChampionDamage;
 
             Console.WriteLine("Имя бойца    -   Здоровье    -    Броня   -   " +
             "Урон   -   Инициатива\n");
@@ -25,23 +31,27 @@ namespace CSTest2
             firstChampion = EnquireChampionNumber();
             secondChampion = EnquireChampionNumber();
 
-            while (firstChampion == secondChampion) 
+            while (firstChampion == secondChampion)
             {
                 Console.Write("Ошибка!Второй боец уже занят!");
                 secondChampion = EnquireChampionNumber();
             }
 
-            while (firstChampion.Health > 0 && secondChampion.Health > 0) 
+            while (firstChampion.Health > 0 && secondChampion.Health > 0)
             {
                 if (firstChampion.Initiative > secondChampion.Initiative)
                 {
-                    secondChampion.TakeDamage(firstChampion.DealDamage());
-                    firstChampion.TakeDamage(secondChampion.DealDamage());
+                    firstChampionDamage = firstChampion.Attack();
+                    secondChampion.TakeDamage(firstChampionDamage);
+                    secondChampionDamage = secondChampion.Attack();
+                    firstChampion.TakeDamage(secondChampionDamage);
                 }
-                else 
+                else
                 {
-                    secondChampion.TakeDamage(firstChampion.DealDamage());
-                    firstChampion.TakeDamage(secondChampion.DealDamage());
+                    secondChampionDamage = secondChampion.Attack();
+                    firstChampion.TakeDamage(secondChampionDamage);
+                    firstChampionDamage = firstChampion.Attack();
+                    secondChampion.TakeDamage(firstChampionDamage);
                 }
             }
 
@@ -58,7 +68,7 @@ namespace CSTest2
                 Console.WriteLine($"\nПобедил {firstChampion.Name}!");
             }
 
-            Console.ReadKey ();
+            Console.ReadKey();
 
             Champion EnquireChampionNumber()
             {
@@ -78,12 +88,12 @@ namespace CSTest2
                 champion = champions.ElementAt(championNumber - 1);
                 return champion;
             }
-        }        
+        }
     }
 
-    abstract class Champion 
+    abstract class Champion
     {
-        public Champion(string name, int health, int armor, int damage, int initiative) 
+        public Champion(string name, int health, int armor, int damage, int initiative)
         {
             Name = name;
             Health = health;
@@ -92,23 +102,24 @@ namespace CSTest2
             Initiative = initiative;
         }
 
-        public string Name { get; set; }
-        public int Health { get; set; }
-        public int Armor { get; set; }
-        public int Damage { get; set; }
-        public int Initiative { get; set; }
+        public string Name { get; private set; }
+        public int Health { get; protected set; }
+        public int Armor { get; private set; }
+        public int Damage { get; protected set; }
+        public int Initiative { get; private set; }
 
-        public void ShowStats() 
+        public void ShowStats()
         {
             Console.Write($"{Name}      -     {Health}      -      {Armor}     -     {Damage}     -     {Initiative}\n");
         }
 
-        public virtual int DealDamage() 
+        public virtual int Attack()
         {
+            Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
             return Damage;
         }
 
-        public virtual void TakeDamage(int incomingDamage) 
+        public virtual void TakeDamage(int incomingDamage)
         {
             Health -= incomingDamage;
             Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
@@ -116,7 +127,7 @@ namespace CSTest2
             Console.WriteLine($"Оставшееся здоровье - {Health}");
         }
 
-        protected int LimitHealthFall(int currentHealth) 
+        protected int LimitHealthFall(int currentHealth)
         {
             if (currentHealth < 0)
             {
@@ -128,18 +139,18 @@ namespace CSTest2
     }
 
     class LightFighter : Champion
-    {       
+    {
         private Random _random = new Random();
 
-        public LightFighter(): base ("Дрыщ", 300,0,50,80) { }
+        public LightFighter() : base("Дрыщ", 300, 0, 50, 80) { }
 
-        public override void TakeDamage(int incomingDamage) 
+        public override void TakeDamage(int incomingDamage)
         {
             if (IsDodging() == false)
             {
                 Health -= incomingDamage;
             }
-            else 
+            else
             {
                 incomingDamage = 0;
             }
@@ -148,7 +159,7 @@ namespace CSTest2
             Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона. \nОставшееся здоровье - {Health}");
         }
 
-        private bool IsDodging() 
+        private bool IsDodging()
         {
             int minValue = 1;
             int maxValue = 7;
@@ -157,12 +168,12 @@ namespace CSTest2
             int dodgeChance = _random.Next(minValue, maxValue);
             bool isDodging;
 
-            if (dodgeChance == successValue1 || dodgeChance == successValue2) 
+            if (dodgeChance == successValue1 || dodgeChance == successValue2)
             {
                 isDodging = true;
                 Console.Write($"\n{Name} уклоняется от вражеской атаки");
             }
-            else 
+            else
             {
                 isDodging = false;
             }
@@ -171,7 +182,7 @@ namespace CSTest2
         }
     }
 
-    class MediumFighter : Champion 
+    class MediumFighter : Champion
     {
         private Random _random = new Random();
 
@@ -187,7 +198,7 @@ namespace CSTest2
             Console.WriteLine($"Оставшееся здоровье - {Health}");
         }
 
-        private void IsHealing() 
+        private void IsHealing()
         {
             int minValue = 1;
             int maxValue = 7;
@@ -198,7 +209,7 @@ namespace CSTest2
             double restoredHealth;
             int initialHealth = 350;
 
-            if (healChance == successValue1 || healChance == successValue2) 
+            if (healChance == successValue1 || healChance == successValue2)
             {
                 restoredHealth = Health * healPercent;
 
@@ -206,23 +217,23 @@ namespace CSTest2
                 {
                     Health = initialHealth;
                 }
-                else 
+                else
                 {
                     Health += Convert.ToInt32(restoredHealth);
                 }
-                
+
                 Console.WriteLine($"{Name} восстанавливает {Convert.ToInt32(restoredHealth)} о.з.");
             }
         }
     }
 
-    class BackStabber : Champion 
+    class BackStabber : Champion
     {
         private Random _random = new Random();
 
         public BackStabber() : base("Крыса", 280, 0, 50, 90) { }
 
-        public override int DealDamage()
+        public override int Attack()
         {
             int initialDamage = 50;
 
@@ -231,15 +242,16 @@ namespace CSTest2
                 Damage *= 2;
                 Console.WriteLine($"\n{Name} использует заточку и удваивает урон");
             }
-            else 
+            else
             {
                 Damage = initialDamage;
             }
 
+            Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
             return Damage;
         }
 
-        private bool TryUseShiv() 
+        private bool TryUseShiv()
         {
             int minValue = 1;
             int maxValue = 7;
@@ -252,7 +264,7 @@ namespace CSTest2
             {
                 isSuccessful = true;
             }
-            else 
+            else
             {
                 isSuccessful = false;
             }
@@ -261,14 +273,9 @@ namespace CSTest2
         }
     }
 
-    class FatGuy : Champion 
+    class FatGuy : Champion
     {
         public FatGuy() : base("Жиробас", 300, 25, 60, 50) { }
-
-        public override int DealDamage()
-        {
-            return Damage;
-        }
 
         public override void TakeDamage(int incomingDamage)
         {
@@ -291,7 +298,7 @@ namespace CSTest2
 
         public Boxer() : base("Боксер", 270, 0, 55, 55) { }
 
-        public override int DealDamage()
+        public override int Attack()
         {
             double modifiedDamage;
 
@@ -302,12 +309,13 @@ namespace CSTest2
                 _hitsCount = 0;
                 Console.WriteLine($"\n{Name} бьет коронный и увеличивает урон");
             }
-            else 
+            else
             {
                 _hitsCount++;
             }
-         
+
+            Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
             return Damage;
         }
-    }  
+    }
 }
