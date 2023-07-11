@@ -1,1 +1,192 @@
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            
+        }
+    }
+}
+
+    class RandomNumber 
+    {
+        private static Random _random = new Random();
+
+        public int ReturnRandomNumber(int minValue, int maxValue) 
+        {
+            int newRandomNumber; 
+
+            newRandomNumber = _random.Next(minValue, maxValue);
+            return newRandomNumber;
+        }       
+    }
+
+    class SoldierPrivate
+    {
+        public SoldierPrivate (string name, int health, int damage)
+        {
+            Name = name;
+            Health = health;
+            Damage = damage;
+        }
+
+        public string Name { get; private set; }
+        public int Health { get; protected set; }
+        public int Damage { get; protected set; }
+
+        public virtual void ShowStats()
+        {
+            Console.Write($"{Name}      -     {Health}      -      {Damage}\n");
+        }
+
+        public virtual int Attack()
+        {
+            Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
+            return Damage;
+        }
+
+        public virtual void TakeDamage(int incomingDamage)
+        {
+            Health -= incomingDamage;
+            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
+            Health = LimitHealthFall(Health);
+            Console.WriteLine($"Оставшееся здоровье - {Health}");
+        }
+
+        protected int LimitHealthFall(int currentHealth)
+        {
+            if (currentHealth < 0)
+            {
+                currentHealth = 0;
+            }
+
+            return currentHealth;
+        }
+    }
+
+    class Sergeant : SoldierPrivate
+{
+        private Random _random = new Random();
+        private int _throwGrenadeCount = 2;
+    private int _initialDamage = 50; 
+
+        public Sergeant() : base("Сержант", 300, 50) { }
+
+    public override int Attack()
+    {
+        Damage = _initialDamage;
+        
+        if (_throwGrenadeCount == 0)
+        {
+            Damage= ThrowGrenade();
+            _throwGrenadeCount = 2;
+        }
+        
+        return Damage;
+    }
+
+        public int ThrowGrenade() 
+        {
+            int damageMultiplier = 2;
+        Damage *= damageMultiplier;
+        return Damage;
+        }
+    }
+
+    class FieldEngineer : SoldierPrivate
+    {
+    private int _turnsToBuild = 2;
+    private int _initialDamage = 45;
+
+    public FieldEngineer() : base("Сапер", 400, 45) { }
+
+        private bool isTrenchBuilt() 
+        {
+            bool isBuilt = false;
+
+            if (_turnsToBuild <= 0) 
+            {
+                isBuilt = true;
+            }
+
+            _turnsToBuild--;
+            return isBuilt;
+        }
+
+        private override int Attack() 
+        {
+            if (_turnsToBuild <= 0)
+            {
+                Damage = _initialDamage;
+            }
+            else 
+            {
+                Damage = 0;
+            }
+
+            return Damage;
+        }
+    }
+
+    class Medic : SoldierPrivate
+    {
+        private int _initialDamage = 35;
+
+        public Medic() : base("Медик", 290, 35) { }
+    
+    }
+
+    class Sniper : SoldierPrivate
+    {
+        public Sniper() : base("Снайпер", 300, 25, 60, 50) { }
+
+        public override void TakeDamage(int incomingDamage)
+        {
+            double reducedDamage;
+            double maxPercent = 100;
+
+            reducedDamage = incomingDamage * ((maxPercent - Armor) / maxPercent);
+            Health -= Convert.ToInt32(reducedDamage);
+
+            Health = LimitHealthFall(Health);
+            Console.WriteLine($"\n{Name} получает {Convert.ToInt32(reducedDamage)} ед. урона");
+            Console.WriteLine($"Оставшееся здоровье - {Health}");
+        }
+    }
+
+    class Boxer : Champion
+    {
+        private int _hitsCount = 0;
+        private double _damageModifier = 1.2;
+
+        public Boxer() : base("Боксер", 270, 0, 55, 55) { }
+
+        public override int Attack()
+        {
+            double modifiedDamage;
+
+            if (_hitsCount == 3)
+            {
+                modifiedDamage = Damage * _damageModifier;
+                Damage += Convert.ToInt32(modifiedDamage);
+                _hitsCount = 0;
+                Console.WriteLine($"\n{Name} бьет коронный и увеличивает урон");
+            }
+            else
+            {
+                _hitsCount++;
+            }
+
+            Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
+            return Damage;
+        }
+    }
+}
