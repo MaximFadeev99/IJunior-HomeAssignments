@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CSTest2
 {
@@ -16,14 +15,13 @@ namespace CSTest2
 
     static class RandomNumber
     {
-        private static Random _random = new Random();
+        private static Random _seed = new Random();
 
-        public static int GenerateRandomNumber(int minValue, int maxValue)
+        public static int Generate(int minValue, int maxValue)
         {
-            int newRandomNumber;
+            int newNumber = _seed.Next(minValue, maxValue);
 
-            newRandomNumber = _random.Next(minValue, maxValue);
-            return newRandomNumber;
+            return newNumber;
         }
     }
 
@@ -53,7 +51,7 @@ namespace CSTest2
             Console.ReadKey();
         }
 
-        private void GenerateProducts() 
+        private void GenerateProducts()
         {
             _products.Add(new Product("Сыр", 800));
             _products.Add(new Product("Клубника", 500));
@@ -64,7 +62,7 @@ namespace CSTest2
         {
             int minNumber = 5;
             int maxNumber = 21;
-            int randomNumber = RandomNumber.GenerateRandomNumber(minNumber, maxNumber);
+            int randomNumber = RandomNumber.Generate(minNumber, maxNumber);
 
             for (int i = 1; i <= randomNumber; i++)
             {
@@ -74,16 +72,12 @@ namespace CSTest2
 
         private void ServeBuyer()
         {
-            int revenuePerCheck;
-            List<Product> productsToSell;
+            Buyer buyer = new Buyer();
+            int revenuePerCheck = CalculateCheckSum(buyer.ChooseProducts(_products));
 
-            productsToSell = _buyers.Peek().ChooseProducts(_products);
-            revenuePerCheck = CalculateCheckSum(productsToSell);
-
-            while (revenuePerCheck > _buyers.Peek().Money)
-            {
-                _buyers.Peek().TakeSomethingOut();
-                revenuePerCheck = CalculateCheckSum(productsToSell);
+            while (revenuePerCheck > buyer.Money)
+            {               
+                revenuePerCheck = CalculateCheckSum(buyer.TakeSomethingOut());
             }
 
             _buyers.Dequeue().DeductMoney(revenuePerCheck);
@@ -98,9 +92,9 @@ namespace CSTest2
             Console.WriteLine("\n\nТоварный чек клиента:\n");
 
             foreach (var product in chosenProducts)
-            {               
+            {
                 Console.WriteLine(product.Name + " - " + product.Price + " руб.");
-                checkSum += product.Price;                
+                checkSum += product.Price;
             }
 
             Console.WriteLine($"\nИтого: {checkSum} руб.");
@@ -109,7 +103,7 @@ namespace CSTest2
 
         private void ShowGeneralInfo()
         {
-            foreach (var product in _products) 
+            foreach (var product in _products)
             {
                 Console.WriteLine($"Цена на позицию: {product.Name} - {product.Price} руб.");
             }
@@ -125,10 +119,10 @@ namespace CSTest2
 
         public Buyer()
         {
-            int minMoney = 3500;
-            int maxMoney = 5551;
+            int minMoney = 3000;
+            int maxMoney = 5000;
 
-            Money = RandomNumber.GenerateRandomNumber(minMoney, maxMoney);
+            Money = RandomNumber.Generate(minMoney, maxMoney);
         }
 
         public int Money { get; private set; }
@@ -136,12 +130,11 @@ namespace CSTest2
         public List<Product> ChooseProducts(List<Product> availableProducts)
         {
             int minNumber = 1;
-            int maxNumber = 7;
-            int randomQuantity = RandomNumber.GenerateRandomNumber(minNumber, maxNumber);
+            int maxNumber = 8;
 
-            for (int i = 1; i <= randomQuantity; i++)
+            for (int i = 1; i <= RandomNumber.Generate(minNumber, maxNumber); i++)
             {
-                _productsToBuy.Add(availableProducts.ElementAt(RandomNumber.GenerateRandomNumber(0, availableProducts.Count)));
+                _productsToBuy.Add(availableProducts[RandomNumber.Generate(0, availableProducts.Count)]);
             }
 
             return _productsToBuy;
@@ -149,23 +142,16 @@ namespace CSTest2
 
         public List<Product> TakeSomethingOut()
         {
-            int randomPosition = RandomNumber.GenerateRandomNumber(0, _productsToBuy.Count);
+            int randomPosition = RandomNumber.Generate(0, _productsToBuy.Count);
 
-            Console.WriteLine($"\n\nПокупатель выкладывает позицию: {_productsToBuy.ElementAt(randomPosition).Name}");
-            _productsToBuy.Remove(_productsToBuy.ElementAt(randomPosition));
+            Console.WriteLine($"\n\nПокупатель выкладывает позицию: {_productsToBuy[randomPosition].Name}");
+            _productsToBuy.Remove(_productsToBuy[randomPosition]);
             return _productsToBuy;
         }
 
         public void DeductMoney(int deductedAmount)
         {
-            if (deductedAmount < Money)
-            {
-                Money = 0;
-            }
-            else
-            {
-                Money -= deductedAmount;
-            }
+            Money -= deductedAmount;
         }
     }
 
