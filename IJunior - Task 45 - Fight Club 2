@@ -35,10 +35,10 @@ namespace CSTest2
             Console.Write($"{Name}      -     {Health}      -      {Armor}     -     {Damage}     -     {Initiative}\n");
         }
 
-        public virtual int Attack()
+        public virtual void Attack(Champion enemy)
         {
             Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
-            return Damage;
+            enemy.TakeDamage(Damage);
         }
 
         public virtual void TakeDamage(int incomingDamage)
@@ -52,9 +52,7 @@ namespace CSTest2
         protected int LimitHealthFall(int currentHealth)
         {
             if (currentHealth < 0)
-            {
                 currentHealth = 0;
-            }
 
             return currentHealth;
         }
@@ -142,7 +140,7 @@ namespace CSTest2
     {
         public BackStabber() : base("Крыса", 280, 0, 50, 90) { }
 
-        public override int Attack()
+        public override void Attack(Champion enemy)
         {
             int damageMultiplier = 2;
             int initialDamage = 50;
@@ -158,7 +156,7 @@ namespace CSTest2
             }
 
             Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
-            return Damage;
+            enemy.TakeDamage(Damage);
         }
 
         private bool CanUseShiv()
@@ -205,9 +203,10 @@ namespace CSTest2
 
         public Boxer() : base("Боксер", 270, 0, 55, 55) { }
 
-        public override int Attack()
+        public override void Attack(Champion enemy)
         {
             double modifiedDamage;
+            int initialDamage = 55;
 
             if (_hitsCount == 3)
             {
@@ -218,11 +217,12 @@ namespace CSTest2
             }
             else
             {
+                Damage = initialDamage;
                 _hitsCount++;
             }
 
             Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
-            return Damage;
+            enemy.TakeDamage(Damage);
         }
     }
 
@@ -236,8 +236,8 @@ namespace CSTest2
             {
                 GenerateNewChampions();
                 ChooseChampions(out Champion firstChampion, out Champion secondChampion);
-                StartFight(ref firstChampion, ref secondChampion);
-                AnnounceWinner(firstChampion, secondChampion);
+                AnnounceWinner(Fight(firstChampion, secondChampion));
+                Console.ReadKey();
                 Console.Clear();
             }          
         }
@@ -290,46 +290,43 @@ namespace CSTest2
             return _champions[championNumber - 1];
         }
 
-        private void StartFight(ref Champion firstChampion, ref Champion secondChampion) 
+        private Champion Fight(Champion firstChampion, Champion secondChampion) 
         {
-            int firstChampionDamage;
-            int secondChampionDamage;
 
             while (firstChampion.Health > 0 && secondChampion.Health > 0)
             {
                 if (firstChampion.Initiative > secondChampion.Initiative)
                 {
-                    firstChampionDamage = firstChampion.Attack();
-                    secondChampion.TakeDamage(firstChampionDamage);
-                    secondChampionDamage = secondChampion.Attack();
-                    firstChampion.TakeDamage(secondChampionDamage);
+                    firstChampion.Attack(secondChampion);
+
+                    if (secondChampion.Health == 0) 
+                        return firstChampion;
+
+                    secondChampion.Attack(firstChampion);
+
+                    if (firstChampion.Health == 0)
+                        return secondChampion;
                 }
                 else
                 {
-                    secondChampionDamage = secondChampion.Attack();
-                    firstChampion.TakeDamage(secondChampionDamage);
-                    firstChampionDamage = firstChampion.Attack();
-                    secondChampion.TakeDamage(firstChampionDamage);
+                    secondChampion.Attack(firstChampion);
+
+                    if (firstChampion.Health == 0)
+                       return secondChampion;
+
+                    firstChampion.Attack(secondChampion);
+
+                    if (secondChampion.Health == 0)
+                        return firstChampion;
                 }
             }
+
+            return null;
         }
 
-        private void AnnounceWinner(Champion firstChampion, Champion secondChampion) 
+        private void AnnounceWinner(Champion winner) 
         {
-            if (firstChampion.Health == 0 && secondChampion.Health == 0)
-            {
-                Console.WriteLine("\nНичья!");
-            }
-            else if (firstChampion.Health == 0)
-            {
-                Console.WriteLine($"\nПобедил {secondChampion.Name}!");
-            }
-            else if (secondChampion.Health == 0)
-            {
-                Console.WriteLine($"\nПобедил {firstChampion.Name}!");
-            }
-
-            Console.ReadKey();
+            Console.WriteLine($"\nПобедил {winner.Name}!");
         }
     }
 
