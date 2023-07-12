@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CSTest2
 {
@@ -8,26 +7,11 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            List<Champion> champions = new List<Champion>()
-                {new LightFighter(),
-                new MediumFighter(),
-                new BackStabber(),
-                new FatGuy(),
-                new Boxer()};
+            Arena arena = new Arena();
 
-            Champion champion;
-
-            champion = champions[1];
-
-            champion.TakeDamage(100);
-
-            champion = champions[1];
-            //Arena arena = new Arena();
-
-            //arena.Work();
+            arena.Work();            
         }
     }
-
 
     abstract class Champion
     {
@@ -78,8 +62,6 @@ namespace CSTest2
 
     class LightFighter : Champion
     {
-        private Random _random = new Random();
-
         public LightFighter() : base("Дрыщ", 300, 0, 50, 80) { }
 
         public override void TakeDamage(int incomingDamage)
@@ -98,15 +80,12 @@ namespace CSTest2
         }
 
         private bool IsDodging()
-        {
-            int minValue = 1;
-            int maxValue = 7;
-            int successValue1 = 3;
-            int successValue2 = 5;
-            int dodgeChance = _random.Next(minValue, maxValue);
+        { 
+            int successThreshold = 33;
+            int dodgeChance = RandomNumber.Generate();
             bool isDodging;
 
-            if (dodgeChance == successValue1 || dodgeChance == successValue2)
+            if (dodgeChance <= successThreshold)
             {
                 isDodging = true;
                 Console.Write($"\n{Name} уклоняется от вражеской атаки");
@@ -122,32 +101,26 @@ namespace CSTest2
 
     class MediumFighter : Champion
     {
-        private Random _random = new Random();
-
         public MediumFighter() : base("Крепыш", 350, 0, 55, 60) { }
 
         public override void TakeDamage(int incomingDamage)
         {
             Health -= incomingDamage;
             Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
-            IsHealing();
-
+            CanHeal();
             Health = LimitHealthFall(Health);
             Console.WriteLine($"Оставшееся здоровье - {Health}");
         }
 
-        private void IsHealing()
+        private void CanHeal()
         {
-            int minValue = 1;
-            int maxValue = 7;
-            int successValue1 = 1;
-            int successValue2 = 6;
-            int healChance = _random.Next(minValue, maxValue);
+            int successThreshold = 33;
+            int healChance = RandomNumber.Generate();
             double healPercent = 0.1;
             double restoredHealth;
             int initialHealth = 350;
 
-            if (healChance == successValue1 || healChance == successValue2)
+            if (healChance <= successThreshold)
             {
                 restoredHealth = Health * healPercent;
 
@@ -167,17 +140,16 @@ namespace CSTest2
 
     class BackStabber : Champion
     {
-        private Random _random = new Random();
-
         public BackStabber() : base("Крыса", 280, 0, 50, 90) { }
 
         public override int Attack()
         {
+            int damageMultiplier = 2;
             int initialDamage = 50;
 
-            if (TryUseShiv() == true)
+            if (CanUseShiv() == true)
             {
-                Damage *= 2;
+                Damage *= damageMultiplier;
                 Console.WriteLine($"\n{Name} использует заточку и удваивает урон");
             }
             else
@@ -189,16 +161,13 @@ namespace CSTest2
             return Damage;
         }
 
-        private bool TryUseShiv()
+        private bool CanUseShiv()
         {
-            int minValue = 1;
-            int maxValue = 7;
-            int successValue1 = 2;
-            int successValue2 = 4;
-            int useChance = _random.Next(minValue, maxValue);
+            int successThreshold = 33;
+            int useChance = RandomNumber.Generate();
             bool isSuccessful;
 
-            if (useChance == successValue1 || useChance == successValue2)
+            if (useChance <= successThreshold)
             {
                 isSuccessful = true;
             }
@@ -259,52 +228,69 @@ namespace CSTest2
 
     class Arena 
     {
-        private List<Champion> champions = new List<Champion>()
-                {new LightFighter(),
-                new MediumFighter(),
-                new BackStabber(),
-                new FatGuy(),
-                new Boxer()};
-
+        private List<Champion> _champions;
 
         public void Work() 
         {
-            Champion firstChampion;
-            Champion secondChampion;
-
-            while (true) 
+            while (true)
             {
-                ShowOptions();
-                firstChampion = EnquireChampionNumber();
-                secondChampion = EnquireChampionNumber();
-
-                //while (firstChampion == secondChampion)
-                //{
-                //    Console.Write("Ошибка!Второй боец уже занят!");
-                //    secondChampion = EnquireChampionNumber();
-                //}
-
-                StartFight(firstChampion, secondChampion);
+                GenerateNewChampions();
+                ChooseChampions(out Champion firstChampion, out Champion secondChampion);
+                StartFight(ref firstChampion, ref secondChampion);
                 AnnounceWinner(firstChampion, secondChampion);
-                Console.ReadKey();
                 Console.Clear();
-            }         
+            }          
         }
 
-        private void ShowOptions() 
+        private void GenerateNewChampions() 
+        {
+            _champions = new List<Champion>() 
+                {new LightFighter(), 
+                new MediumFighter(), 
+                new BackStabber(), 
+                new FatGuy(), 
+                new Boxer()};
+        }
+
+        private void ChooseChampions(out Champion firstChampion, out Champion secondChampion) 
         {
             Console.WriteLine("Имя бойца    -   Здоровье    -    Броня   -   " +
-           "Урон   -   Инициатива\n");
+            "Урон   -   Инициатива\n");
 
-            for (int i = 0; i < champions.Count; i++)
+            for (int i = 0; i < _champions.Count; i++)
             {
                 Console.Write(i + 1 + ") ");
-                champions.ElementAt(i).ShowStats();
+                _champions[i].ShowStats();
+            }
+
+            firstChampion = EnquireChampionNumber();
+            secondChampion = EnquireChampionNumber();
+
+            while (firstChampion == secondChampion)
+            {
+                Console.Write("Ошибка!Второй боец уже занят!");
+                secondChampion = EnquireChampionNumber();
             }
         }
-        
 
-        private void StartFight(Champion firstChampion, Champion secondChampion) 
+        private Champion EnquireChampionNumber()
+        {
+            string userInput;
+            int championNumber;
+
+            Console.Write("\nВведите номер бойца: ");
+            userInput = Console.ReadLine();
+
+            while (int.TryParse(userInput, out championNumber) == false || championNumber - 1 < 0 || championNumber > _champions.Count)
+            {
+                Console.Write("Ошибка! Введите повторно номер бойца: ");
+                userInput = Console.ReadLine();
+            }
+
+            return _champions[championNumber - 1];
+        }
+
+        private void StartFight(ref Champion firstChampion, ref Champion secondChampion) 
         {
             int firstChampionDamage;
             int secondChampionDamage;
@@ -334,33 +320,30 @@ namespace CSTest2
             {
                 Console.WriteLine("\nНичья!");
             }
-            else if (firstChampion.Health <= 0)
+            else if (firstChampion.Health == 0)
             {
                 Console.WriteLine($"\nПобедил {secondChampion.Name}!");
             }
-            else if (secondChampion.Health <= 0)
+            else if (secondChampion.Health == 0)
             {
                 Console.WriteLine($"\nПобедил {firstChampion.Name}!");
             }
+
+            Console.ReadKey();
         }
+    }
 
-        private Champion EnquireChampionNumber() 
+    static class RandomNumber 
+    {
+        private static Random _seed = new Random();
+        private static int minValue = 1;
+        private static int maxValue = 101;
+
+        public static int Generate() 
         {
-            Champion champion;
-            string userInput;
-            int championNumber;
+            int newNumber = _seed.Next(minValue, maxValue);
 
-            Console.Write("\nВведите номер бойца: ");
-            userInput = Console.ReadLine();
-
-            while (int.TryParse(userInput, out championNumber) == false || championNumber - 1 < 0 || championNumber > champions.Count)
-            {
-                Console.Write("Ошибка! Введите повторно номер бойца: ");
-                userInput = Console.ReadLine();
-            }
-
-            champion = champions[1];
-            return champion;
+            return newNumber;
         }
     }
 }
