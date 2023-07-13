@@ -48,6 +48,7 @@ namespace CSTest2
             }
 
             Console.WriteLine("Все клиенты обслужены!");
+            Console.WriteLine($"Валовая выручка {_totalRevenue} руб.");
             Console.ReadKey();
         }
 
@@ -66,39 +67,26 @@ namespace CSTest2
 
             for (int i = 1; i <= randomNumber; i++)
             {
-                _buyers.Enqueue(new Buyer());
+                _buyers.Enqueue(new Buyer(_products));
             }
         }
 
         private void ServeBuyer()
         {
-            Buyer buyer = new Buyer();
-            int revenuePerCheck = CalculateCheckSum(buyer.ChooseProducts(_products));
+            Buyer buyer = _buyers.Peek();
+
+            int revenuePerCheck = buyer.CalculateSum();
 
             while (revenuePerCheck > buyer.Money)
-            {               
-                revenuePerCheck = CalculateCheckSum(buyer.TakeSomethingOut());
+            {
+                buyer.TakeSomethingOut();
+                revenuePerCheck = buyer.CalculateSum();
             }
 
-            _buyers.Dequeue().DeductMoney(revenuePerCheck);
+            buyer.DrawCheck();
+            _buyers.Dequeue().Pay();
             _totalRevenue += revenuePerCheck;
             Console.ReadKey();
-        }
-
-        private int CalculateCheckSum(List<Product> chosenProducts)
-        {
-            int checkSum = 0;
-
-            Console.WriteLine("\n\nТоварный чек клиента:\n");
-
-            foreach (var product in chosenProducts)
-            {
-                Console.WriteLine(product.Name + " - " + product.Price + " руб.");
-                checkSum += product.Price;
-            }
-
-            Console.WriteLine($"\nИтого: {checkSum} руб.");
-            return checkSum;
         }
 
         private void ShowGeneralInfo()
@@ -117,41 +105,63 @@ namespace CSTest2
     {
         private List<Product> _productsToBuy = new List<Product>();
 
-        public Buyer()
+        public Buyer(List<Product> availableProducts)
         {
             int minMoney = 3000;
             int maxMoney = 5000;
-
-            Money = RandomNumber.Generate(minMoney, maxMoney);
-        }
-
-        public int Money { get; private set; }
-
-        public List<Product> ChooseProducts(List<Product> availableProducts)
-        {
             int minNumber = 1;
             int maxNumber = 8;
+
+            Money = RandomNumber.Generate(minMoney, maxMoney);
 
             for (int i = 1; i <= RandomNumber.Generate(minNumber, maxNumber); i++)
             {
                 _productsToBuy.Add(availableProducts[RandomNumber.Generate(0, availableProducts.Count)]);
             }
-
-            return _productsToBuy;
         }
 
-        public List<Product> TakeSomethingOut()
+        public int Money { get; private set; }
+
+        public void TakeSomethingOut()
         {
             int randomPosition = RandomNumber.Generate(0, _productsToBuy.Count);
 
-            Console.WriteLine($"\n\nПокупатель выкладывает позицию: {_productsToBuy[randomPosition].Name}");
+            Console.WriteLine($"\n\nПокупатель выкладывает позицию: {_productsToBuy[randomPosition].Name} " +
+                $"на {_productsToBuy[randomPosition].Price} руб.");
             _productsToBuy.Remove(_productsToBuy[randomPosition]);
-            return _productsToBuy;
         }
 
-        public void DeductMoney(int deductedAmount)
+        public void Pay()
         {
-            Money -= deductedAmount;
+            Money -= CalculateSum();
+            _productsToBuy.Clear();
+        }
+
+        public int CalculateSum() 
+        {
+            int checkSum = 0;
+
+            foreach (var product in _productsToBuy)
+            {
+                checkSum += product.Price;
+            }
+
+            return checkSum;
+        }
+
+        public void DrawCheck()
+        {
+            int totalSum = 0;
+
+            Console.WriteLine("\n\nТоварный чек клиента:\n");
+
+            foreach (var product in _productsToBuy)
+            {
+                Console.WriteLine(product.Name + " - " + product.Price + " руб.");
+                totalSum += product.Price;
+            }
+
+            Console.WriteLine($"\nИтого: {totalSum}");
         }
     }
 
