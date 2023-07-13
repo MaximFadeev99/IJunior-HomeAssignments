@@ -9,7 +9,7 @@ namespace CSTest2
         {
             Arena arena = new Arena();
 
-            arena.Work();            
+            arena.Work();
         }
     }
 
@@ -56,6 +56,14 @@ namespace CSTest2
 
             return currentHealth;
         }
+
+        protected bool CanUseSpecialAbility() 
+        {
+            int successThreshold = 33;
+            int useChance = RandomNumber.GeneratePercent();
+
+            return useChance <= successThreshold;   
+        }
     }
 
     class LightFighter : Champion
@@ -64,36 +72,18 @@ namespace CSTest2
 
         public override void TakeDamage(int incomingDamage)
         {
-            if (IsDodging() == false)
+            if (CanUseSpecialAbility()  == false)
             {
                 Health -= incomingDamage;
             }
             else
             {
                 incomingDamage = 0;
+                Console.Write($"\n{Name} уклоняется от вражеской атаки");
             }
 
             Health = LimitHealthFall(Health);
             Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона. \nОставшееся здоровье - {Health}");
-        }
-
-        private bool IsDodging()
-        { 
-            int successThreshold = 33;
-            int dodgeChance = RandomNumber.Generate();
-            bool isDodging;
-
-            if (dodgeChance <= successThreshold)
-            {
-                isDodging = true;
-                Console.Write($"\n{Name} уклоняется от вражеской атаки");
-            }
-            else
-            {
-                isDodging = false;
-            }
-
-            return isDodging;
         }
     }
 
@@ -112,13 +102,11 @@ namespace CSTest2
 
         private void CanHeal()
         {
-            int successThreshold = 33;
-            int healChance = RandomNumber.Generate();
             double healPercent = 0.1;
             double restoredHealth;
             int initialHealth = 350;
 
-            if (healChance <= successThreshold)
+            if (CanUseSpecialAbility() == true)
             {
                 restoredHealth = Health * healPercent;
 
@@ -145,7 +133,7 @@ namespace CSTest2
             int damageMultiplier = 2;
             int initialDamage = 50;
 
-            if (CanUseShiv() == true)
+            if (CanUseSpecialAbility() == true)
             {
                 Damage *= damageMultiplier;
                 Console.WriteLine($"\n{Name} использует заточку и удваивает урон");
@@ -155,27 +143,8 @@ namespace CSTest2
                 Damage = initialDamage;
             }
 
-            Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
-            enemy.TakeDamage(Damage);
-        }
-
-        private bool CanUseShiv()
-        {
-            int successThreshold = 33;
-            int useChance = RandomNumber.Generate();
-            bool isSuccessful;
-
-            if (useChance <= successThreshold)
-            {
-                isSuccessful = true;
-            }
-            else
-            {
-                isSuccessful = false;
-            }
-
-            return isSuccessful;
-        }
+            base.Attack(enemy);
+        }       
     }
 
     class FatGuy : Champion
@@ -199,6 +168,7 @@ namespace CSTest2
     class Boxer : Champion
     {
         private int _hitsCount = 0;
+        private int _maxHitsCount = 3;
         private double _damageModifier = 1.2;
 
         public Boxer() : base("Боксер", 270, 0, 55, 55) { }
@@ -208,7 +178,7 @@ namespace CSTest2
             double modifiedDamage;
             int initialDamage = 55;
 
-            if (_hitsCount == 3)
+            if (_hitsCount == _maxHitsCount)
             {
                 modifiedDamage = Damage * _damageModifier;
                 Damage += Convert.ToInt32(modifiedDamage);
@@ -221,38 +191,40 @@ namespace CSTest2
                 _hitsCount++;
             }
 
-            Console.WriteLine($"\n{Name} наносит атаку в {Damage} ед. урона");
-            enemy.TakeDamage(Damage);
+            base.Attack(enemy);
         }
     }
 
-    class Arena 
+    class Arena
     {
         private List<Champion> _champions;
 
-        public void Work() 
+        public void Work()
         {
-            while (true)
+            bool isLeaving = false;
+            
+            while (isLeaving == false)
             {
                 GenerateNewChampions();
                 ChooseChampions(out Champion firstChampion, out Champion secondChampion);
-                AnnounceWinner(Fight(firstChampion, secondChampion));
+                Fight(ref firstChampion, ref secondChampion);
+                AnnounceWinner(firstChampion, secondChampion);
                 Console.ReadKey();
                 Console.Clear();
-            }          
+            }
         }
 
-        private void GenerateNewChampions() 
+        private void GenerateNewChampions()
         {
-            _champions = new List<Champion>() 
-                {new LightFighter(), 
-                new MediumFighter(), 
-                new BackStabber(), 
-                new FatGuy(), 
+            _champions = new List<Champion>()
+                {new LightFighter(),
+                new MediumFighter(),
+                new BackStabber(),
+                new FatGuy(),
                 new Boxer()};
         }
 
-        private void ChooseChampions(out Champion firstChampion, out Champion secondChampion) 
+        private void ChooseChampions(out Champion firstChampion, out Champion secondChampion)
         {
             Console.WriteLine("Имя бойца    -   Здоровье    -    Броня   -   " +
             "Урон   -   Инициатива\n");
@@ -290,57 +262,59 @@ namespace CSTest2
             return _champions[championNumber - 1];
         }
 
-        private Champion Fight(Champion firstChampion, Champion secondChampion) 
+        private void Fight(ref Champion firstChampion, ref Champion secondChampion)
         {
-
             while (firstChampion.Health > 0 && secondChampion.Health > 0)
             {
                 if (firstChampion.Initiative > secondChampion.Initiative)
                 {
                     firstChampion.Attack(secondChampion);
 
-                    if (secondChampion.Health == 0) 
-                        return firstChampion;
+                    if (secondChampion.Health == 0)
+                        break;
 
                     secondChampion.Attack(firstChampion);
 
                     if (firstChampion.Health == 0)
-                        return secondChampion;
+                        break;
                 }
                 else
                 {
                     secondChampion.Attack(firstChampion);
 
                     if (firstChampion.Health == 0)
-                       return secondChampion;
+                        break;
 
                     firstChampion.Attack(secondChampion);
 
                     if (secondChampion.Health == 0)
-                        return firstChampion;
+                        break;
                 }
             }
-
-            return null;
         }
 
-        private void AnnounceWinner(Champion winner) 
+        private void AnnounceWinner(Champion firstChampion, Champion secondChampion)
         {
-            Console.WriteLine($"\nПобедил {winner.Name}!");
+            if (firstChampion.Health == 0)
+            {
+                Console.WriteLine($"\nПобедил {secondChampion.Name}!");
+            }
+            else if (secondChampion.Health == 0)
+            {
+                Console.WriteLine($"\nПобедил {firstChampion.Name}!");
+            }            
         }
     }
 
-    static class RandomNumber 
+    static class RandomNumber
     {
-        private static Random _seed = new Random();
-        private static int minValue = 1;
-        private static int maxValue = 101;
+        private static Random _random = new Random();
+        private static int _minValue = 1;
+        private static int _maxValue = 101;
 
-        public static int Generate() 
+        public static int GeneratePercent()
         {
-            int newNumber = _seed.Next(minValue, maxValue);
-
-            return newNumber;
+            return  _random.Next(_minValue, _maxValue);
         }
     }
 }
