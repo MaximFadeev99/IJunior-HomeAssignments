@@ -41,18 +41,18 @@ namespace CSTest2
 
         private void Fight()
         {
-            while (_firstSquad.isAlive == true || _secondSquad.isAlive == true) 
+            while (_firstSquad.IsAlive == true || _secondSquad.IsAlive == true) 
             {
                 RunRound(_firstSquad, _secondSquad);                              
 
-                if (_secondSquad.isAlive == false)
+                if (_secondSquad.IsAlive == false)
                 {
                     break;
                 }
 
                 RunRound(_secondSquad, _firstSquad);
 
-                if (_firstSquad.isAlive == false)
+                if (_firstSquad.IsAlive == false)
                 {
                     break;
                 }                           
@@ -69,11 +69,11 @@ namespace CSTest2
 
         private void AnnounceWinner()
         {
-            if (_firstSquad.isAlive == false)
+            if (_firstSquad.IsAlive == false)
             {
                 Console.WriteLine($"\nПобеждает {_secondSquad.Name}!");
             }
-            else if (_secondSquad.isAlive == false)
+            else if (_secondSquad.IsAlive == false)
             {
                 Console.WriteLine($"\nПобеждает {_firstSquad.Name}!");
             }
@@ -99,7 +99,7 @@ namespace CSTest2
         }
 
         public string Name { get; private set; }
-        public bool isAlive { get; private set; } = true;       
+        public bool IsAlive { get; private set; } = true;       
 
         public void TryTakeCover ()
         {
@@ -170,28 +170,28 @@ namespace CSTest2
             }
 
             if (_aliveMembers == 0)
-                isAlive = false;
+                IsAlive = false;
         }
 
         private void GenerateCurrentMembers()
         {
-            List<SoldierPrivate> _possibleSquadMembers = new List<SoldierPrivate>
+            List<SoldierPrivate> possibleSquadMembers = new List<SoldierPrivate>
             {new SoldierPrivate(),
              new Sergeant(),
              new FieldEngineer(),
              new Medic(),
              new Sniper(),
              new Armored()};
-            int randomPosition = RandomNumber.ReturnNewNumber(0, _possibleSquadMembers.Count);
+            int randomPosition = RandomNumber.ReturnNewNumber(0, possibleSquadMembers.Count);
 
             for (int i = 1; i <= _maxMembers; i++)
             {
-                while (_squadMembers.Contains(_possibleSquadMembers[randomPosition]) == true)
+                while (_squadMembers.Contains(possibleSquadMembers[randomPosition]) == true)
                 {
-                    randomPosition = RandomNumber.ReturnNewNumber(0, _possibleSquadMembers.Count);
+                    randomPosition = RandomNumber.ReturnNewNumber(0, possibleSquadMembers.Count);
                 }
 
-                _squadMembers.Add(_possibleSquadMembers[randomPosition]);
+                _squadMembers.Add(possibleSquadMembers[randomPosition]);
             }
 
             _aliveMembers = _maxMembers;
@@ -212,14 +212,14 @@ namespace CSTest2
 
     class SoldierPrivate
     {
-        public SoldierPrivate() 
+        public SoldierPrivate()
         {
             CurrentHealth = MaxHealth;
         }
 
-        public virtual string Name { get; protected set; } = "Рядовой";
-        public virtual int MaxHealth { get; protected set; } = 290;
-        public virtual int InitialDamage { get; protected set; } = 45;
+        public string Name { get; protected set; } = "Рядовой";
+        public int MaxHealth { get; protected set; } = 290;
+        public int InitialDamage { get; protected set; } = 45;
         public int CurrentDamage { get; protected set; }
         public bool IsInTrench { get; protected set; } = false;
         public int CurrentHealth { get; protected set; }
@@ -293,9 +293,13 @@ namespace CSTest2
         private int _turnsToThrowGrenade = 2;
         private int _grenadeDamageMultiplier = 2;
 
-        public override string Name { get; protected set; } = "Сержант";
-        public override int MaxHealth { get; protected set; } = 310;
-        public override int InitialDamage { get; protected set; } = 50;
+        public Sergeant()
+        {
+            Name = "Сержант";
+            MaxHealth = 310;
+            InitialDamage = 50;
+            CurrentHealth = MaxHealth;
+        }
 
         public override void Attack(SoldierPrivate enemy)
         {
@@ -318,10 +322,15 @@ namespace CSTest2
 
     class FieldEngineer : SoldierPrivate
     {
-        public int TurnsToBuild { get; protected set; } = 2;
-        public override string Name { get; protected set; } = "Сапер";
-        public override int MaxHealth { get; protected set; } = 400;
-        public override int InitialDamage { get; protected set; } = 45;
+        public FieldEngineer()
+        {
+            Name = "Сапер";
+            MaxHealth = 400;
+            InitialDamage = 45;
+            CurrentHealth = MaxHealth;
+        }
+
+        public int TurnsToBuild { get; private set; } = 2;
 
         public override void Attack(SoldierPrivate enemy)
         {
@@ -340,17 +349,26 @@ namespace CSTest2
 
     class Medic : SoldierPrivate
     {
-        public override string Name { get; protected set; } = "Медик";
-        public override int MaxHealth { get; protected set; } = 290;
-        public override int InitialDamage { get; protected set; } = 35;
+        public Medic()
+        {
+            Name = "Медик";
+            MaxHealth = 290;
+            InitialDamage = 35;
+            CurrentHealth = MaxHealth;
+        }
     }
 
     class Sniper : SoldierPrivate
     {
         private int _liquidationCount = 2;
-        public override string Name { get; protected set; } = "Снайпер";
-        public override int MaxHealth { get; protected set; } = 100;
-        public override int InitialDamage { get; protected set; } = 50;
+
+        public Sniper()
+        {
+            Name = "Снайпер";
+            MaxHealth = 100;
+            InitialDamage = 50;
+            CurrentHealth = MaxHealth;
+        }
 
         public override void Attack(SoldierPrivate enemy)
         {
@@ -373,9 +391,13 @@ namespace CSTest2
     {
         private double _incomingDamageModifier = 0.8;
 
-        public override string Name { get; protected set; } = "Броник";
-        public override int MaxHealth { get; protected set; } = 300;
-        public override int InitialDamage { get; protected set; } = 45;
+        public Armored()
+        {
+            Name = "Броник";
+            MaxHealth = 300;
+            InitialDamage = 45;
+            CurrentHealth = MaxHealth;
+        }
 
         public override void TakeDamage(int incomingDamage)
         {
