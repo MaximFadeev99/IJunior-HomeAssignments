@@ -7,24 +7,94 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            Player player1 = new Player("Игрок1");
-            Shop universalStore = new Shop();
+            Player player = new Player("Игрок");
 
-            universalStore.Work(player1);
+            player.Trade(player);
         }
     }
 
-    class Shop
+    class Player : Person
     {
-        public const string CommandShowItems = "1";
-        public const string CommandBuy = "2";
-        public const string CommandShowPlayerInventory = "3";
-        public const string CommandLeave = "4";
-
-        private Merchant _merchant = new Merchant();
-
-        public void Work(Player player)
+        public Player(string name) : base(name, 1100) { }
+                    
+        public void AddItem(Item addedItem, int addedAmount)
         {
+            Inventory.AddItem(addedItem, addedAmount);
+            Money -= addedItem.Price * addedAmount;
+        }
+
+        public bool IsEnoughMoney(int price, int desiredQuantity)
+        {          
+            return price * desiredQuantity <= Money;
+        }
+    }
+
+    class Merchant : Person
+    {
+        public Merchant() : base("Торговец Джек", 1500)
+        {
+            AddInitialItems();
+        }
+
+        public void IntroduceYourself()
+        {
+            Console.WriteLine($"{Name}: \"Добро пожаловать в наш магазин!\"");
+            Console.WriteLine($"{Name}: \"Меня зовут {Name}.\"");
+            Console.WriteLine($"{Name}: \"Чем я могу Вам помочь?\"");
+        }
+     
+        public bool RemoveItem(Item removedItem, int removedQuantity)
+        {
+            bool isSuccessful = Inventory.RemoveItem(removedItem, removedQuantity);
+
+            if (isSuccessful == true) 
+                Money += removedItem.Price * removedQuantity;
+
+            return isSuccessful;
+        }
+
+        private void AddInitialItems()
+        {
+            string ironOre = "Железная руда";
+            string healingPotion = "Исцеляющее зелье";
+            int initialIronOreAmount = 20;
+            int initialHealingPositionsAmount = 20;
+            int ironOrePrice = 25;
+            int healingPotionPrice = 50;
+
+            Inventory.AddNewItem(new Item(ironOre, ironOrePrice), initialIronOreAmount);
+            Inventory.AddNewItem(new Item(healingPotion, healingPotionPrice), initialHealingPositionsAmount);
+        }
+    }
+
+    class Person
+    {
+        protected Inventory Inventory = new Inventory();
+        const string CommandShowItems = "1";
+        const string CommandBuy = "2";
+        const string CommandShowPlayerInventory = "3";
+        const string CommandLeave = "4";
+
+        public Person(string name, int initialMoney)
+        {
+            Name = name;
+            Money = initialMoney;
+        }
+
+        public string Name { get; protected set; }
+        public int Money { get; protected set; }
+
+        public void ShowInventory()
+        {
+            bool showPrices = false;
+
+            Console.WriteLine($"\n{Name}: \"У меня в наличии следующие предметы:\"");
+            Inventory.ShowStacks(showPrices);
+        }
+
+        public void Trade(Player player) 
+        {           
+            Merchant merchant = new Merchant();
             bool isLeaving = false;
 
             while (isLeaving == false)
@@ -32,22 +102,22 @@ namespace CSTest2
                 Console.SetCursorPosition(70, 0);
                 Console.Write($"{player.Name}: Денег в наличии {player.Money}");
                 Console.SetCursorPosition(70, 1);
-                Console.WriteLine($"{_merchant.Name}: Денег в наличии {_merchant.Money}");
+                Console.WriteLine($"{merchant.Name}: Денег в наличии {merchant.Money}");
                 Console.SetCursorPosition(0, 0);
-                _merchant.IntroduceYourself();
+                merchant.IntroduceYourself();
 
                 switch (player.DefineNextAction())
                 {
                     case CommandShowItems:
-                        _merchant.ShowInventory();
+                        merchant.ShowInventory();
                         Console.ReadKey();
                         break;
 
                     case CommandBuy:
-                        BuyItem(player);
+                        merchant.Inventory.StrikeDeal(player, merchant);
                         break;
 
-                    case Shop.CommandShowPlayerInventory:
+                    case CommandShowPlayerInventory:
                         player.ShowInventory();
                         Console.ReadKey();
                         break;
@@ -61,39 +131,13 @@ namespace CSTest2
             }
         }
 
-        private void BuyItem(Player player)
-        {
-            _merchant.ShowSalesPrices();
-            _merchant.EnquireDesiredItem(out Item desiredItem, out int desiredQuantity);
-           
-            if (player.IsEnoughMoney(desiredItem.Price, desiredQuantity) == true)
-            {
-                _merchant.RemoveItem(desiredItem, desiredQuantity);
-                player.AddItem(desiredItem, desiredQuantity);
-                player.Pay(desiredItem.Price * desiredQuantity);
-                _merchant.AddMoney(desiredItem.Price * desiredQuantity);
-                Console.WriteLine($"\n{_merchant.Name}: \"Приятно иметь с Вами дело!\"");               
-            }
-            else
-            {
-                Console.WriteLine($"\n{player.Name}: \"У меня не хватает денег!\"");
-            }
-
-            Console.ReadKey();
-        }
-    }
-
-    class Player : Person
-    {
-        public Player(string name) : base(name, 1100) { }
-
         public string DefineNextAction()
         {
             string playerInput;
-            string _commandOptions = $"\n{Shop.CommandShowItems} - \"покажи мне свои товары...\"" +
-            $"\n{Shop.CommandBuy} - \"хочу кое-что прикупить...\"" +
-            $"\n{Shop.CommandShowPlayerInventory} - посмотреть свой инвентарь..." +
-            $"\n{Shop.CommandLeave} - \"извини, до следующего раза\"";
+            string _commandOptions = $"\n{CommandShowItems} - \"покажи мне свои товары...\"" +
+            $"\n{CommandBuy} - \"хочу кое-что прикупить...\"" +
+            $"\n{CommandShowPlayerInventory} - посмотреть свой инвентарь..." +
+            $"\n{CommandLeave} - \"извини, до следующего раза\"";
 
             Console.WriteLine(_commandOptions);
 
@@ -102,137 +146,10 @@ namespace CSTest2
                 Console.Write("\nВыберите одно из действий выше: ");
                 playerInput = Console.ReadLine();
             }
-            while (playerInput != Shop.CommandShowItems && playerInput != Shop.CommandBuy
-            && playerInput != Shop.CommandLeave && playerInput != Shop.CommandShowPlayerInventory);
+            while (playerInput != CommandShowItems && playerInput != CommandBuy
+            && playerInput != CommandLeave && playerInput != CommandShowPlayerInventory);
 
             return playerInput;
-        }
-
-        public void Pay(int deductedAmount)
-        {
-            Money -= deductedAmount;
-        }
-
-        public void AddItem(Item addedItem, int addedAmount)
-        {
-            Inventory.AddItem(addedItem, addedAmount);
-        }
-
-        public bool IsEnoughMoney(int price, int desiredQuantity)
-        {
-            bool isEnoughMoney;
-
-            if (price * desiredQuantity > Money)
-            {
-                isEnoughMoney = false;
-            }
-            else
-            {
-                isEnoughMoney = true;
-            }
-
-            return isEnoughMoney;
-        }
-    }
-
-    class Merchant : Person
-    {       
-        public Merchant() : base("Торговец Джек", 1500)
-        {
-            AddInitialItems();
-        }
-
-        public void IntroduceYourself()
-        {
-            Console.WriteLine($"{Name}: \"Добро пожаловать в наш магазин!\"");
-            Console.WriteLine($"{Name}: \"Меня зовут {Name}.\"");
-            Console.WriteLine($"{Name}: \"Чем я могу Вам помочь?\"");
-        }
-
-        public void ShowSalesPrices()
-        {
-            int itemsCount = 1;
-            Console.WriteLine();
-
-            foreach (var stack in Inventory.ReturnStacks())
-            {
-                Console.WriteLine($"{itemsCount}) {stack.ItemName.Name} x {stack.ItemsCount} шт. по {stack.ItemName.Price} золотых монет");
-                itemsCount++;
-            }
-        }
-
-        public void EnquireDesiredItem(out Item desiredItem, out int desiredQuantity)
-        {
-            int itemNumber;
-            List<Stack> merchantInventory = Inventory.ReturnStacks();
-
-            Console.Write($"\n{Name}: \"Что именно вам нужно?\" (укажите номер) - ");
-
-            while (int.TryParse(Console.ReadLine(), out itemNumber) == false || itemNumber <= 0
-                || itemNumber > merchantInventory.Count)
-            {
-                Console.Write($"\n{Name}: \"Не понял вас. Что именно вам нужно?\" (укажите номер) - ");
-            }
-
-            desiredItem = merchantInventory[itemNumber - 1].ItemName;
-            Console.Write($"\n{Name}: \"Сколько вам нужно?\" - ");
-
-            while (int.TryParse(Console.ReadLine(), out desiredQuantity) == false || desiredQuantity <= 0 
-                || desiredQuantity > merchantInventory[itemNumber - 1].ItemsCount)
-            {
-                if (desiredQuantity > merchantInventory[itemNumber - 1].ItemsCount)
-                {
-                    Console.Write($"\n{Name}: \"У меня не хватает товара!\"");
-                    Console.Write($"\n{Name}: \"Укажите меньшее количество\" - ");
-                }
-                else 
-                {
-                    Console.Write($"\n{Name}: \"Не понял вас. Сколько вам нужно?\" - ");
-                }    
-            }
-        }
-
-        public void RemoveItem(Item removedItem, int removedQuantity) 
-        {
-            Inventory.RemoveItem(removedItem, removedQuantity);
-        }
-
-        public void AddMoney(int addedAmount)
-        {
-            Money += addedAmount;
-        }
-
-        private void AddInitialItems()
-        {
-            string ironOre = "Железная руда";
-            string healingPotion = "Исцеляющее зелье";
-            int initialIronOreAmount = 20;
-            int initialHealingPositionsAmount = 10;
-            int ironOrePrice = 25;
-            int healingPotionPrice = 50;
-
-            Inventory.AddNewItem(new Item(ironOre, ironOrePrice), initialIronOreAmount);
-            Inventory.AddNewItem(new Item(healingPotion, healingPotionPrice), initialHealingPositionsAmount);
-        }
-    }
-
-    class Person
-    {
-        protected Inventory Inventory = new Inventory();
-
-        public Person(string name, int initialMoney)
-        {
-            Name = name;
-            Money = initialMoney;
-        }
-
-        public string Name { get; protected set; }
-        public int Money { get; protected set; }
-
-        public void ShowInventory()
-        {
-            Console.WriteLine($"\n{Name}: \"У меня в наличии следующие предметы:\"\n");
-            Inventory.ShowStacks();
         }
     }
 
@@ -243,6 +160,33 @@ namespace CSTest2
         public void AddNewItem(Item newItem, int quantity)
         {
             _stacks.Add(new Stack(newItem, quantity));
+        }
+
+        public void StrikeDeal(Player player, Merchant merchant)
+        {
+            bool showPrices = true; 
+
+            ShowStacks(showPrices);
+            EnquireDesiredItem(out Item desiredItem, out int desiredQuantity);
+
+            if (player.IsEnoughMoney(desiredItem.Price, desiredQuantity) == true)
+            {
+                if (merchant.RemoveItem(desiredItem, desiredQuantity) == true)
+                {
+                    player.AddItem(desiredItem, desiredQuantity);
+                    Console.WriteLine($"\n{merchant.Name}: \"Приятно иметь с Вами дело!\"");
+                }
+                else 
+                {
+                    Console.Write($"{merchant.Name}\"У меня не хватает товара!\"");
+                }               
+            }
+            else
+            {
+                Console.WriteLine($"\n{player.Name}: \"У меня не хватает денег!\"");
+            }
+
+            Console.ReadKey();
         }
 
         public void AddItem(Item addedItem, int addedAmount)
@@ -262,7 +206,7 @@ namespace CSTest2
 
             if (isSuccessful == true)
             {
-                _stacks[existingPosition].ChangeItemsCount(addedAmount);
+                _stacks[existingPosition].AddAmount(addedAmount);
             }
             else
             {
@@ -272,32 +216,70 @@ namespace CSTest2
             Console.WriteLine("Товар получен!");
         }
 
-        public void RemoveItem(Item removedItem, int removedAmount)
+        public bool RemoveItem(Item removedItem, int removedAmount)
         {
+            bool isSuccessful = false;
+
             foreach (var stack in _stacks)
             {
                 if (stack.ItemName.Name == removedItem.Name && stack.ItemsCount >= removedAmount)
                 {
-                    stack.ChangeItemsCount(-removedAmount);
+                    stack.ReduceAmount(removedAmount);
+                    isSuccessful = true;
                     break;
                 }
             }
-        }
 
-        public void ShowStacks()
+            return isSuccessful;
+        }        
+
+        public void ShowStacks(bool showPrices)
         {
             int itemsCount = 1;
+            Console.WriteLine();
 
             foreach (var stack in _stacks)
             {
-                Console.WriteLine($"{itemsCount}) {stack.ItemName.Name} x {stack.ItemsCount} шт.");
-                itemsCount++;
+                if (showPrices == true)
+                {
+                    Console.WriteLine($"{itemsCount}) {stack.ItemName.Name} x {stack.ItemsCount} шт. по {stack.ItemName.Price} золотых монет");
+                    itemsCount++;
+                }
+                else 
+                {
+                    Console.WriteLine($"{itemsCount}) {stack.ItemName.Name} x {stack.ItemsCount} шт.");
+                    itemsCount++;
+                }              
             }
         }
 
-        public List<Stack> ReturnStacks()
+        private void EnquireDesiredItem(out Item desiredItem, out int desiredQuantity)
         {
-            return _stacks;
+            int itemNumber;
+
+            Console.Write($"\"Что именно вам нужно?\" (укажите номер) - ");
+
+            while (int.TryParse(Console.ReadLine(), out itemNumber) == false || itemNumber <= 0
+                || itemNumber > _stacks.Count)
+            {
+                Console.Write($"\"Не понял вас. Что именно вам нужно?\" (укажите номер) - ");
+            }
+
+            desiredItem = _stacks[itemNumber - 1].ItemName;
+            Console.Write($"\"Сколько вам нужно?\" - ");
+
+            while (int.TryParse(Console.ReadLine(), out desiredQuantity) == false || desiredQuantity <= 0
+                || desiredQuantity > _stacks[itemNumber - 1].ItemsCount)
+            {
+                if (desiredQuantity > _stacks[itemNumber - 1].ItemsCount)
+                {
+                    Console.Write($"\"У меня не хватает товара! Укажите меньшее количество\" - ");
+                }
+                else
+                {
+                    Console.Write($"\"Не понял вас. Сколько вам нужно?\" - ");
+                }
+            }
         }
     }
 
@@ -312,11 +294,19 @@ namespace CSTest2
         public Item ItemName { get; private set; }
         public int ItemsCount { get; private set; }
 
-        public void ChangeItemsCount(int change)
+        public void AddAmount(int change)
         {
-            if (ItemsCount + change >= 0)
+            if (change >= 0)
             {
                 ItemsCount += change;
+            }
+        }
+
+        public void ReduceAmount(int change)
+        {
+            if (change >= 0)
+            {
+                ItemsCount -= change;
             }
         }
     }
