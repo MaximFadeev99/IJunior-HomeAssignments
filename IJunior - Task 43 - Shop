@@ -83,15 +83,7 @@ namespace CSTest2
 
         public string Name { get; protected set; }
         public int Money { get; protected set; }
-
-        public void ShowInventory()
-        {
-            bool showPrices = false;
-
-            Console.WriteLine($"\n{Name}: \"У меня в наличии следующие предметы:\"");
-            Inventory.ShowStacks(showPrices);
-        }
-
+       
         public void Trade(Player player) 
         {           
             Merchant merchant = new Merchant();
@@ -150,6 +142,14 @@ namespace CSTest2
             && playerInput != CommandLeave && playerInput != CommandShowPlayerInventory);
 
             return playerInput;
+        }
+
+        private void ShowInventory()
+        {
+            bool showPrices = false;
+
+            Console.WriteLine($"\n{Name}: \"У меня в наличии следующие предметы:\"");
+            Inventory.ShowStacks(showPrices);
         }
     }
 
