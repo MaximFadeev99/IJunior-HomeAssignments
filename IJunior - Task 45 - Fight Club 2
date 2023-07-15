@@ -15,6 +15,8 @@ namespace CSTest2
 
     abstract class Champion
     {
+        private int _health;
+
         public Champion(string name, int health, int armor, int damage, int initiative)
         {
             Name = name;
@@ -25,10 +27,28 @@ namespace CSTest2
         }
 
         public string Name { get; private set; }
-        public int Health { get; protected set; }
         public int Armor { get; private set; }
         public int Damage { get; protected set; }
         public int Initiative { get; private set; }
+
+        public int Health
+        {
+            get { return _health; }
+
+            protected set 
+            {
+                if (value < 0)
+                {
+                    _health = 0;
+                    return;
+                }
+                else 
+                {
+                    _health = value;
+                    return;
+                }                                      
+            }
+        }
 
         public void ShowStats()
         {
@@ -45,24 +65,15 @@ namespace CSTest2
         {
             Health -= incomingDamage;
             Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
-            Health = LimitHealthFall(Health);
             Console.WriteLine($"Оставшееся здоровье - {Health}");
         }
 
-        protected int LimitHealthFall(int currentHealth)
-        {
-            if (currentHealth < 0)
-                currentHealth = 0;
-
-            return currentHealth;
-        }
-
-        protected bool CanUseSpecialAbility() 
+        protected bool TryUseSpecialAbility()
         {
             int successThreshold = 33;
             int useChance = RandomNumber.GeneratePercent();
 
-            return useChance <= successThreshold;   
+            return useChance <= successThreshold;
         }
     }
 
@@ -72,18 +83,15 @@ namespace CSTest2
 
         public override void TakeDamage(int incomingDamage)
         {
-            if (CanUseSpecialAbility()  == false)
+            if (TryUseSpecialAbility() == false)
             {
-                Health -= incomingDamage;
+                base.TakeDamage(incomingDamage);
             }
             else
             {
                 incomingDamage = 0;
-                Console.Write($"\n{Name} уклоняется от вражеской атаки");
+                base.TakeDamage(incomingDamage);
             }
-
-            Health = LimitHealthFall(Health);
-            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона. \nОставшееся здоровье - {Health}");
         }
     }
 
@@ -93,20 +101,17 @@ namespace CSTest2
 
         public override void TakeDamage(int incomingDamage)
         {
-            Health -= incomingDamage;
-            Console.WriteLine($"\n{Name} получает {incomingDamage} ед. урона");
-            CanHeal();
-            Health = LimitHealthFall(Health);
-            Console.WriteLine($"Оставшееся здоровье - {Health}");
+            base.TakeDamage(incomingDamage);
+            TryHeal();
         }
 
-        private void CanHeal()
+        private void TryHeal()
         {
             double healPercent = 0.1;
             double restoredHealth;
             int initialHealth = 350;
 
-            if (CanUseSpecialAbility() == true)
+            if (TryUseSpecialAbility() == true)
             {
                 restoredHealth = Health * healPercent;
 
@@ -133,18 +138,16 @@ namespace CSTest2
             int damageMultiplier = 2;
             int initialDamage = 50;
 
-            if (CanUseSpecialAbility() == true)
+            Damage = initialDamage;
+
+            if (TryUseSpecialAbility() == true)
             {
                 Damage *= damageMultiplier;
                 Console.WriteLine($"\n{Name} использует заточку и удваивает урон");
             }
-            else
-            {
-                Damage = initialDamage;
-            }
-
+            
             base.Attack(enemy);
-        }       
+        }
     }
 
     class FatGuy : Champion
@@ -157,11 +160,7 @@ namespace CSTest2
             double maxPercent = 100;
 
             reducedDamage = incomingDamage * ((maxPercent - Armor) / maxPercent);
-            Health -= Convert.ToInt32(reducedDamage);
-
-            Health = LimitHealthFall(Health);
-            Console.WriteLine($"\n{Name} получает {Convert.ToInt32(reducedDamage)} ед. урона");
-            Console.WriteLine($"Оставшееся здоровье - {Health}");
+            base.TakeDamage((int)reducedDamage);
         }
     }
 
@@ -202,12 +201,21 @@ namespace CSTest2
         public void Work()
         {
             bool isLeaving = false;
-            
+
             while (isLeaving == false)
             {
                 GenerateNewChampions();
                 ChooseChampions(out Champion firstChampion, out Champion secondChampion);
-                Fight(ref firstChampion, ref secondChampion);
+
+                if (firstChampion.Initiative > secondChampion.Initiative)
+                {
+                    Fight(firstChampion, secondChampion);
+                }
+                else
+                {
+                    Fight(secondChampion, firstChampion);
+                }
+
                 AnnounceWinner(firstChampion, secondChampion);
                 Console.ReadKey();
                 Console.Clear();
@@ -262,35 +270,20 @@ namespace CSTest2
             return _champions[championNumber - 1];
         }
 
-        private void Fight(ref Champion firstChampion, ref Champion secondChampion)
+        private void Fight(Champion attacker, Champion defender) 
         {
-            while (firstChampion.Health > 0 && secondChampion.Health > 0)
+            while (attacker.Health > 0 && defender.Health > 0) 
             {
-                if (firstChampion.Initiative > secondChampion.Initiative)
-                {
-                    firstChampion.Attack(secondChampion);
+                attacker.Attack(defender);
 
-                    if (secondChampion.Health == 0)
-                        break;
+                if (defender.Health == 0)
+                    break;
 
-                    secondChampion.Attack(firstChampion);
+                defender.Attack(attacker);
 
-                    if (firstChampion.Health == 0)
-                        break;
-                }
-                else
-                {
-                    secondChampion.Attack(firstChampion);
-
-                    if (firstChampion.Health == 0)
-                        break;
-
-                    firstChampion.Attack(secondChampion);
-
-                    if (secondChampion.Health == 0)
-                        break;
-                }
-            }
+                if (attacker.Health == 0)
+                    break;
+            }                     
         }
 
         private void AnnounceWinner(Champion firstChampion, Champion secondChampion)
@@ -302,7 +295,7 @@ namespace CSTest2
             else if (secondChampion.Health == 0)
             {
                 Console.WriteLine($"\nПобедил {firstChampion.Name}!");
-            }            
+            }
         }
     }
 
@@ -314,7 +307,7 @@ namespace CSTest2
 
         public static int GeneratePercent()
         {
-            return  _random.Next(_minValue, _maxValue);
+            return _random.Next(_minValue, _maxValue);
         }
     }
 }
