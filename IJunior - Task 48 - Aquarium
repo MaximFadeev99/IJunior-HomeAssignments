@@ -1,0 +1,192 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Aquarium aquarium = new Aquarium();
+
+            aquarium.Work();
+        }       
+    }
+    class Aquarium 
+    {
+        private List <Fish> _fish = new List <Fish>();
+        private int _maxFish = 7;
+
+        public Aquarium() 
+        {
+            AddInitialFish();
+        }
+
+        public void Work() 
+        {
+            const string CommandAddFish = "1";
+            const string CommandRemoveFish = "2";
+            const string CommandExit = "3";
+
+            string commandOptions = $"\n{CommandAddFish} - добавить рыбку\n" +
+                $"{CommandRemoveFish} - вытащить рыбку\n" +
+                $"{CommandExit} - уйти";
+            bool isLeaving = false;
+            string userInput;
+
+            while (isLeaving == false) 
+            {
+                
+                ShowFish();
+                Console.WriteLine(commandOptions);
+                Console.Write("Что сделать дальше? - ");
+                userInput = Console.ReadLine();
+                IncreaseAge();
+
+                switch (userInput) 
+                {
+                    case CommandAddFish:
+                        AddFish();
+                        break;
+
+                    case CommandRemoveFish:
+                        _fish.RemoveAt(EnquireFishPosition(_fish.Count));
+                        break;
+
+                    case CommandExit:
+                        isLeaving = true;
+                        break;
+                }
+
+                Console.ReadKey();
+                Console.Clear();           
+            }       
+        }
+
+        private void AddFish() 
+        {
+            int speciesMaxNumber = Fish.ReturnMaxNumberOfSpecies();
+            string userInputName;
+
+            if (_fish.Count < _maxFish) 
+            {
+                Fish.ShowPossibleSpecies();
+                Console.Write("\nУкажите кличку рыбки: ");
+                userInputName = Console.ReadLine();
+                _fish.Add(new Fish(userInputName, EnquireFishPosition(speciesMaxNumber)));
+                Console.WriteLine("Рыбка успешно добавлена!");
+            }
+            else 
+            {
+                Console.WriteLine("\nДостигнуто максимальное количество рыб! Вы не можете добавить новую!");
+            }           
+        }
+
+        private int EnquireFishPosition(int maxNumber) 
+        {
+            int fishPosition;
+
+            do
+            {
+                Console.Write("Укажите номер рыбки из списка выше: ");
+            }
+            while (int.TryParse(Console.ReadLine(), out fishPosition) == false || fishPosition < 1 ||
+            fishPosition > maxNumber);
+
+            return fishPosition - 1;
+        }
+
+        private void ShowFish() 
+        {
+            int positionCount = 1;
+
+            Console.WriteLine("Кличка   -   Вид   -   Осталось жить\n");
+
+            foreach (var fish in _fish) 
+            {
+                if (fish.Lifespan > 0) 
+                {
+                    Console.WriteLine($"{positionCount}) {fish.Name}   -   {fish.Species}   -   {fish.Lifespan}");
+                    positionCount++;
+                }               
+            }
+        }
+
+        private void IncreaseAge() 
+        {
+            int positionCount = 0;
+            
+            while (positionCount < _fish.Count) 
+            {
+                if (_fish[positionCount].Lifespan > 0)
+                {
+                    _fish[positionCount].IncreaseAge();
+                }
+                else if (_fish[positionCount].Lifespan == 0) 
+                {
+                    _fish.RemoveAt(positionCount);
+                }
+
+                positionCount++;
+            }
+        }
+
+        private void AddInitialFish() 
+        {
+            _fish.Add(new Fish("Патрик", 0));
+            _fish.Add(new Fish("Семёныч", 2));
+            _fish.Add(new Fish("Ёжик", 1));
+            _fish.Add(new Fish("Петр", 3));
+            _fish.Add(new Fish("Тортилья", 4));
+        }           
+    }
+
+    class Fish 
+    {                  
+        private static Dictionary<string, int> _possibleSpecies = new Dictionary<string, int>() 
+        {
+            { "Морской окунь", 5 },
+            { "Морской еж", 3},
+            { "Угорь", 7},
+            { "Скат", 4},
+            { "Черепаха", 10}
+        };
+
+        public Fish(string name, int species) 
+        {
+            Name = name;
+            Species = _possibleSpecies.ElementAt(species).Key;
+            Lifespan = _possibleSpecies[Species];
+            FishCount++;
+        }
+
+        public static int FishCount { get; private set; } = 0;
+        public string Name { get; private set; }
+        public int Lifespan { get; private set; }
+        public string Species { get; private set; }
+
+        public static void ShowPossibleSpecies()
+        {
+            int positionCount = 1;
+
+            Console.WriteLine("\nНомер - Вид - Продолжительность жизни");
+
+            foreach (var fish in _possibleSpecies)
+            {
+                Console.WriteLine($"{positionCount}  -   {fish.Key}   -   {fish.Value}");
+                positionCount++;
+            }
+        }
+
+        public static int ReturnMaxNumberOfSpecies()
+        {
+            return _possibleSpecies.Count();
+        }
+
+        public void IncreaseAge() 
+        {
+            Lifespan -= 1;
+        }       
+    }
+}
