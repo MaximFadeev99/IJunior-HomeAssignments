@@ -131,7 +131,7 @@ namespace CSTest2
             }
         }
 
-        public string DefineNextAction()
+        private string DefineNextAction()
         {
             string playerInput;
             string _commandOptions = $"\n{CommandShowItems} - \"покажи мне свои товары...\"" +
