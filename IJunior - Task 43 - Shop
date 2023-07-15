@@ -164,10 +164,11 @@ namespace CSTest2
 
         public void StrikeDeal(Player player, Merchant merchant)
         {
-            bool showPrices = true; 
+            bool showPrices = true;
+            Item desiredItem;
 
             ShowStacks(showPrices);
-            EnquireDesiredItem(out Item desiredItem, out int desiredQuantity);
+            desiredItem= EnquireDesiredItem(out int desiredQuantity);
 
             if (player.IsEnoughMoney(desiredItem.Price, desiredQuantity) == true)
             {
@@ -253,8 +254,9 @@ namespace CSTest2
             }
         }
 
-        private void EnquireDesiredItem(out Item desiredItem, out int desiredQuantity)
+        private Item EnquireDesiredItem(out int desiredQuantity)
         {
+            Item desiredItem;
             int itemNumber;
 
             Console.Write($"\"Что именно вам нужно?\" (укажите номер) - ");
@@ -280,6 +282,8 @@ namespace CSTest2
                     Console.Write($"\"Не понял вас. Сколько вам нужно?\" - ");
                 }
             }
+
+            return desiredItem;
         }
     }
 
