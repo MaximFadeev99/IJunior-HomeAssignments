@@ -1,13 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Messaging;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
-using System.Security.Principal;
-using System.Security.Cryptography.X509Certificates;
-using System.Diagnostics;
 
 namespace CSTest2
 {
@@ -21,7 +13,6 @@ namespace CSTest2
         }
     }
 
-
     static class RandomNumber
     {
         private static Random _random = new Random();
@@ -32,147 +23,119 @@ namespace CSTest2
         }
     }
 
-    class Arena 
+    class Arena
     {
-        Squad firstSquad = new Squad("Отряд 1");
-        Squad secondSquad = new Squad("Отряд 2");
+        private Squad _firstSquad = new Squad("Отряд 1");
+        private Squad _secondSquad = new Squad("Отряд 2");
 
-        public void Work()  //добавить отключение отхила, если медик мертв 
-        {
-            bool isOpen = true;
-
-            while (isOpen == true) 
-            {
-                firstSquad.ShowInfo();
-                secondSquad.ShowInfo();
-                Console.WriteLine("\nНажмите любую клавишу, чтобы начать бой...");
-                Console.ReadKey();
-                AnnounceWinner(Fight());
-            }     
+        public void Work()  
+        {          
+            _firstSquad.ShowInfo();
+            _secondSquad.ShowInfo();
+            Console.WriteLine("\nНажмите любую клавишу, чтобы начать бой...");
+            Console.ReadKey();
+            Fight();
+            AnnounceWinner();
+            Console.ReadKey();
         }
 
-        private Squad Fight()
+        private void Fight()
         {
-            Squad winner = new Squad("Отряд 3");
-            
-            while (firstSquad.isAlive == true || secondSquad.isAlive == true) //попробовать заменить на бесконечный тру
+            while (_firstSquad.isAlive == true || _secondSquad.isAlive == true) 
             {
-                firstSquad.TakeCover();
-                secondSquad.TakeCover();
-                firstSquad.Attack(secondSquad);
+                RunRound(_firstSquad, _secondSquad);                              
 
-                if (secondSquad.CountDead() == secondSquad.MaxMembers) 
+                if (_secondSquad.isAlive == false)
                 {
-                    winner = firstSquad;
-                    return winner;
+                    break;
                 }
 
-                secondSquad.Attack(firstSquad);
+                RunRound(_secondSquad, _firstSquad);
 
-                if (firstSquad.CountDead() == firstSquad.MaxMembers) 
+                if (_firstSquad.isAlive == false)
                 {
-                    winner = secondSquad;
-                    return winner;
-                }
+                    break;
+                }                           
+            }
+        }
 
-                firstSquad.Heal();
-                secondSquad.Heal(); 
+        private void RunRound(Squad attackers, Squad defenders) 
+        {
+            defenders.TryTakeCover();
+            attackers.Attack(defenders);
+            defenders.CountAlive();
+            defenders.Heal();
+        }
+
+        private void AnnounceWinner()
+        {
+            if (_firstSquad.isAlive == false)
+            {
+                Console.WriteLine($"\nПобеждает {_secondSquad.Name}!");
+            }
+            else if (_secondSquad.isAlive == false)
+            {
+                Console.WriteLine($"\nПобеждает {_firstSquad.Name}!");
             }
 
-            return winner;
-
-        }
-
-        private void AnnounceWinner(Squad winner) 
-        {
-            Console.WriteLine($"\n Побеждает {winner.Name}!");
+            _firstSquad.ShowInfo();
+            _secondSquad.ShowInfo();
         }
     }
 
-    class Squad 
+    class Squad
     {
         private List<SoldierPrivate> _squadMembers = new List<SoldierPrivate>();
-        public bool IsTrenchAvailable { get; private set; } = false;
-        public string Name { get; private set; }
-        public bool isAlive { get; private set; } = true;
-        public int MaxMembers { get; private set; } = 3;
-        private bool _isFieldEngineerAvailable = false;
-        private bool _isMedicAvailable = false;
+        private int _maxMembers = 3;
+        private int _aliveMembers;
+        private FieldEngineer _fieldEngineer;
+        private bool _isTrenchAvailable = false;
+        private Medic _medic;
 
-        public Squad(string name) 
+        public Squad(string name)
         {
             Name = name;
             GenerateCurrentMembers();
         }
 
-        private void GenerateCurrentMembers() 
+        public string Name { get; private set; }
+        public bool isAlive { get; private set; } = true;       
+
+        public void TryTakeCover ()
         {
-            List<SoldierPrivate> _possibleSquadMembers = new List<SoldierPrivate> 
-               {new SoldierPrivate(), 
-                new Sergeant(),
-                new FieldEngineer(),
-                new Medic(), 
-                new Sniper(), 
-                new Armored()};
-
-            int randomPosition = RandomNumber.ReturnNewNumber(0, _possibleSquadMembers.Count);
-            int medicPosition = 3;
-            int fieldEngineerPosition = 2;
-
-            for (int i = 1; i <= MaxMembers; i++) 
+            if (_isTrenchAvailable == false && _fieldEngineer != null)
             {
-                
-                while (_squadMembers.Contains(_possibleSquadMembers[randomPosition]) == true) 
+                if (_fieldEngineer.TurnsToBuild == 0)
                 {
-                    randomPosition = RandomNumber.ReturnNewNumber(0, _possibleSquadMembers.Count);
+                    Console.WriteLine($"{Name}: {_fieldEngineer.Name} достроил окоп, отряд занимает укрытие.");
+
+                    foreach (var member in _squadMembers)
+                    {
+                        _isTrenchAvailable = true;                      
+                        member.TakeCover();
+                    }
                 }
-
-                _squadMembers.Add(_possibleSquadMembers[randomPosition]);
             }
+        }   
 
-            if (_squadMembers.Contains(_possibleSquadMembers[medicPosition])) 
-                _isMedicAvailable = true;
-
-            if (_squadMembers.Contains(_possibleSquadMembers[fieldEngineerPosition]))
-                _isFieldEngineerAvailable = true;
-        }
-
-        public void TakeCover() 
-        {
-            int turnsToBuildTrench = 2;
-
-            if (_isFieldEngineerAvailable == true && turnsToBuildTrench == 0)
-            {
-                IsTrenchAvailable = true;
-                Console.WriteLine($"Сапер закончил строительство окопа! {Name} занимает укрытие!");
-            }
-            else 
-            {
-                turnsToBuildTrench--;
-            }
-        }
-
-        public void Attack(Squad enemySquad) 
+        public void Attack(Squad enemySquad)
         {
             Console.WriteLine();
-            
-            foreach (var member in _squadMembers) 
-            {
-                if (enemySquad.IsTrenchAvailable == true) 
-                {
-                    member.ActivateAttackDebuff();
-                }
 
+            foreach (var member in _squadMembers)
+            {
                 Console.Write($"{Name}: ");
-                member.Attack(_squadMembers[RandomNumber.ReturnNewNumber(0, MaxMembers)]);
+                member.Attack(enemySquad._squadMembers[RandomNumber.ReturnNewNumber(0, (enemySquad._squadMembers.Count))]);
             }
         }
 
-        public void Heal() 
+        public void Heal()
         {
-            if (_isMedicAvailable == true) 
+            Console.WriteLine();
+
+            if (_medic != null && _medic.CurrentHealth > 0)
             {
-                foreach (var member in _squadMembers) 
+                foreach (var member in _squadMembers)
                 {
                     Console.Write($"{Name}: ");
                     member.Heal();
@@ -180,198 +143,245 @@ namespace CSTest2
             }
         }
 
-        public void ShowInfo() 
+        public void ShowInfo()
         {
             Console.WriteLine($"\n{Name}");
-            Console.WriteLine("Класс     -     Здоровье      -      Стартовый урон");
-            foreach (var member in _squadMembers) 
+            Console.WriteLine("Класс   -   Здоровье    -    Стартовый урон");
+
+            foreach (var member in _squadMembers)
             {
                 member.ShowStats();
             }
         }
 
-        public int CountDead() 
+        public void CountAlive()
         {
-            int deathToll = 0;
-            
-            foreach (var member in _squadMembers) 
+            int positionCount = 0;
+
+            while (positionCount < _squadMembers.Count)
             {
-                if (member.Health == 0) 
-                    deathToll++;
+                if (_squadMembers[positionCount].CurrentHealth == 0) 
+                {
+                    _squadMembers.RemoveAt(positionCount);
+                    _aliveMembers--;
+                }
+                
+                positionCount++;
             }
 
-            if (deathToll == MaxMembers) 
-            {
+            if (_aliveMembers == 0)
                 isAlive = false;
+        }
+
+        private void GenerateCurrentMembers()
+        {
+            List<SoldierPrivate> _possibleSquadMembers = new List<SoldierPrivate>
+            {new SoldierPrivate(),
+             new Sergeant(),
+             new FieldEngineer(),
+             new Medic(),
+             new Sniper(),
+             new Armored()};
+            int randomPosition = RandomNumber.ReturnNewNumber(0, _possibleSquadMembers.Count);
+
+            for (int i = 1; i <= _maxMembers; i++)
+            {
+                while (_squadMembers.Contains(_possibleSquadMembers[randomPosition]) == true)
+                {
+                    randomPosition = RandomNumber.ReturnNewNumber(0, _possibleSquadMembers.Count);
+                }
+
+                _squadMembers.Add(_possibleSquadMembers[randomPosition]);
             }
 
-            return deathToll;
+            _aliveMembers = _maxMembers;
+
+            foreach (var member in _squadMembers)
+            {
+                if (member is FieldEngineer)
+                {
+                    _fieldEngineer = (FieldEngineer)member;
+                }
+                else if (member is Medic)
+                {
+                    _medic = (Medic)member;
+                }
+            }
         }
     }
 
-    class SoldierPrivate 
+    class SoldierPrivate
     {
+        public SoldierPrivate() 
+        {
+            CurrentHealth = MaxHealth;
+        }
+
         public virtual string Name { get; protected set; } = "Рядовой";
-        public virtual int Health { get; protected set; } = 290;
+        public virtual int MaxHealth { get; protected set; } = 290;
         public virtual int InitialDamage { get; protected set; } = 45;
-        public virtual int CurrentDamage { get; protected set; }
+        public int CurrentDamage { get; protected set; }
+        public bool IsInTrench { get; protected set; } = false;
+        public int CurrentHealth { get; protected set; }
 
         public virtual void ShowStats()
         {
-            Console.Write($"{Name}      -     {Health}      -      {InitialDamage}\n");
+            Console.Write($"{Name}    -   {CurrentHealth}      -      {InitialDamage}\n");
         }
 
         public virtual void Attack(SoldierPrivate enemy)
         {
+            CurrentDamage = InitialDamage;
             Console.Write($"{Name} наносит атаку в {CurrentDamage} ед. урона\n");
             enemy.TakeDamage(CurrentDamage);
         }
 
         public virtual void TakeDamage(int incomingDamage)
         {
-            Health -= incomingDamage;
-            Console.WriteLine($"\n Вражеский {Name} получает {incomingDamage} ед. урона");
-            Health = LimitHealthFall(Health);
-            Console.WriteLine($"Оставшееся здоровье - {Health}");
-        }
-
-        protected int LimitHealthFall(int currentHealth)
-        {
-            if (currentHealth < 0)
+            double trenchDamageModifier = 0.1;
+            double reducedDamage;
+            
+            if (IsInTrench == true) 
             {
-                currentHealth = 0;
+                reducedDamage = incomingDamage * trenchDamageModifier;
+                incomingDamage -= (int)reducedDamage;
             }
 
-            return currentHealth;
+            LimitHealthFall(incomingDamage);
+            Console.WriteLine($"Вражеский {Name} получает {incomingDamage} ед. урона");
+            Console.WriteLine($"Оставшееся здоровье - {CurrentHealth}");
         }
 
-        public void ActivateAttackDebuff() 
+        public void Heal()
         {
-            double AttackDebuff = 0.2;
-            double reducedDamage = InitialDamage * AttackDebuff;
+            double healMultiplier = 0.05;
+            double restoredHealth = CurrentHealth * healMultiplier;
 
-            InitialDamage -= (int)reducedDamage;
+            if (CurrentHealth + (int)restoredHealth > MaxHealth)
+            {
+                CurrentHealth = MaxHealth;
+                restoredHealth = 0;
+            }
+            else 
+            {
+                CurrentHealth += (int)restoredHealth;
+            }
+
+            Console.WriteLine($"{Name} восстанавливает {(int)restoredHealth} ед. здоровья");
         }
 
-        public void Heal() 
+        public void TakeCover() 
         {
-            double healMultiplier = 0.2;
-            double restoredHealth = Health * healMultiplier;
+            IsInTrench = true;
+        }
 
-            Health += (int)restoredHealth;
-            Console.WriteLine($"{Name} восстанавливает {restoredHealth} ед. здоровья");
+        private void LimitHealthFall(int incomingDamage) 
+        {
+            if (CurrentHealth - incomingDamage < 0)
+            {
+                CurrentHealth = 0;
+            }
+            else 
+            {
+                CurrentHealth -= incomingDamage;
+            }
         }
     }
 
     class Sergeant : SoldierPrivate
     {
-        private int _throwGrenadeCount = 2;
-        private int _initialDamage = 50;
+        private int _turnsToThrowGrenade = 2;
+        private int _grenadeDamageMultiplier = 2;
 
         public override string Name { get; protected set; } = "Сержант";
-        public override int Health { get; protected set; } = 310;
+        public override int MaxHealth { get; protected set; } = 310;
         public override int InitialDamage { get; protected set; } = 50;
-        public override int CurrentDamage { get; protected set; }
 
         public override void Attack(SoldierPrivate enemy)
         {
-            CurrentDamage = _initialDamage;
+            CurrentDamage = InitialDamage;
 
-            if (_throwGrenadeCount == 0)
+            if (_turnsToThrowGrenade == 0)
             {
-                CurrentDamage = ThrowGrenade();
-                _throwGrenadeCount = 2;
+                CurrentDamage *= _grenadeDamageMultiplier;
+                Console.Write($"{Name} использует гранату и удваивает урон\n");
+                enemy.TakeDamage(CurrentDamage);
+                _turnsToThrowGrenade = 2;
             }
-
-            Console.Write($"{Name} наносит атаку в {CurrentDamage} ед. урона\n");
-            enemy.TakeDamage(CurrentDamage);
-        }
-
-        public int ThrowGrenade()
-        {
-            int damageMultiplier = 2;
-            CurrentDamage *= damageMultiplier;
-            Console.Write($"{Name} использует гранату и удваивает урон\n");
-            return CurrentDamage;
+            else 
+            {
+                _turnsToThrowGrenade--;
+                base.Attack(enemy);
+            }           
         }
     }
 
     class FieldEngineer : SoldierPrivate
     {
-        private int _turnsToBuild = 2;
-
+        public int TurnsToBuild { get; protected set; } = 2;
         public override string Name { get; protected set; } = "Сапер";
-        public override int Health { get; protected set; } = 400;
+        public override int MaxHealth { get; protected set; } = 400;
         public override int InitialDamage { get; protected set; } = 45;
-        public override int CurrentDamage { get; protected set; }
 
         public override void Attack(SoldierPrivate enemy)
         {
-            if (_turnsToBuild <= 0)
+            if (TurnsToBuild == 0)
             {
-                CurrentDamage = InitialDamage;
+                base.Attack(enemy);
             }
             else
             {
                 CurrentDamage = 0;
                 Console.Write($"{Name} строит окоп\n");
+                TurnsToBuild--;
             }
-
-            Console.Write($"{Name} наносит атаку в {CurrentDamage} ед. урона\n");
-            enemy.TakeDamage(CurrentDamage);
         }
     }
 
     class Medic : SoldierPrivate
     {
         public override string Name { get; protected set; } = "Медик";
-        public override int Health { get; protected set; } = 290;
+        public override int MaxHealth { get; protected set; } = 290;
         public override int InitialDamage { get; protected set; } = 35;
-        public override int CurrentDamage { get; protected set; }
     }
 
     class Sniper : SoldierPrivate
     {
-        private int _liquidationCount = 1;
+        private int _liquidationCount = 2;
         public override string Name { get; protected set; } = "Снайпер";
-        public override int Health { get; protected set; } = 100;
+        public override int MaxHealth { get; protected set; } = 100;
         public override int InitialDamage { get; protected set; } = 50;
-        public override int CurrentDamage { get; protected set; }
 
         public override void Attack(SoldierPrivate enemy)
         {
-            if (_liquidationCount == 1)
+            if (_liquidationCount != 0)
             {
-                CurrentDamage = enemy.Health;
-                Console.Write($"{Name} устраняет вражеский юнит: {enemy.Name}\n");
+                CurrentDamage = enemy.MaxHealth / 2;
+                Console.Write($"{Name} подстреливает вражеский юнит: {enemy.Name}\n");
+                Console.Write($"{Name} наносит атаку в {CurrentDamage} ед. урона\n");
+                enemy.TakeDamage(CurrentDamage);
+                _liquidationCount--;
             }
             else 
             {
-                CurrentDamage = InitialDamage;
-                Console.Write($"{Name} наносит атаку в {CurrentDamage} ед. урона\n");
-            }
-
-            enemy.TakeDamage(CurrentDamage);
+                base.Attack(enemy);
+            }                      
         }
     }
 
     class Armored : SoldierPrivate
     {
-        private double _damageDivisor = 0.5;
+        private double _incomingDamageModifier = 0.8;
 
         public override string Name { get; protected set; } = "Броник";
-        public override int Health { get; protected set; } = 300;
+        public override int MaxHealth { get; protected set; } = 300;
         public override int InitialDamage { get; protected set; } = 45;
-        public override int CurrentDamage { get; protected set; }
 
         public override void TakeDamage(int incomingDamage)
         {
-            double reducedDamage = incomingDamage * _damageDivisor;
+            double reducedDamage = incomingDamage * _incomingDamageModifier;
 
-            incomingDamage -= Convert.ToInt32(reducedDamage);
-            Console.WriteLine($"\n Вражеский {Name} получает {incomingDamage} ед. урона");
-            Health = LimitHealthFall(Health);
-            Console.WriteLine($"Оставшееся здоровье - {Health}");
+            base.TakeDamage((int)reducedDamage);
         }
     }
 }
