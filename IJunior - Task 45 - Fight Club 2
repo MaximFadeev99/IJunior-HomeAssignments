@@ -35,18 +35,18 @@ namespace CSTest2
         {
             get { return _health; }
 
-            protected set 
+            protected set
             {
                 if (value < 0)
                 {
                     _health = 0;
                     return;
                 }
-                else 
+                else
                 {
                     _health = value;
                     return;
-                }                                      
+                }
             }
         }
 
@@ -68,7 +68,7 @@ namespace CSTest2
             Console.WriteLine($"Оставшееся здоровье - {Health}");
         }
 
-        protected bool TryUseSpecialAbility()
+        protected bool CanUseSpecialAbility()
         {
             int successThreshold = 33;
             int useChance = RandomNumber.GeneratePercent();
@@ -83,7 +83,7 @@ namespace CSTest2
 
         public override void TakeDamage(int incomingDamage)
         {
-            if (TryUseSpecialAbility() == false)
+            if (CanUseSpecialAbility() == false)
             {
                 base.TakeDamage(incomingDamage);
             }
@@ -108,23 +108,23 @@ namespace CSTest2
         private void TryHeal()
         {
             double healPercent = 0.1;
-            double restoredHealth;
+            int restoredHealth;
             int initialHealth = 350;
 
-            if (TryUseSpecialAbility() == true)
+            if (CanUseSpecialAbility() == true)
             {
-                restoredHealth = Health * healPercent;
+                restoredHealth = (int)Math.Round(Health * healPercent);
 
-                if (Health + Convert.ToInt32(restoredHealth) > initialHealth)
+                if (Health + restoredHealth > initialHealth)
                 {
                     Health = initialHealth;
                 }
                 else
                 {
-                    Health += Convert.ToInt32(restoredHealth);
+                    Health += restoredHealth;
                 }
 
-                Console.WriteLine($"{Name} восстанавливает {Convert.ToInt32(restoredHealth)} о.з.");
+                Console.WriteLine($"{Name} восстанавливает {restoredHealth} о.з.");
             }
         }
     }
@@ -140,12 +140,12 @@ namespace CSTest2
 
             Damage = initialDamage;
 
-            if (TryUseSpecialAbility() == true)
+            if (CanUseSpecialAbility() == true)
             {
                 Damage *= damageMultiplier;
                 Console.WriteLine($"\n{Name} использует заточку и удваивает урон");
             }
-            
+
             base.Attack(enemy);
         }
     }
@@ -174,13 +174,13 @@ namespace CSTest2
 
         public override void Attack(Champion enemy)
         {
-            double modifiedDamage;
+            int modifiedDamage;
             int initialDamage = 55;
 
             if (_hitsCount == _maxHitsCount)
             {
-                modifiedDamage = Damage * _damageModifier;
-                Damage += Convert.ToInt32(modifiedDamage);
+                modifiedDamage = (int)Math.Round(Damage * _damageModifier);
+                Damage += modifiedDamage;
                 _hitsCount = 0;
                 Console.WriteLine($"\n{Name} бьет коронный и увеличивает урон");
             }
@@ -207,7 +207,7 @@ namespace CSTest2
                 GenerateNewChampions();
                 ChooseChampions(out Champion firstChampion, out Champion secondChampion);
 
-                if (firstChampion.Initiative > secondChampion.Initiative)
+                if (firstChampion.Initiative >= secondChampion.Initiative)
                 {
                     Fight(firstChampion, secondChampion);
                 }
@@ -270,9 +270,9 @@ namespace CSTest2
             return _champions[championNumber - 1];
         }
 
-        private void Fight(Champion attacker, Champion defender) 
+        private void Fight(Champion attacker, Champion defender)
         {
-            while (attacker.Health > 0 && defender.Health > 0) 
+            while (attacker.Health > 0 && defender.Health > 0)
             {
                 attacker.Attack(defender);
 
@@ -283,7 +283,7 @@ namespace CSTest2
 
                 if (attacker.Health == 0)
                     break;
-            }                     
+            }
         }
 
         private void AnnounceWinner(Champion firstChampion, Champion secondChampion)
