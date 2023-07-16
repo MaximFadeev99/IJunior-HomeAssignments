@@ -28,8 +28,8 @@ namespace CSTest2
         private Squad _firstSquad = new Squad("Отряд 1");
         private Squad _secondSquad = new Squad("Отряд 2");
 
-        public void Work()  
-        {          
+        public void Work()
+        {
             _firstSquad.ShowInfo();
             _secondSquad.ShowInfo();
             Console.WriteLine("\nНажмите любую клавишу, чтобы начать бой...");
@@ -41,25 +41,31 @@ namespace CSTest2
 
         private void Fight()
         {
-            while (_firstSquad.IsAlive == true || _secondSquad.IsAlive == true) 
-            {
-                RunRound(_firstSquad, _secondSquad);                              
+            bool isFighting = true;
 
-                if (_secondSquad.IsAlive == false)
+            while (isFighting == true)
+            {
+                if (_firstSquad.IsAlive == true && _secondSquad.IsAlive == true)
                 {
-                    break;
+                    RunRound(_firstSquad, _secondSquad);
+                }
+                else 
+                {
+                    isFighting = false;
                 }
 
-                RunRound(_secondSquad, _firstSquad);
-
-                if (_firstSquad.IsAlive == false)
+                if (_firstSquad.IsAlive == true && _secondSquad.IsAlive == true)
                 {
-                    break;
-                }                           
+                    RunRound(_secondSquad, _firstSquad);
+                }
+                else
+                {
+                    isFighting = false;
+                }               
             }
         }
 
-        private void RunRound(Squad attackers, Squad defenders) 
+        private void RunRound(Squad attackers, Squad defenders)
         {
             defenders.TryTakeCover();
             attackers.Attack(defenders);
@@ -71,11 +77,11 @@ namespace CSTest2
         {
             if (_firstSquad.IsAlive == false)
             {
-                Console.WriteLine($"\nПобеждает {_secondSquad.Name}!");
+                Console.Write($"\nПобеждает {_secondSquad.Name}!\n");
             }
             else if (_secondSquad.IsAlive == false)
             {
-                Console.WriteLine($"\nПобеждает {_firstSquad.Name}!");
+                Console.Write($"\nПобеждает {_firstSquad.Name}!\n");
             }
 
             _firstSquad.ShowInfo();
@@ -85,7 +91,7 @@ namespace CSTest2
 
     class Squad
     {
-        private List<SoldierPrivate> _squadMembers = new List<SoldierPrivate>();
+        private List<SoldierPrivate> _members = new List<SoldierPrivate>();
         private int _maxMembers = 3;
         private int _aliveMembers;
         private FieldEngineer _fieldEngineer;
@@ -99,9 +105,9 @@ namespace CSTest2
         }
 
         public string Name { get; private set; }
-        public bool IsAlive { get; private set; } = true;       
+        public bool IsAlive { get; private set; } = true;
 
-        public void TryTakeCover ()
+        public void TryTakeCover()
         {
             if (_isTrenchAvailable == false && _fieldEngineer != null)
             {
@@ -109,33 +115,33 @@ namespace CSTest2
                 {
                     Console.WriteLine($"{Name}: {_fieldEngineer.Name} достроил окоп, отряд занимает укрытие.");
 
-                    foreach (var member in _squadMembers)
+                    foreach (var member in _members)
                     {
-                        _isTrenchAvailable = true;                      
+                        _isTrenchAvailable = true;
                         member.TakeCover();
                     }
                 }
             }
-        }   
+        }
 
         public void Attack(Squad enemySquad)
         {
             Console.WriteLine();
 
-            foreach (var member in _squadMembers)
+            foreach (var member in _members)
             {
                 Console.Write($"{Name}: ");
-                member.Attack(enemySquad._squadMembers[RandomNumber.ReturnNewNumber(0, (enemySquad._squadMembers.Count))]);
+                member.Attack(enemySquad._members[RandomNumber.ReturnNewNumber(0, (enemySquad._members.Count))]);
             }
         }
 
         public void Heal()
         {
-            Console.WriteLine();
-
             if (_medic != null && _medic.CurrentHealth > 0)
             {
-                foreach (var member in _squadMembers)
+                Console.WriteLine();
+
+                foreach (var member in _members)
                 {
                     Console.Write($"{Name}: ");
                     member.Heal();
@@ -148,7 +154,7 @@ namespace CSTest2
             Console.WriteLine($"\n{Name}");
             Console.WriteLine("Класс   -   Здоровье    -    Стартовый урон");
 
-            foreach (var member in _squadMembers)
+            foreach (var member in _members)
             {
                 member.ShowStats();
             }
@@ -156,17 +162,13 @@ namespace CSTest2
 
         public void CountAlive()
         {
-            int positionCount = 0;
-
-            while (positionCount < _squadMembers.Count)
+            for (int i = _members.Count-1; i >=0; i--) 
             {
-                if (_squadMembers[positionCount].CurrentHealth == 0) 
+                if (_members[i].CurrentHealth == 0)
                 {
-                    _squadMembers.RemoveAt(positionCount);
+                    _members.RemoveAt(i);
                     _aliveMembers--;
                 }
-                
-                positionCount++;
             }
 
             if (_aliveMembers == 0)
@@ -175,28 +177,28 @@ namespace CSTest2
 
         private void GenerateCurrentMembers()
         {
-            List<SoldierPrivate> possibleSquadMembers = new List<SoldierPrivate>
+            List<SoldierPrivate> possibleMembers = new List<SoldierPrivate>
             {new SoldierPrivate(),
              new Sergeant(),
              new FieldEngineer(),
              new Medic(),
              new Sniper(),
              new Armored()};
-            int randomPosition = RandomNumber.ReturnNewNumber(0, possibleSquadMembers.Count);
+            int randomPosition = RandomNumber.ReturnNewNumber(0, possibleMembers.Count);
 
             for (int i = 1; i <= _maxMembers; i++)
             {
-                while (_squadMembers.Contains(possibleSquadMembers[randomPosition]) == true)
+                while (_members.Contains(possibleMembers[randomPosition]) == true)
                 {
-                    randomPosition = RandomNumber.ReturnNewNumber(0, possibleSquadMembers.Count);
+                    randomPosition = RandomNumber.ReturnNewNumber(0, possibleMembers.Count);
                 }
 
-                _squadMembers.Add(possibleSquadMembers[randomPosition]);
+                _members.Add(possibleMembers[randomPosition]);
             }
 
             _aliveMembers = _maxMembers;
 
-            foreach (var member in _squadMembers)
+            foreach (var member in _members)
             {
                 if (member is FieldEngineer)
                 {
@@ -240,16 +242,16 @@ namespace CSTest2
         {
             double trenchDamageModifier = 0.1;
             double reducedDamage;
-            
-            if (IsInTrench == true) 
+
+            if (IsInTrench == true)
             {
                 reducedDamage = incomingDamage * trenchDamageModifier;
                 incomingDamage -= (int)reducedDamage;
             }
 
             LimitHealthFall(incomingDamage);
-            Console.WriteLine($"Вражеский {Name} получает {incomingDamage} ед. урона");
-            Console.WriteLine($"Оставшееся здоровье - {CurrentHealth}");
+            Console.Write($"Вражеский {Name} получает {incomingDamage} ед. урона\n");
+            Console.Write($"Оставшееся здоровье - {CurrentHealth}\n");
         }
 
         public void Heal()
@@ -262,7 +264,7 @@ namespace CSTest2
                 CurrentHealth = MaxHealth;
                 restoredHealth = 0;
             }
-            else 
+            else
             {
                 CurrentHealth += (int)restoredHealth;
             }
@@ -270,18 +272,18 @@ namespace CSTest2
             Console.WriteLine($"{Name} восстанавливает {(int)restoredHealth} ед. здоровья");
         }
 
-        public void TakeCover() 
+        public void TakeCover()
         {
             IsInTrench = true;
         }
 
-        private void LimitHealthFall(int incomingDamage) 
+        private void LimitHealthFall(int incomingDamage)
         {
             if (CurrentHealth - incomingDamage < 0)
             {
                 CurrentHealth = 0;
             }
-            else 
+            else
             {
                 CurrentHealth -= incomingDamage;
             }
@@ -296,7 +298,7 @@ namespace CSTest2
         public Sergeant()
         {
             Name = "Сержант";
-            MaxHealth = 310;
+            MaxHealth = 310; 
             InitialDamage = 50;
             CurrentHealth = MaxHealth;
         }
@@ -312,11 +314,11 @@ namespace CSTest2
                 enemy.TakeDamage(CurrentDamage);
                 _turnsToThrowGrenade = 2;
             }
-            else 
+            else
             {
                 _turnsToThrowGrenade--;
                 base.Attack(enemy);
-            }           
+            }
         }
     }
 
@@ -325,7 +327,7 @@ namespace CSTest2
         public FieldEngineer()
         {
             Name = "Сапер";
-            MaxHealth = 400;
+            MaxHealth = 400; 
             InitialDamage = 45;
             CurrentHealth = MaxHealth;
         }
@@ -380,10 +382,10 @@ namespace CSTest2
                 enemy.TakeDamage(CurrentDamage);
                 _liquidationCount--;
             }
-            else 
+            else
             {
                 base.Attack(enemy);
-            }                      
+            }
         }
     }
 
