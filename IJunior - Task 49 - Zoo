@@ -1,0 +1,177 @@
+using System;
+using System.Collections.Generic;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Zoo zoo = new Zoo();
+
+            zoo.Work();
+        }
+    }
+
+    class Zoo 
+    {
+        private List<Cage> _cages = new List<Cage>();
+
+        public Zoo() 
+        {
+            _cages.Add(new Cage(new Crocodile()));
+            _cages.Add(new Cage(new Zebra()));
+            _cages.Add(new Cage(new Eagle()));
+            _cages.Add(new Cage(new Python()));
+        }
+
+        public void Work()       
+        {
+            bool isLeaving = false;
+            int cageNumber;
+
+            while (isLeaving == false) 
+            {
+                ShowCagesNames();
+
+                do
+                {
+                    Console.Write("\nВведите номер вольера, чтобы приблизиться: ");
+                } 
+                while (int.TryParse(Console.ReadLine(), out cageNumber) == false || cageNumber < 1 || cageNumber > _cages.Count);
+
+                _cages[cageNumber-1].ShowAnimals();
+                Console.WriteLine("\nНажмите любую клавишу, чтобы отойти от вольера...");
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        private void ShowCagesNames() 
+        {
+            foreach (var cage in _cages) 
+            {
+                Console.WriteLine(cage.Name);
+            }
+        }   
+    }
+
+    class Cage 
+    {
+        private static int _cageCount = 0;
+
+        private string _nameFixedPart = "Вольер";
+        private List <Animal> _animals = new List<Animal>();
+        private int _maxAnimals = 5;
+        private int _animalsCount = 0;
+
+        public Cage(Animal newAnimal) 
+        {  
+            _cageCount++;
+            Name = _nameFixedPart + " " + _cageCount;
+            int randomAnimalNumber = RandomNumber.GenerateNewNumber(1, _maxAnimals + 1);
+
+            for (int i = 1; i <= randomAnimalNumber; i++) 
+            {
+                _animals.Add(newAnimal);
+                _animalsCount++;
+            }
+        }
+
+        public string Name { get; private set; }
+
+        public void ShowAnimals() 
+        {
+            Console.WriteLine($"\n{Name}:\n");
+            Console.WriteLine("Животное  -  Пол  -  Издаваемый звук\n");
+
+            foreach (var animal in _animals) 
+            {
+                animal.ShowInfo();
+            }
+
+            Console.WriteLine($"\nОбщее количество зверей: {_animalsCount}\n");
+        }
+    }
+
+    abstract class Animal 
+    {
+        public Animal() 
+        {
+            Gender = GenerateGender();
+        }
+        
+        public string Name { get; protected set; }
+        public string Sound { get; protected set; }
+        public string Gender { get; protected set; }
+
+        public void ShowInfo() 
+        {
+            Console.WriteLine($"{Name}  -  {Gender}  -  {Sound}");
+        }
+
+        protected string GenerateGender() 
+        {
+            int genderChance = 50;
+            int maxPercent = 100;
+            int randomNumber = RandomNumber.GenerateNewNumber(1, maxPercent + 1);
+
+            if (randomNumber <= genderChance)
+            {
+                return "Самец";
+            }
+            else if (randomNumber > genderChance) 
+            {
+                return "Самка";
+            }
+
+            return string.Empty;
+        }
+    }
+
+    class Crocodile : Animal
+    {
+        public Crocodile() 
+        {
+            Name = "Крокодил";
+            Sound = "Кро-кро-кро";
+        }
+    }
+
+    class Python : Animal
+    {
+        public Python()
+        {
+            Name = "Питон";
+            Sound = "Шшш-шшш-шшш";
+        }
+    }
+
+    class Zebra : Animal
+    {
+        public Zebra()
+        {
+            Name = "Зебра";
+            Sound = "И-го-го";
+        }
+    }
+
+    class Eagle : Animal
+    {
+        public Eagle()
+        {
+            Name = "Орел";
+            Sound = "Яа-яа-яа";
+        }
+    }
+
+    static class RandomNumber 
+    {
+        private static Random _random = new Random();
+
+        public static int GenerateNewNumber(int minValue, int maxValue) 
+        {
+            return _random.Next(minValue, maxValue);
+        }
+    }
+}
