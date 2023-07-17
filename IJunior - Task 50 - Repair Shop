@@ -1,0 +1,259 @@
+using System;
+using System.Collections.Generic;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            CarService carService = new CarService();
+
+            carService.Work();
+        }
+    }
+
+    class CarService 
+    {
+        private static List<Detail> _detailsToRepair = new List<Detail>() 
+            {new Tire(),
+             new Engine(),
+             new Brakes(),
+             new Wheel()};
+
+        private Queue<Client> _clients = new Queue<Client>();
+        private List<Stack> _stacks = new List<Stack>();
+        private int _accountBalance = 15000;
+        private int _fineAmount = 5000;
+
+        public CarService() 
+        {
+            GenerateCustomers();
+            GenerateStockOfDetails();
+        }
+
+        public void Work() 
+        {
+            while (_clients.Count > 0 && _accountBalance > 0) 
+            {
+                ShowGeneralInfo();
+                ServeNextClient();
+                Console.Clear();
+            }
+
+            DrawResults();
+        }
+
+        public static Detail ReturnBrokenPart() 
+        {
+            return _detailsToRepair[RandomNumber.GenerateNewNumber(0, _detailsToRepair.Count)];
+        }
+
+        private void ShowGeneralInfo() 
+        {
+            Console.WriteLine("Добро пожаловать в систему управления Автосервисом!");
+            Console.WriteLine($"\nЧисло клиентов, ожидающих обслуживания: {_clients.Count}");
+            Console.WriteLine($"Денег на балансе у Автосервиса: {_accountBalance} руб.");
+        }
+        
+        private void ServeNextClient() 
+        {
+            Client client = _clients.Peek();
+            Detail replacedDetail;
+            bool isAvailable;
+
+            Console.WriteLine($"\nЖалоба следующего клиента: {client.Problem.Description}");
+            Console.WriteLine($"\nДетали для замены:");
+            ShowCommandButtons();
+            replacedDetail = DefineReplacedDetail();
+
+            if (replacedDetail.Name == client.Problem.Name)
+            {
+                isAvailable = ConfirmAvailability(replacedDetail);
+
+                if (isAvailable == true)
+                {
+                    Console.WriteLine($"\nКлиент обслужен. Вы заработали {replacedDetail.Cost} руб. (себестоимость детали)" +
+                        $" и {replacedDetail.InstallationCost} руб. (стоимость установки)");
+                    ReduceStockAmount(replacedDetail);
+                    _accountBalance += replacedDetail.Cost + replacedDetail.InstallationCost;
+                }
+                else
+                {
+                    Console.WriteLine($"\nВыбранной детали нет в наличии, клиент ушел. Вы платите штраф {_fineAmount} руб.");
+                    _accountBalance -= _fineAmount;
+                }
+            }
+            else            
+            {
+                Console.WriteLine($"\nВы выбрали неверную деталь, клиент ушел. Вы платите штраф {_fineAmount} руб.");
+                _accountBalance -= _fineAmount;
+            }
+                      
+            Console.ReadKey();
+            _clients.Dequeue();
+        }
+
+        private void ShowCommandButtons() 
+        {
+            int buttonNumber = 1;
+
+            foreach (var detail in _detailsToRepair) 
+            {
+                Console.WriteLine(buttonNumber + " - " + detail.Name);
+                buttonNumber++;
+            }
+        }
+
+        private Detail DefineReplacedDetail() 
+        {
+            int detailPosition;
+
+            do
+            {
+                Console.Write("\nУкажите номер детали: ");
+            }
+            while (int.TryParse(Console.ReadLine(), out detailPosition) == false 
+            || detailPosition < 1 || detailPosition > _detailsToRepair.Count);
+
+            return _detailsToRepair[detailPosition - 1];
+        }
+
+        private bool ConfirmAvailability(Detail requestedDetail) 
+        {
+            bool isAvailable = false;
+
+            foreach (var stack in _stacks) 
+            {
+                if (stack.Detail.Name == requestedDetail.Name && stack.Count > 0) 
+                {
+                    isAvailable = true; 
+                    break;
+                }
+            }
+
+            return isAvailable;       
+        }
+
+        private void ReduceStockAmount(Detail requestedDetail) 
+        {
+            foreach (var stack in _stacks)
+            {
+                if (stack.Detail.Name == requestedDetail.Name)
+                {
+                    stack.ReduceCount(); 
+                    break;
+                }
+            }
+        }
+
+        private void DrawResults() 
+        {
+            if (_accountBalance <= 0)
+            {
+                Console.WriteLine("Вы разорились!");
+            }
+            else
+            {
+                Console.WriteLine("Все клиенты обслужены!");
+                Console.WriteLine($"Итоговая выручка Автосервиса составила {_accountBalance} руб.");
+            }
+
+            Console.ReadKey();
+        }
+
+        private void GenerateCustomers() 
+        {
+            int maxCustomers = 20;
+            int randomCustomersNumber = RandomNumber.GenerateNewNumber(1, maxCustomers+1);
+
+            for (int i = 1; i <= randomCustomersNumber; i++) 
+            { 
+                _clients.Enqueue(new Client());
+            }
+        }
+
+        private void GenerateStockOfDetails() 
+        {
+            int addedAmount = 3;
+
+            foreach (var detail in _detailsToRepair) 
+            {
+                _stacks.Add(new Stack(detail, addedAmount));
+            }       
+        }
+    }
+
+    class Client 
+    {
+        public Client() 
+        {
+            Problem = CarService.ReturnBrokenPart();       
+        }
+
+        public Detail Problem { get; private set; } 
+    }
+
+    class Stack
+    {
+        public Stack(Detail newDetail, int addedAmount) 
+        {
+            Detail = newDetail;
+            Count = addedAmount;
+        }
+        
+        public Detail Detail { get; private set; }
+        public int Count { get; private set; }
+
+        public void ReduceCount() 
+        {
+            Count--; 
+        }
+    }
+
+    abstract class Detail
+    {
+        public Detail(string name, string description, int cost, int installationCost)
+        {
+            Name = name;
+            Description = description;
+            Cost = cost;
+            InstallationCost = installationCost;
+        }        
+
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+        public int Cost { get; private set; }
+        public int InstallationCost { get; private set; }
+    }
+
+    class Tire : Detail
+    {
+        public Tire() : base ("Шина", "У машины загорелся датчик c давлением", 10000, 3000) { }
+    }
+
+    class Engine : Detail
+    {
+        public Engine() : base("Двигатель", "Что-то стучит под капотом.", 70000, 20000) { }
+    }
+
+    class Brakes : Detail
+    {
+        public Brakes() : base("Тормозные колодки", "Машина долго останавливается.", 20000, 1500) { }
+    }
+
+    class Wheel : Detail
+    {
+        public Wheel() : base("Руль", "Машина плохо реагирует на повороты.", 15000, 4000) { }
+    }
+
+    static class RandomNumber 
+    {
+        private static Random _random = new Random();
+
+        public static int GenerateNewNumber(int minValue, int maxValue) 
+        {
+            return _random.Next(minValue, maxValue);
+        }
+    }
+}
