@@ -20,7 +20,6 @@ namespace CSTest2
                 new Criminal("Райнхардт Лили Игоревна", "Россия", 175, 80, false),
                 new Criminal("Махно Иван Васильевич", "Белоруссия", 185, 87, false),
                 new Criminal("Приходько Емельян Корнеевич", "Белоруссия", 185, 87, false)};
-
             int userInputHeight; 
             int userInputWeight;
             string userInputNationality;
