@@ -1,0 +1,53 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List <Criminal> criminals = new List<Criminal>()
+                { new Criminal("Иванов Петр Васильевич", "Убийство"),
+                new Criminal("Сурков Владимир Петрович", "Убийство"),
+                new Criminal("Матвеев Матвей Матвеевич", "Убийство"),
+                new Criminal("Максимов Максим Максимович", "Убийство"),
+                new Criminal("Ахбетов Худайдот Магометович", "Наркоторговля"),
+                new Criminal("Проско Василий Николаевич", "Наркоторговля"),
+                new Criminal("Романенко Петр Игнатьевич", "Наркоторговля"),
+                new Criminal("Коркина Любовь Алексеевна", "Антиправительственное"),
+                new Criminal("Райнхардт Лили Игоревна", "Антиправительственное"),
+                new Criminal("Махно Иван Васильевич", "Антиправительственное"),
+                new Criminal("Приходько Емельян Корнеевич", "Антиправительственное")};
+
+            ShowCriminals(criminals);
+            var filteredCriminals = from criminal in criminals where (criminal.Felony != "Антиправительственное") select criminal;           
+            ShowCriminals(filteredCriminals.ToList());                      
+        }
+
+        static void ShowCriminals(List<Criminal> criminals)
+        {
+            Console.WriteLine($"\nФИО       -        Преступление\n");
+
+            foreach (var criminal in criminals)
+            {
+                Console.WriteLine($"{criminal.FullName} - {criminal.Felony}");
+            }
+
+            Console.ReadKey();
+        }
+    }
+
+    class Criminal 
+    {
+        public Criminal(string fullName, string felony) 
+        {
+            FullName = fullName;
+            Felony = felony;
+        }
+        
+        public string FullName { get; private set; }
+        public string Felony { get; private set; }      
+    }
+}
