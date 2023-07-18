@@ -1,0 +1,93 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List <Criminal> criminals = new List<Criminal>()
+                { new Criminal("Иванов Петр Васильевич", "Россия", 175, 80, true),
+                new Criminal("Сурков Владимир Петрович", "Россия", 175, 80, false),
+                new Criminal("Матвеев Матвей Матвеевич", "Россия", 175, 80, false),
+                new Criminal("Максимов Максим Максимович", "Россия", 175, 80, false),
+                new Criminal("Ахбетов Худайдот Магометович", "Белоруссия", 185, 87, false),
+                new Criminal("Проско Василий Николаевич", "Белоруссия", 185, 87, false),
+                new Criminal("Романенко Петр Игнатьевич", "Белоруссия", 185, 87, true),
+                new Criminal("Коркина Любовь Алексеевна", "Россия", 175, 80, true),
+                new Criminal("Райнхардт Лили Игоревна", "Россия", 175, 80, false),
+                new Criminal("Махно Иван Васильевич", "Белоруссия", 185, 87, false),
+                new Criminal("Приходько Емельян Корнеевич", "Белоруссия", 185, 87, false)};
+
+            int userInputHeight; 
+            int userInputWeight;
+            string userInputNationality;
+
+            do
+            {
+                Console.Write("Укажите рост подозреваемого: ");
+            }
+            while (int.TryParse(Console.ReadLine(), out userInputHeight) == false || userInputHeight < 100 || userInputHeight > 250);
+
+            do
+            {
+                Console.Write("\nУкажите вес подозреваемого: ");
+            }
+            while (int.TryParse(Console.ReadLine(), out userInputWeight) == false || userInputWeight < 30 || userInputWeight > 350);
+
+            Console.Write("\nУкажите гражданство подозреваемого: ");
+            userInputNationality = Console.ReadLine();
+            var filteredCriminals = from criminal in criminals 
+                                    where (criminal.Nationality ==  userInputNationality && criminal.Height == userInputHeight 
+                                    && criminal.Weight == userInputWeight && criminal.IsImprisoned == false)
+                                    select criminal;           
+            ShowFilteredCriminals(filteredCriminals.ToList());                      
+        }
+
+        static void ShowFilteredCriminals(List<Criminal> criminals)
+        {
+            Console.WriteLine($"\nФИО   -    Гражданство  -  Рост  -  Вес  -  Статус\n");
+
+            foreach (var criminal in criminals)
+            {
+                Console.WriteLine($"{criminal.FullName} - {criminal.Nationality}  -  {criminal.Height}  -  {criminal.Weight}  -  {criminal.Status}");
+            }
+
+            Console.ReadKey();
+        }
+    }
+
+    class Criminal 
+    {
+        public Criminal(string fullName, string nationality, int height, int weight, bool isImprisoned) 
+        {
+            FullName = fullName;
+            Nationality = nationality;
+            Height = height;
+            Weight = weight;
+            IsImprisoned = isImprisoned;
+            Status = SetStatus();
+        }
+        
+        public string FullName { get; private set; }
+        public string Nationality { get; private set; }
+        public int Height { get; private set; }
+        public int Weight { get; private set; }
+        public bool IsImprisoned { get; private set; }
+        public string Status { get; private set; }
+
+        private string SetStatus() 
+        {
+            if (IsImprisoned)
+            {
+                return "Отбывает срок";
+            }
+            else 
+            {
+                return "На свободе";
+            }
+        }
+    }
+}
