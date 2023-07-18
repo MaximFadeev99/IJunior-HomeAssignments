@@ -148,7 +148,7 @@ namespace CSTest2
 
     abstract class Person
     {
-        protected List<Stack> _stacks = new List<Stack>();
+        protected List<Stack> Stacks = new List<Stack>();
 
         public Person(string name, int money)
         {
@@ -165,19 +165,20 @@ namespace CSTest2
 
             Console.WriteLine($"\n{Name}: \"У меня в наличии следующие предметы:\"");
 
-            foreach (var stack in _stacks) 
+            if (includePrices == false)
             {
-                if (includePrices == false)
+                foreach (var stack in Stacks) 
                 {
                     Console.WriteLine($"{positionCount}) {stack.ItemInside.Name} x {stack.ItemsCount} шт.");
                 }
-                else 
+            }
+            else 
+            {
+                foreach (var stack in Stacks)
                 {
                     Console.WriteLine($"{positionCount}) {stack.ItemInside.Name} x {stack.ItemsCount} шт. по {stack.ItemInside.Price} монет");
                 }
-
-                positionCount++;
-            }
+            }             
         }
     }
 
@@ -189,7 +190,7 @@ namespace CSTest2
         {
             bool isFound = false;
 
-            foreach (var stack in _stacks) 
+            foreach (var stack in Stacks) 
             {
                 if (stack.ItemInside.Name == targetItem.Name) 
                 {
@@ -199,7 +200,7 @@ namespace CSTest2
             }
 
             if (isFound == false)
-                _stacks.Add(new Stack(targetItem, amount));
+                Stacks.Add(new Stack(targetItem, amount));
 
             Money -= targetItem.Price * amount;
         }
@@ -221,19 +222,19 @@ namespace CSTest2
 
         public int ReturnMaxItems() 
         {
-            return _stacks.Count;
+            return Stacks.Count;
         }
 
         public Item ReturnItem(int itemPosition) 
         {
-            return _stacks[itemPosition].ItemInside;
+            return Stacks[itemPosition].ItemInside;
         }
 
         public bool CanConfirmAvailability(int itemPosition, int desiredAmount) 
         {
             bool isAvailable;          
 
-            if (_stacks[itemPosition].ItemsCount >= desiredAmount)
+            if (Stacks[itemPosition].ItemsCount >= desiredAmount)
             {
                 isAvailable = true;
             }
@@ -247,14 +248,14 @@ namespace CSTest2
 
         public void RemoveItem(int targetItemPosition, int removedAmount) 
         {
-            _stacks[targetItemPosition].RemoveAmount(removedAmount);
-            Money += _stacks[targetItemPosition].ItemInside.Price * removedAmount;
+            Stacks[targetItemPosition].RemoveAmount(removedAmount);
+            Money += Stacks[targetItemPosition].ItemInside.Price * removedAmount;
         }
 
         private void AddInitialItems()
         {
-            _stacks.Add(new Stack(new Item("Железная руда", 25), 20));
-            _stacks.Add(new Stack(new Item("Зелье исцеления", 50), 10));
+            Stacks.Add(new Stack(new Item("Железная руда", 25), 20));
+            Stacks.Add(new Stack(new Item("Зелье исцеления", 50), 10));
         }
     }
 
