@@ -8,7 +8,7 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            List <Criminal> criminals = new List<Criminal>()
+            List<Criminal> criminals = new List<Criminal>()
                 { new Criminal("Иванов Петр Васильевич", "Россия", 175, 80, true),
                 new Criminal("Сурков Владимир Петрович", "Россия", 175, 80, false),
                 new Criminal("Матвеев Матвей Матвеевич", "Россия", 175, 80, false),
@@ -20,29 +20,17 @@ namespace CSTest2
                 new Criminal("Райнхардт Лили Игоревна", "Россия", 175, 80, false),
                 new Criminal("Махно Иван Васильевич", "Белоруссия", 185, 87, false),
                 new Criminal("Приходько Емельян Корнеевич", "Белоруссия", 185, 87, false)};
-            int userInputHeight; 
+            int userInputHeight;
             int userInputWeight;
             string userInputNationality;
+            List<Criminal> filteredCriminals;
 
-            do
-            {
-                Console.Write("Укажите рост подозреваемого: ");
-            }
-            while (int.TryParse(Console.ReadLine(), out userInputHeight) == false || userInputHeight < 100 || userInputHeight > 250);
-
-            do
-            {
-                Console.Write("\nУкажите вес подозреваемого: ");
-            }
-            while (int.TryParse(Console.ReadLine(), out userInputWeight) == false || userInputWeight < 30 || userInputWeight > 350);
-
-            Console.Write("\nУкажите гражданство подозреваемого: ");
+            userInputHeight = EnquireParameter("рост");
+            userInputWeight = EnquireParameter("вес");
+            Console.Write("Укажите гражданство подозреваемого: ");
             userInputNationality = Console.ReadLine();
-            var filteredCriminals = from criminal in criminals 
-                                    where (criminal.Nationality ==  userInputNationality && criminal.Height == userInputHeight 
-                                    && criminal.Weight == userInputWeight && criminal.IsImprisoned == false)
-                                    select criminal;           
-            ShowFilteredCriminals(filteredCriminals.ToList());                      
+            filteredCriminals = FilterCriminals(criminals, userInputHeight, userInputWeight, userInputNationality);
+            ShowFilteredCriminals(filteredCriminals.ToList());
         }
 
         static void ShowFilteredCriminals(List<Criminal> criminals)
@@ -56,11 +44,52 @@ namespace CSTest2
 
             Console.ReadKey();
         }
+
+        static List<Criminal> FilterCriminals(List<Criminal> criminals, int height, int weight, string nationality) 
+        {
+            var filteredCriminals = from criminal in criminals
+                                    where (criminal.Nationality == nationality && criminal.Height == height
+                                    && criminal.Weight == weight && criminal.IsImprisoned == false)
+                                    select criminal;
+            return filteredCriminals.ToList();
+        }
+
+        static int EnquireParameter(string parameter) 
+        {
+            int maxValue = 0;
+            int minValue = 0;
+            int verifiedParameter;
+
+            if (parameter == "рост")
+            {
+                maxValue = 250;
+                minValue = 100;
+            }
+            else if (parameter == "вес")
+            {
+                maxValue = 30;
+                minValue = 350;
+            }
+            else 
+            {
+                Console.WriteLine("Ошибка: Неверный параметр поиска!");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
+            
+            do
+            {
+                Console.Write($"Укажите {parameter} подозреваемого: ");
+            }
+            while (int.TryParse(Console.ReadLine(), out verifiedParameter) == false || minValue < 100 || maxValue > 250);
+
+            return verifiedParameter;
+        }
     }
 
-    class Criminal 
+    class Criminal
     {
-        public Criminal(string fullName, string nationality, int height, int weight, bool isImprisoned) 
+        public Criminal(string fullName, string nationality, int height, int weight, bool isImprisoned)
         {
             FullName = fullName;
             Nationality = nationality;
@@ -69,7 +98,7 @@ namespace CSTest2
             IsImprisoned = isImprisoned;
             Status = SetStatus();
         }
-        
+
         public string FullName { get; private set; }
         public string Nationality { get; private set; }
         public int Height { get; private set; }
@@ -77,13 +106,13 @@ namespace CSTest2
         public bool IsImprisoned { get; private set; }
         public string Status { get; private set; }
 
-        private string SetStatus() 
+        private string SetStatus()
         {
             if (IsImprisoned)
             {
                 return "Отбывает срок";
             }
-            else 
+            else
             {
                 return "На свободе";
             }
