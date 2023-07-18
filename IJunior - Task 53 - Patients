@@ -1,0 +1,121 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Hospital hospital = new Hospital();
+
+            hospital.Work();            
+        }             
+    }
+
+    class Hospital 
+    {
+        private List<Patient> _patients = new List<Patient>()
+        { new Patient("Иванов Петр Васильевич",68, "диабет"),
+        new Patient("Сурков Владимир Петрович", 13, "коронавирус"),
+        new Patient("Матвеев Матвей Матвеевич", 45, "СПИД"),
+        new Patient("Максимов Максим Максимович", 16, "диабет"),
+        new Patient("Ахбетов Худайдот Магометович", 19, "коронавирус"),
+        new Patient("Проско Василий Николаевич", 34, "СПИД"),
+        new Patient("Романенко Петр Игнатьевич", 25, "диабет"),
+        new Patient("Коркина Любовь Алексеевна", 22, "коронавирус"),
+        new Patient("Райнхардт Лили Игоревна", 51, "СПИД"),
+        new Patient("Махно Иван Васильевич", 78, "диабет"),
+        new Patient("Приходько Емельян Корнеевич", 80,"коронавирус")};
+
+        public void Work() 
+        {
+            const string CommandSortByLastName = "1";
+            const string CommandSortByAge = "2";
+            const string CommandFilterByDisease = "3";
+
+            string commandOptions = $"{CommandSortByLastName} - отсортировать по фамилии;\n" +
+                $"{CommandSortByAge} - отсортировать по возрасту (по возрастанию)\n" +
+                $"{CommandFilterByDisease} - отфильтровать по болезни";
+            bool isLeaving = false;
+            string userInput;
+
+            while (isLeaving == false) 
+            {             
+                Console.WriteLine(commandOptions);
+
+                do
+                {
+                    Console.Write("\nВыберите действие из списка выше: ");
+                    userInput = Console.ReadLine();
+                }
+                while (userInput != CommandSortByLastName && userInput != CommandSortByAge && userInput != CommandFilterByDisease);
+
+                switch (userInput) 
+                {
+                    case CommandSortByLastName:
+                        _patients.Sort((patient1,patient2) => string.Compare(patient1.FullName, patient2.FullName));
+                        ShowPatients(_patients);
+                        break;
+
+                    case CommandSortByAge:
+                        List<Patient> sortedPatients = _patients.OrderBy(patient => patient.Age).ToList();
+                        ShowPatients(sortedPatients);
+                        break;
+
+                    case CommandFilterByDisease:
+                        FilterByDisease();
+                        break;
+                }
+
+                Console.Clear();
+            }        
+        }
+
+        private void ShowPatients(List <Patient> patients)
+        {
+            Console.WriteLine($"\nФИО   -    Возраст   -   Заболевание\n");
+
+            foreach (var patient in patients)
+            {
+                Console.WriteLine($"{patient.FullName}  -  {patient.Age}  -  {patient.Disease}");
+            }
+
+            Console.ReadKey();
+        }
+
+        private void FilterByDisease() 
+        {
+            List<Patient> filteredPatients;
+            string userInput;
+
+            Console.Write("\nВведите название болезни: ");
+            userInput = Console.ReadLine();
+            filteredPatients = _patients.Where(patient => patient.Disease.ToLower() == userInput.ToLower()).ToList();
+
+            if (filteredPatients.Count == 0)
+            {
+                Console.WriteLine("Пациенты с указанным заболеванием не зарегистрированы.");
+            }
+            else 
+            {
+                ShowPatients(filteredPatients);
+            }
+        }
+    }
+
+    class Patient
+    {       
+        public Patient(string fullName, int age, string  disease)
+        {
+            FullName = fullName;
+            Age = age;
+            Disease = disease;           
+        }
+
+        public string FullName { get; private set; }
+        public int Age { get; private set; }
+        public string Disease { get; private set; }
+    }
+}
