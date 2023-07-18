@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Player> players = new List<Player>()
+                { new Player("Игрок1",68, 500),
+                new Player("Игрок2", 13, 100),
+                new Player("Игрок3", 45, 300),
+                new Player("Игрок4", 16, 450),
+                new Player("Игрок5", 19, 780),
+                new Player("Игрок6", 34, 1200),
+                new Player("Игрок7", 25, 900),
+                new Player("Игрок8", 22, 990),
+                new Player("Игрок9", 51, 220),
+                new Player("Игрок10", 78, 370),
+                new Player("Игрок11", 80, 1400)};
+            List<Player> selectedPlayers;
+
+            Console.WriteLine("Игроки с максимальным уровнем:");
+            selectedPlayers = players.OrderByDescending(player => player.Level).Take(3).ToList();
+            ShowPayers(selectedPlayers);
+            Console.WriteLine("\nИгроки с максимальной силой:");
+            selectedPlayers = players.OrderByDescending(player => player.Power).Take(3).ToList();
+            ShowPayers(selectedPlayers);
+            Console.ReadKey();
+        }  
+        
+        static void ShowPayers(List<Player> players)
+        {
+            Console.WriteLine($"\nФИО   -    Уровень   -   Сила\n");
+
+            foreach (var patient in players)
+            {
+                Console.WriteLine($"{patient.Nickname}  -  {patient.Level}  -  {patient.Power}");
+            }
+        }
+    }
+   
+    class Player
+    {       
+        public Player(string nickname, int level, int  power)
+        {
+            Nickname = nickname;
+            Level = level;
+            Power = power;           
+        }
+
+        public string Nickname { get; private set; }
+        public int Level { get; private set; }
+        public int Power { get; private set; }
+    }
+}
