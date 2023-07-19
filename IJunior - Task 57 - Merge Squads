@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Soldier> squad1 = new List<Soldier>() 
+            {
+                new Soldier("Борисенко Дмитрий Иванович"),
+                new Soldier("Приходько Петр Васильевич"),
+                new Soldier("Борисов Сергей Сергеевич"),
+                new Soldier("Матвеев Николай Иванович"),
+                new Soldier("Бортников Никита Петрович")
+            };
+            List<Soldier> squad2 = new List<Soldier>() 
+            {
+                new Soldier("Антипов Григорий Сергеевич"),
+                new Soldier("Степаненко Кирилл Макарович"),
+            };
+
+            var extendedSquad = squad2.Union(from soldier in squad1 where soldier.Name.StartsWith("Б") select soldier);
+
+            foreach (var soldier in extendedSquad) 
+            {
+                Console.WriteLine(soldier.Name);
+            }
+
+            Console.ReadKey();
+        }
+    }
+
+    class Soldier 
+    {
+        public Soldier(string name) 
+        {
+            Name = name;    
+        }
+
+        public string Name { get; private set; }
+    }
+}
