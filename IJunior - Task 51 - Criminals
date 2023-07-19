@@ -8,32 +8,61 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            List<Criminal> criminals = new List<Criminal>()
-                { new Criminal("Иванов Петр Васильевич", "Россия", 175, 80, true),
-                new Criminal("Сурков Владимир Петрович", "Россия", 175, 80, false),
-                new Criminal("Матвеев Матвей Матвеевич", "Россия", 175, 80, false),
-                new Criminal("Максимов Максим Максимович", "Россия", 175, 80, false),
-                new Criminal("Ахбетов Худайдот Магометович", "Белоруссия", 185, 87, false),
-                new Criminal("Проско Василий Николаевич", "Белоруссия", 185, 87, false),
-                new Criminal("Романенко Петр Игнатьевич", "Белоруссия", 185, 87, true),
-                new Criminal("Коркина Любовь Алексеевна", "Россия", 175, 80, true),
-                new Criminal("Райнхардт Лили Игоревна", "Россия", 175, 80, false),
-                new Criminal("Махно Иван Васильевич", "Белоруссия", 185, 87, false),
-                new Criminal("Приходько Емельян Корнеевич", "Белоруссия", 185, 87, false)};
+            Searcher searcher = new Searcher();
+
+            searcher.SearchForFreeCriminals();
+        }
+    }    
+
+    class Searcher 
+    {
+        private List<Criminal> _criminals = new List<Criminal>();
+
+        public Searcher() 
+        {
+            AddInitialCriminals();        
+        }
+
+        public void SearchForFreeCriminals() 
+        {
+            string height = "рост";
+            string weight = "вес";
             int userInputHeight;
             int userInputWeight;
             string userInputNationality;
             List<Criminal> filteredCriminals;
 
-            userInputHeight = EnquireParameter("рост");
-            userInputWeight = EnquireParameter("вес");
+            userInputHeight = EnquireParameter(height);
+            userInputWeight = EnquireParameter(weight);
             Console.Write("Укажите гражданство подозреваемого: ");
             userInputNationality = Console.ReadLine();
-            filteredCriminals = FilterCriminals(criminals, userInputHeight, userInputWeight, userInputNationality);
+            filteredCriminals = FilterCriminals(_criminals, userInputHeight, userInputWeight, userInputNationality);
             ShowFilteredCriminals(filteredCriminals.ToList());
         }
 
-        static void ShowFilteredCriminals(List<Criminal> criminals)
+        private int EnquireParameter(string parameter)
+        {           
+            int verifiedParameter;
+
+            do
+            {
+                Console.Write($"Укажите {parameter} подозреваемого: ");
+            }
+            while (int.TryParse(Console.ReadLine(), out verifiedParameter) == false);
+
+            return verifiedParameter;
+        }
+
+        private List<Criminal> FilterCriminals(List<Criminal> criminals, int height, int weight, string nationality)
+        {
+            var filteredCriminals = from criminal in criminals
+                                    where (criminal.Nationality == nationality && criminal.Height == height
+                                    && criminal.Weight == weight && criminal.IsImprisoned == false)
+                                    select criminal;
+            return filteredCriminals.ToList();
+        }
+
+        private void ShowFilteredCriminals(List<Criminal> criminals)
         {
             Console.WriteLine($"\nФИО   -    Гражданство  -  Рост  -  Вес  -  Статус\n");
 
@@ -45,45 +74,19 @@ namespace CSTest2
             Console.ReadKey();
         }
 
-        static List<Criminal> FilterCriminals(List<Criminal> criminals, int height, int weight, string nationality) 
+        private void AddInitialCriminals()        
         {
-            var filteredCriminals = from criminal in criminals
-                                    where (criminal.Nationality == nationality && criminal.Height == height
-                                    && criminal.Weight == weight && criminal.IsImprisoned == false)
-                                    select criminal;
-            return filteredCriminals.ToList();
-        }
-
-        static int EnquireParameter(string parameter) 
-        {
-            int maxValue = 0;
-            int minValue = 0;
-            int verifiedParameter;
-
-            if (parameter == "рост")
-            {
-                maxValue = 250;
-                minValue = 100;
-            }
-            else if (parameter == "вес")
-            {
-                maxValue = 30;
-                minValue = 350;
-            }
-            else 
-            {
-                Console.WriteLine("Ошибка: Неверный параметр поиска!");
-                Console.ReadKey();
-                Environment.Exit(0);
-            }
-            
-            do
-            {
-                Console.Write($"Укажите {parameter} подозреваемого: ");
-            }
-            while (int.TryParse(Console.ReadLine(), out verifiedParameter) == false || minValue < 100 || maxValue > 250);
-
-            return verifiedParameter;
+            _criminals.Add(new Criminal("Иванов Петр Васильевич", "Россия", 175, 80, true));
+            _criminals.Add(new Criminal("Сурков Владимир Петрович", "Россия", 175, 80, false));
+            _criminals.Add(new Criminal("Матвеев Матвей Матвеевич", "Россия", 175, 80, false));
+            _criminals.Add(new Criminal("Максимов Максим Максимович", "Россия", 175, 80, false));
+            _criminals.Add(new Criminal("Ахбетов Худайдот Магометович", "Белоруссия", 185, 87, false));
+            _criminals.Add(new Criminal("Проско Василий Николаевич", "Белоруссия", 185, 87, false));
+            _criminals.Add(new Criminal("Романенко Петр Игнатьевич", "Белоруссия", 185, 87, true));
+            _criminals.Add(new Criminal("Коркина Любовь Алексеевна", "Россия", 175, 80, true));
+            _criminals.Add(new Criminal("Райнхардт Лили Игоревна", "Россия", 175, 80, false));
+            _criminals.Add(new Criminal("Махно Иван Васильевич", "Белоруссия", 185, 87, false));
+            _criminals.Add(new Criminal("Приходько Емельян Корнеевич", "Белоруссия", 185, 87, false));
         }
     }
 
