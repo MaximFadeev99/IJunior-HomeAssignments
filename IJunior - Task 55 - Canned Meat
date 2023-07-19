@@ -1,0 +1,98 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            CanUtilizer canUtilizer = new CanUtilizer();
+
+            canUtilizer.Work();
+        }   
+    }
+    class CanUtilizer 
+    {
+        private List<Can> _cans = new List<Can>();
+
+        public CanUtilizer() 
+        {
+            AddCans();
+        }
+
+        public void Work() 
+        {
+            List<Can> sortedCans;
+
+            Console.WriteLine("Список тушенки до сортировки:\n");
+            ShowCans(_cans);
+            Console.WriteLine();
+            Console.WriteLine("Список просроченной тушенки:\n");            
+            sortedCans = SortCans();
+            ShowCans(sortedCans);
+            Console.ReadKey();
+        }
+
+        private void ShowCans(List<Can> cans) 
+        {
+            int itemsCount = 1;
+
+            Console.WriteLine("Название  -  Год до");
+
+            foreach (var can in cans) 
+            {
+                Console.WriteLine($"{itemsCount++}) {can.Name}  -  {can.ExpiryYear}");
+            }
+        }
+
+        private List<Can> SortCans() 
+        {
+            int currentYear = DateTime.UtcNow.Year;
+
+            return (from can in _cans where can.ExpiryYear <= currentYear select can).ToList();
+        }
+
+        private void AddCans() 
+        {
+            int cansMinimum = 1;
+            int cansMaximum = 30;
+
+            for (int i = cansMinimum; i <= cansMaximum; i++) 
+            {
+                _cans.Add(new Can());
+            }
+        }    
+    }
+
+    class Can 
+    {
+        private static int _cansCount = 0;
+
+        private string _nameFixedPart = "Тушенка";
+
+        public Can() 
+        {
+            int minYear = 2015;
+            int maxYear = 2031;
+            
+            Name = _nameFixedPart + ++_cansCount;
+            ExpiryYear = RandomNumber.ReturnNewNumber(minYear, maxYear);
+        }
+
+        public string Name { get; private set; }
+        public int ExpiryYear { get; private set; }
+        public int ConsumptionPeriod { get; private set; }
+    }
+
+    static class RandomNumber 
+    {
+        private static Random _random = new Random();
+
+        public static int ReturnNewNumber(int minValue, int maxValue) 
+        {
+            return _random.Next(minValue, maxValue);
+        }
+    }
+}
