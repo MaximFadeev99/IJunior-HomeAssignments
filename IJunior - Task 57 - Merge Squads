@@ -22,14 +22,23 @@ namespace CSTest2
                 new Soldier("Степаненко Кирилл Макарович"),
             };
 
-            var extendedSquad = squad2.Union(from soldier in squad1 where soldier.Name.StartsWith("Б") select soldier);
+            Console.WriteLine("Отряд 1 до переформирования:");
+            ShowSoldiers(squad1);
+            Console.WriteLine("\nОтряд 2 после переформирования:");
+            List<Soldier> extendedSquad = squad2.Union(from soldier in squad1 where soldier.Name.StartsWith("Б") select soldier).ToList();
+            ShowSoldiers(extendedSquad);
+            Console.WriteLine("\nОтряд 1 после переформирования:");
+            squad1 = squad1.Except(extendedSquad).ToList();
+            ShowSoldiers(squad1);
+            Console.ReadKey();            
+        }
 
-            foreach (var soldier in extendedSquad) 
+        static void ShowSoldiers(List<Soldier> soldiers) 
+        {
+            foreach (var soldier in soldiers)
             {
                 Console.WriteLine(soldier.Name);
             }
-
-            Console.ReadKey();
         }
     }
 
