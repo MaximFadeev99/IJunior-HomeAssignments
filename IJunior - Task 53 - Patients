@@ -10,26 +10,20 @@ namespace CSTest2
         {
             Hospital hospital = new Hospital();
 
-            hospital.Work();            
-        }             
+            hospital.Work();
+        }
     }
 
-    class Hospital 
+    class Hospital
     {
-        private List<Patient> _patients = new List<Patient>()
-        { new Patient("Иванов Петр Васильевич",68, "диабет"),
-        new Patient("Сурков Владимир Петрович", 13, "коронавирус"),
-        new Patient("Матвеев Матвей Матвеевич", 45, "СПИД"),
-        new Patient("Максимов Максим Максимович", 16, "диабет"),
-        new Patient("Ахбетов Худайдот Магометович", 19, "коронавирус"),
-        new Patient("Проско Василий Николаевич", 34, "СПИД"),
-        new Patient("Романенко Петр Игнатьевич", 25, "диабет"),
-        new Patient("Коркина Любовь Алексеевна", 22, "коронавирус"),
-        new Patient("Райнхардт Лили Игоревна", 51, "СПИД"),
-        new Patient("Махно Иван Васильевич", 78, "диабет"),
-        new Patient("Приходько Емельян Корнеевич", 80,"коронавирус")};
+        private List<Patient> _patients = new List<Patient>();
 
-        public void Work() 
+        public Hospital() 
+        {
+            AddInitialPatients();
+        }
+
+        public void Work()
         {
             const string CommandSortByLastName = "1";
             const string CommandSortByAge = "2";
@@ -40,27 +34,23 @@ namespace CSTest2
                 $"{CommandFilterByDisease} - отфильтровать по болезни";
             bool isLeaving = false;
             string userInput;
+            List<Patient> sortedPatients;
 
-            while (isLeaving == false) 
-            {             
-                Console.WriteLine(commandOptions);
-
-                do
-                {
-                    Console.Write("\nВыберите действие из списка выше: ");
-                    userInput = Console.ReadLine();
-                }
-                while (userInput != CommandSortByLastName && userInput != CommandSortByAge && userInput != CommandFilterByDisease);
-
-                switch (userInput) 
+            while (isLeaving == false)
+            {
+                Console.WriteLine(commandOptions);                
+                Console.Write("\nВыберите действие из списка выше: ");
+                userInput = Console.ReadLine(); 
+               
+                switch (userInput)
                 {
                     case CommandSortByLastName:
-                        _patients.Sort((patient1,patient2) => string.Compare(patient1.FullName, patient2.FullName));
-                        ShowPatients(_patients);
+                        sortedPatients = (from patient in _patients orderby patient.FullName select patient).ToList();
+                        ShowPatients(sortedPatients);
                         break;
 
                     case CommandSortByAge:
-                        List<Patient> sortedPatients = _patients.OrderBy(patient => patient.Age).ToList();
+                        sortedPatients = _patients.OrderBy(patient => patient.Age).ToList();
                         ShowPatients(sortedPatients);
                         break;
 
@@ -70,10 +60,10 @@ namespace CSTest2
                 }
 
                 Console.Clear();
-            }        
+            }
         }
 
-        private void ShowPatients(List <Patient> patients)
+        private void ShowPatients(List<Patient> patients)
         {
             Console.WriteLine($"\nФИО   -    Возраст   -   Заболевание\n");
 
@@ -85,7 +75,7 @@ namespace CSTest2
             Console.ReadKey();
         }
 
-        private void FilterByDisease() 
+        private void FilterByDisease()
         {
             List<Patient> filteredPatients;
             string userInput;
@@ -98,20 +88,35 @@ namespace CSTest2
             {
                 Console.WriteLine("Пациенты с указанным заболеванием не зарегистрированы.");
             }
-            else 
+            else
             {
                 ShowPatients(filteredPatients);
             }
         }
+
+        private void AddInitialPatients() 
+        {
+            _patients.Add(new Patient("Иванов Петр Васильевич", 68, "диабет"));
+            _patients.Add(new Patient("Сурков Владимир Петрович", 13, "коронавирус"));
+            _patients.Add(new Patient("Матвеев Матвей Матвеевич", 45, "СПИД"));
+            _patients.Add(new Patient("Максимов Максим Максимович", 16, "диабет"));
+            _patients.Add(new Patient("Ахбетов Худайдот Магометович", 19, "коронавирус"));
+            _patients.Add(new Patient("Проско Василий Николаевич", 34, "СПИД"));
+            _patients.Add(new Patient("Романенко Петр Игнатьевич", 25, "диабет"));
+            _patients.Add(new Patient("Коркина Любовь Алексеевна", 22, "коронавирус"));
+            _patients.Add(new Patient("Райнхардт Лили Игоревна", 51, "СПИД"));
+            _patients.Add(new Patient("Махно Иван Васильевич", 78, "диабет"));
+            _patients.Add(new Patient("Приходько Емельян Корнеевич", 80, "коронавирус"));
+        }
     }
 
     class Patient
-    {       
-        public Patient(string fullName, int age, string  disease)
+    {
+        public Patient(string fullName, int age, string disease)
         {
             FullName = fullName;
             Age = age;
-            Disease = disease;           
+            Disease = disease;
         }
 
         public string FullName { get; private set; }
