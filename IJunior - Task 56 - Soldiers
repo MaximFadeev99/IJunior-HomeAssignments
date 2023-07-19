@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CSTest2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Searcher searcher = new Searcher();
+            
+            searcher.ShowNamesAndRanks();
+        }
+    }
+
+    class Searcher 
+    {
+        private List<Soldier> _soldiers = new List<Soldier>();
+
+        public Searcher() 
+        {
+            AddSoldiers();      
+        }
+
+        public void ShowNamesAndRanks() 
+        {
+            Console.WriteLine("ФИО - Звание");
+            var soldiersWithSelectedParameters = _soldiers.Select(soldier => new
+            {
+                name = soldier.Name,
+                militaryRank = soldier.MilitaryRank
+            });
+
+            foreach (var soldier in soldiersWithSelectedParameters) 
+            {
+                Console.WriteLine(soldier.name + " - " + soldier.militaryRank);
+            }
+
+            Console.ReadKey();
+        }
+
+        private void AddSoldiers()        
+        {
+            _soldiers.Add(new Soldier("Рябенко Дмитрий Иванович", "Рядовой", "АК-47", 12));
+            _soldiers.Add(new Soldier("Приходько Петр Васильевич", "Рядовой", "АК-47", 10));
+            _soldiers.Add(new Soldier("Борисов Сергей Сергеевич", "Прапорщик", "РПГ", 23));
+            _soldiers.Add(new Soldier("Матвеев Николай Иванович", "Сержант", "Т-34", 34));
+            _soldiers.Add(new Soldier("Киргизин Никита Петрович", "Лейтенант", "Град", 45));
+        }  
+    }
+
+    class Soldier 
+    {
+        public Soldier(string name, string militaryRank, string usedWeapon, int servicePeriod) 
+        {
+            Name = name;
+            MilitaryRank = militaryRank;
+            UsedWeapon = usedWeapon;
+            ServicePeriod = servicePeriod;      
+        }
+
+        public string Name { get; private set; }
+        public string MilitaryRank { get; private set; }
+        public string UsedWeapon { get; private set; }
+        public int ServicePeriod { get; private set; }
+    }
+}
