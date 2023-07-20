@@ -8,38 +8,63 @@ namespace CSTest2
     {
         static void Main(string[] args)
         {
-            List<Soldier> squad1 = new List<Soldier>() 
-            {
-                new Soldier("Борисенко Дмитрий Иванович"),
-                new Soldier("Приходько Петр Васильевич"),
-                new Soldier("Борисов Сергей Сергеевич"),
-                new Soldier("Матвеев Николай Иванович"),
-                new Soldier("Бортников Никита Петрович")
-            };
-            List<Soldier> squad2 = new List<Soldier>() 
-            {
-                new Soldier("Антипов Григорий Сергеевич"),
-                new Soldier("Степаненко Кирилл Макарович"),
-            };
+            Unifier unifier = new Unifier();
 
-            Console.WriteLine("Отряд 1 до переформирования:");
-            ShowSoldiers(squad1);
-            Console.WriteLine("\nОтряд 2 после переформирования:");
-            List<Soldier> extendedSquad = squad2.Union(from soldier in squad1 where soldier.Name.StartsWith("Б") select soldier).ToList();
-            ShowSoldiers(extendedSquad);
-            Console.WriteLine("\nОтряд 1 после переформирования:");
-            squad1 = squad1.Except(extendedSquad).ToList();
-            ShowSoldiers(squad1);
-            Console.ReadKey();            
+            unifier.Work();
+        }   
+    }
+
+    class Unifier 
+    {
+        private List <Soldier> _squad1 = new List<Soldier>();
+        private List <Soldier> _squad2 = new List<Soldier>();
+
+        public Unifier() 
+        {
+            AddInitialSoldiers();
         }
 
-        static void ShowSoldiers(List<Soldier> soldiers) 
+        public void Work() 
         {
-            foreach (var soldier in soldiers)
+            string startingLetter = "Б";
+
+            Console.WriteLine("Отряд 1 до переформирования:");
+            ShowSoldiers(_squad1);
+            Console.WriteLine("\nОтряд 2 до переформирования:");
+            ShowSoldiers(_squad2);
+            TransferSoldiers(startingLetter);
+            Console.WriteLine("\nОтряд 1 после переформирования:");
+            ShowSoldiers(_squad1);
+            Console.WriteLine("\nОтряд 2 после переформирования:");
+            ShowSoldiers(_squad2);
+            Console.ReadKey();
+        }
+
+        private void TransferSoldiers(string startingLetter) 
+        {
+            _squad2 = (_squad2.Union(from soldier in _squad1 where soldier.Name.StartsWith(startingLetter) select soldier)).ToList();
+            _squad1 = _squad1.Except(_squad2).ToList();
+        }
+
+        private void ShowSoldiers (List <Soldier> squad) 
+        {
+            foreach (var soldier in squad) 
             {
                 Console.WriteLine(soldier.Name);
             }
         }
+
+        private void AddInitialSoldiers() 
+        {
+            _squad1.Add(new Soldier("Борисенко Дмитрий Иванович"));
+            _squad1.Add(new Soldier("Приходько Петр Васильевич"));
+            _squad1.Add(new Soldier("Борисов Сергей Сергеевич"));
+            _squad1.Add(new Soldier("Матвеев Николай Иванович"));
+            _squad1.Add(new Soldier("Бортников Никита Петрович"));
+            _squad2.Add(new Soldier("Антипов Григорий Сергеевич"));
+            _squad2.Add(new Soldier("Степаненко Кирилл Макарович"));
+        }
+    
     }
 
     class Soldier 
