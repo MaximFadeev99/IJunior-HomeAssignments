@@ -15,7 +15,6 @@ namespace CSTest2
 
     class CarService
     {
-        private List<Detail> _detailsToRepair = new List<Detail>();
         private Queue<Client> _clients = new Queue<Client>();
         private List<Stack> _stacks = new List<Stack>();
         private int _accountBalance = 15000;
@@ -24,7 +23,6 @@ namespace CSTest2
         public CarService()
         {
             GenerateCustomers();
-            GenerateDetailsToRepair();
             GenerateStockOfDetails();
         }
 
@@ -89,9 +87,9 @@ namespace CSTest2
         {
             int buttonNumber = 1;
 
-            foreach (var detail in _detailsToRepair)
+            foreach (var stack in _stacks)
             {
-                Console.WriteLine(buttonNumber + " - " + detail.Name);
+                Console.WriteLine(buttonNumber + " - " + stack.Detail.Name);
                 buttonNumber++;
             }
         }
@@ -105,9 +103,9 @@ namespace CSTest2
                 Console.Write("\nУкажите номер детали: ");
             }
             while (int.TryParse(Console.ReadLine(), out detailPosition) == false
-            || detailPosition < 1 || detailPosition > _detailsToRepair.Count);
+            || detailPosition < 1 || detailPosition > _stacks.Count);
 
-            return _detailsToRepair[detailPosition - 1];
+            return _stacks[detailPosition - 1].Detail;
         }
 
         private bool ConfirmAvailability(Detail requestedDetail)
@@ -164,21 +162,13 @@ namespace CSTest2
             }
         }
 
-        private void GenerateDetailsToRepair() 
-        {
-            for (int i = 0; i < Malfunction.PartsCount; i++) 
-            {
-                _detailsToRepair.Add(Malfunction.CloneDetail(i));
-            }
-        }
-
         private void GenerateStockOfDetails()
         {
             int addedAmount = 3;
 
-            foreach (var detail in _detailsToRepair)
+            for (int i = 0; i < Malfunction.PartsCount; i++)
             {
-                _stacks.Add(new Stack(detail, addedAmount));
+                _stacks.Add(new Stack(Malfunction.CloneDetail(i), addedAmount));
             }
         }
     }
