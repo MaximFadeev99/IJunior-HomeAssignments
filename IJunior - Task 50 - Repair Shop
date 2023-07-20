@@ -13,28 +13,24 @@ namespace CSTest2
         }
     }
 
-    class CarService 
+    class CarService
     {
-        private static List<Detail> _detailsToRepair = new List<Detail>() 
-            {new Tire(),
-             new Engine(),
-             new Brakes(),
-             new Wheel()};
-
+        private List<Detail> _detailsToRepair = new List<Detail>();
         private Queue<Client> _clients = new Queue<Client>();
         private List<Stack> _stacks = new List<Stack>();
         private int _accountBalance = 15000;
         private int _fineAmount = 5000;
 
-        public CarService() 
+        public CarService()
         {
             GenerateCustomers();
+            GenerateDetailsToRepair();
             GenerateStockOfDetails();
         }
 
-        public void Work() 
+        public void Work()
         {
-            while (_clients.Count > 0 && _accountBalance > 0) 
+            while (_clients.Count > 0 && _accountBalance > 0)
             {
                 ShowGeneralInfo();
                 ServeNextClient();
@@ -44,19 +40,14 @@ namespace CSTest2
             DrawResults();
         }
 
-        public static Detail ReturnBrokenPart() 
-        {
-            return _detailsToRepair[RandomNumber.GenerateNewNumber(0, _detailsToRepair.Count)];
-        }
-
-        private void ShowGeneralInfo() 
+        private void ShowGeneralInfo()
         {
             Console.WriteLine("Добро пожаловать в систему управления Автосервисом!");
             Console.WriteLine($"\nЧисло клиентов, ожидающих обслуживания: {_clients.Count}");
             Console.WriteLine($"Денег на балансе у Автосервиса: {_accountBalance} руб.");
         }
-        
-        private void ServeNextClient() 
+
+        private void ServeNextClient()
         {
             Client client = _clients.Peek();
             Detail replacedDetail;
@@ -84,28 +75,28 @@ namespace CSTest2
                     _accountBalance -= _fineAmount;
                 }
             }
-            else            
+            else
             {
                 Console.WriteLine($"\nВы выбрали неверную деталь, клиент ушел. Вы платите штраф {_fineAmount} руб.");
                 _accountBalance -= _fineAmount;
             }
-                      
+
             Console.ReadKey();
             _clients.Dequeue();
         }
 
-        private void ShowCommandButtons() 
+        private void ShowCommandButtons()
         {
             int buttonNumber = 1;
 
-            foreach (var detail in _detailsToRepair) 
+            foreach (var detail in _detailsToRepair)
             {
                 Console.WriteLine(buttonNumber + " - " + detail.Name);
                 buttonNumber++;
             }
         }
 
-        private Detail DefineReplacedDetail() 
+        private Detail DefineReplacedDetail()
         {
             int detailPosition;
 
@@ -113,41 +104,41 @@ namespace CSTest2
             {
                 Console.Write("\nУкажите номер детали: ");
             }
-            while (int.TryParse(Console.ReadLine(), out detailPosition) == false 
+            while (int.TryParse(Console.ReadLine(), out detailPosition) == false
             || detailPosition < 1 || detailPosition > _detailsToRepair.Count);
 
             return _detailsToRepair[detailPosition - 1];
         }
 
-        private bool ConfirmAvailability(Detail requestedDetail) 
+        private bool ConfirmAvailability(Detail requestedDetail)
         {
             bool isAvailable = false;
 
-            foreach (var stack in _stacks) 
+            foreach (var stack in _stacks)
             {
-                if (stack.Detail.Name == requestedDetail.Name && stack.Count > 0) 
+                if (stack.Detail.Name == requestedDetail.Name && stack.Count > 0)
                 {
-                    isAvailable = true; 
+                    isAvailable = true;
                     break;
                 }
             }
 
-            return isAvailable;       
+            return isAvailable;
         }
 
-        private void ReduceStockAmount(Detail requestedDetail) 
+        private void ReduceStockAmount(Detail requestedDetail)
         {
             foreach (var stack in _stacks)
             {
                 if (stack.Detail.Name == requestedDetail.Name)
                 {
-                    stack.ReduceCount(); 
+                    stack.ReduceCount();
                     break;
                 }
             }
         }
 
-        private void DrawResults() 
+        private void DrawResults()
         {
             if (_accountBalance <= 0)
             {
@@ -162,56 +153,91 @@ namespace CSTest2
             Console.ReadKey();
         }
 
-        private void GenerateCustomers() 
+        private void GenerateCustomers()
         {
             int maxCustomers = 20;
-            int randomCustomersNumber = RandomNumber.GenerateNewNumber(1, maxCustomers+1);
+            int randomCustomersNumber = RandomNumber.GenerateNewNumber(1, maxCustomers + 1);
 
-            for (int i = 1; i <= randomCustomersNumber; i++) 
-            { 
+            for (int i = 1; i <= randomCustomersNumber; i++)
+            {
                 _clients.Enqueue(new Client());
             }
         }
 
-        private void GenerateStockOfDetails() 
+        private void GenerateDetailsToRepair() 
+        {
+            for (int i = 0; i < Malfunction.PartsCount; i++) 
+            {
+                _detailsToRepair.Add(Malfunction.CloneDetail(i));
+            }
+        }
+
+        private void GenerateStockOfDetails()
         {
             int addedAmount = 3;
 
-            foreach (var detail in _detailsToRepair) 
+            foreach (var detail in _detailsToRepair)
             {
                 _stacks.Add(new Stack(detail, addedAmount));
-            }       
+            }
         }
     }
 
-    class Client 
+    class Client
     {
-        public Client() 
+        public Client()
         {
-            Problem = CarService.ReturnBrokenPart();       
+            Problem = Malfunction.CloneDetail(RandomNumber.GenerateNewNumber(0, Malfunction.PartsCount));
         }
 
-        public Detail Problem { get; private set; } 
+        public Detail Problem { get; private set; }
     }
 
     class Stack
     {
-        public Stack(Detail newDetail, int addedAmount) 
+        public Stack(Detail newDetail, int addedAmount)
         {
             Detail = newDetail;
             Count = addedAmount;
         }
-        
+
         public Detail Detail { get; private set; }
         public int Count { get; private set; }
 
-        public void ReduceCount() 
+        public void ReduceCount()
         {
-            Count--; 
+            Count--;
         }
     }
 
-    abstract class Detail
+    static class Malfunction 
+    {
+        static private List <Detail> _brokenParts = new List <Detail>();       
+
+        static Malfunction() 
+        {
+            AddDetails();
+            PartsCount = _brokenParts.Count;
+        }
+
+        static public int PartsCount { get; private set; }
+
+        public static Detail CloneDetail(int detailPosition) 
+        {
+            return new Detail(_brokenParts[detailPosition].Name, _brokenParts[detailPosition].Description,
+                _brokenParts[detailPosition].Cost, _brokenParts[detailPosition].InstallationCost);
+        }
+
+        private static void AddDetails() 
+        {
+            _brokenParts.Add(new Detail("Шина", "У машины загорелся датчик c давлением", 10000, 3000));
+            _brokenParts.Add(new Detail("Двигатель", "Что-то стучит под капотом.", 70000, 20000));
+            _brokenParts.Add(new Detail("Тормозные колодки", "Машина долго останавливается.", 20000, 1500));
+            _brokenParts.Add(new Detail("Руль", "Машина плохо реагирует на повороты.", 15000, 4000));
+        }
+    }
+
+    class Detail
     {
         public Detail(string name, string description, int cost, int installationCost)
         {
@@ -219,39 +245,19 @@ namespace CSTest2
             Description = description;
             Cost = cost;
             InstallationCost = installationCost;
-        }        
+        }
 
         public string Name { get; private set; }
         public string Description { get; private set; }
         public int Cost { get; private set; }
         public int InstallationCost { get; private set; }
     }
-
-    class Tire : Detail
-    {
-        public Tire() : base ("Шина", "У машины загорелся датчик c давлением", 10000, 3000) { }
-    }
-
-    class Engine : Detail
-    {
-        public Engine() : base("Двигатель", "Что-то стучит под капотом.", 70000, 20000) { }
-    }
-
-    class Brakes : Detail
-    {
-        public Brakes() : base("Тормозные колодки", "Машина долго останавливается.", 20000, 1500) { }
-    }
-
-    class Wheel : Detail
-    {
-        public Wheel() : base("Руль", "Машина плохо реагирует на повороты.", 15000, 4000) { }
-    }
-
-    static class RandomNumber 
+  
+    static class RandomNumber
     {
         private static Random _random = new Random();
 
-        public static int GenerateNewNumber(int minValue, int maxValue) 
+        public static int GenerateNewNumber(int minValue, int maxValue)
         {
             return _random.Next(minValue, maxValue);
         }
