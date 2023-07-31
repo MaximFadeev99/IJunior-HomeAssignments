@@ -1,0 +1,97 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AlarmControl : MonoBehaviour
+{
+    //private GameObject _openDoorImage; 
+    //private void Awake() 
+    //{ 
+    //    _openDoorImage = GameObject.Find("OpenDoorImage"); 
+    //} 
+
+    private SpriteRenderer _spriteRenderer;
+    private GameObject _alarm;
+    private AudioSource _alarmSound;
+    private Thief _thief;
+    private bool _isDoorOpen = false;
+    private bool _isThiefInside = false;
+    private float _fullVolumeTime = 10;
+
+    private void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteRenderer.enabled = false;
+        _alarm = GameObject.Find("Alarm");
+        _alarmSound = _alarm.GetComponent<AudioSource>();
+        _alarmSound.volume = 0f;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent<Thief>(out _thief))
+        {
+            _spriteRenderer.enabled = true;
+            _isDoorOpen = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        _spriteRenderer.enabled = false;      
+        _isDoorOpen = false;       
+    }
+
+    private void Update()
+    {
+        Coroutine soundIncrease = null;
+        
+        if (Input.GetKeyUp(KeyCode.E) == true && _isDoorOpen == true)
+        {
+            _alarm.GetComponent<Animator>().SetBool("isActive", true);
+            _thief.GetComponent<SpriteRenderer>().enabled = false;
+            _spriteRenderer.enabled = false;
+            _isThiefInside = true;
+            //_alarm.GetComponent<AudioSource>().Play();
+        }
+
+        if (Input.anyKey == true && _isThiefInside == true)
+        {
+            _spriteRenderer.enabled = true;
+            _thief.GetComponent<SpriteRenderer>().enabled = true;
+            _isThiefInside = false;
+            _alarm.GetComponent<Animator>().SetBool("isActive", false);
+            //_alarm.GetComponent<AudioSource>().Stop();
+        }
+
+        if (_isThiefInside)
+        {
+            StartCoroutine(ChangeVolume(true));
+        }
+        //else
+        //{
+        //    StopCoroutine(soundIncrease);
+        //    StartCoroutine(ChangeVolume(false));
+        //}
+    }
+
+    private IEnumerator ChangeVolume(bool isIncreasing) 
+    {
+        var waitTime = new WaitForSeconds(2f);       
+
+        if (isIncreasing)
+        {
+            yield return waitTime;
+            _alarmSound.volume += 0.1f;           
+        }
+
+        
+        //else
+        //{
+        //        yield return new WaitForSecondsRealtime(1f);
+        //        _alarmSound.volume = 0f;
+
+        //}
+
+    }
+}
